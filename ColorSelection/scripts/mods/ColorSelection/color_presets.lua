@@ -1,0 +1,536 @@
+-- Complete color presets from Darktide's Color system
+-- Organized by category for easy browsing
+
+local color_presets = {
+	-- Team/Slot Colors (Default game colors)
+	{
+		category = "Team Colors",
+		colors = {
+			{ name = "Player 1 (Yellow)", r = 226, g = 210, b = 117 },
+			{ name = "Player 2 (Red)", r = 180, g = 88, b = 108 },
+			{ name = "Player 3 (Green)", r = 84, g = 172, b = 121 },
+			{ name = "Player 4 (Blue)", r = 126, g = 153, b = 230 },
+			{ name = "Bot (Gray)", r = 128, g = 128, b = 128 },
+		}
+	},
+	
+	-- UI Colors
+	{
+		category = "UI Colors",
+		colors = {
+			{ name = "Terminal", r = 226, g = 199, b = 126 },
+			{ name = "Terminal Dark", r = 192, g = 169, b = 106 },
+			{ name = "Terminal Highlight", r = 226, g = 216, b = 0 },
+			{ name = "Input Color", r = 226, g = 199, b = 126 },
+			{ name = "Health Default", r = 245, g = 121, b = 21 },
+			{ name = "Health Critical", r = 245, g = 121, b = 21 },
+			{ name = "Health Ghost", r = 251, g = 195, b = 86 },
+			{ name = "Toughness Default", r = 108, g = 187, b = 196 },
+			{ name = "Toughness Medium", r = 62, g = 143, b = 155 },
+			{ name = "Toughness Buffed", r = 196, g = 195, b = 108 },
+			{ name = "Corruption Default", r = 166, g = 93, b = 172 },
+			{ name = "Corruption Medium", r = 130, g = 66, b = 170 },
+			{ name = "Ability Purple", r = 102, g = 38, b = 98 },
+			{ name = "Highlight Color", r = 245, g = 121, b = 21 },
+			{ name = "Interaction Default", r = 91, g = 121, b = 82 },
+			{ name = "Interaction Mission", r = 216, g = 237, b = 190 },
+			{ name = "Interaction Pickup", r = 91, g = 121, b = 82 },
+			{ name = "Interaction Critical", r = 246, g = 69, b = 69 },
+			{ name = "Interaction POI", r = 176, g = 150, b = 99 },
+			{ name = "Brown Light", r = 194, g = 154, b = 116 },
+			{ name = "Brown Super Light", r = 255, g = 242, b = 230 },
+			{ name = "Brown Medium", r = 156, g = 87, b = 22 },
+			{ name = "Brown Dark", r = 93, g = 58, b = 27 },
+			{ name = "Green Light", r = 74, g = 199, b = 60 },
+			{ name = "Green Super Light", r = 249, g = 255, b = 152 },
+			{ name = "Green Medium", r = 61, g = 112, b = 55 },
+			{ name = "Grey Light", r = 152, g = 152, b = 152 },
+			{ name = "Grey Medium", r = 102, g = 102, b = 102 },
+			{ name = "Chalk Grey", r = 102, g = 102, b = 102 },
+			{ name = "Orange Light", r = 255, g = 183, b = 44 },
+			{ name = "Orange Medium", r = 245, g = 121, b = 21 },
+			{ name = "Orange Dark", r = 148, g = 46, b = 14 },
+			{ name = "Red Light", r = 255, g = 54, b = 36 },
+			{ name = "Red Super Light", r = 242, g = 122, b = 99 },
+			{ name = "Red Medium", r = 158, g = 28, b = 16 },
+			{ name = "Blue Light", r = 107, g = 209, b = 241 },
+			{ name = "Disabled Text", r = 60, g = 60, b = 60 },
+		}
+	},
+	
+	-- HUD Colors
+	{
+		category = "HUD Colors",
+		colors = {
+			{ name = "HUD Green Super Light", r = 216, g = 237, b = 190 },
+			{ name = "HUD Green Light", r = 91, g = 121, b = 82 },
+			{ name = "HUD Green Medium", r = 43, g = 58, b = 43 },
+			{ name = "HUD Green Dark", r = 18, g = 20, b = 18 },
+			{ name = "HUD Red Super Light", r = 240, g = 201, b = 201 },
+			{ name = "HUD Red Light", r = 246, g = 69, b = 69 },
+			{ name = "HUD Red Medium", r = 81, g = 46, b = 46 },
+			{ name = "HUD Red Dark", r = 35, g = 16, b = 21 },
+			{ name = "HUD Yellow Super Light", r = 218, g = 186, b = 126 },
+			{ name = "HUD Yellow Light", r = 121, g = 106, b = 77 },
+			{ name = "HUD Yellow Medium", r = 63, g = 56, b = 43 },
+			{ name = "Warp Charge Low", r = 251, g = 195, b = 86 },
+			{ name = "Warp Charge Medium", r = 245, g = 121, b = 21 },
+			{ name = "Warp Charge High", r = 246, g = 69, b = 69 },
+		}
+	},
+	
+	-- Difficulty Colors
+	{
+		category = "Difficulty Colors",
+		colors = {
+			{ name = "Difficulty 1 (Cyan)", r = 0, g = 255, b = 204 },
+			{ name = "Difficulty 2 (Lime)", r = 192, g = 255, b = 0 },
+			{ name = "Difficulty 3 (Yellow)", r = 255, g = 234, b = 0 },
+			{ name = "Difficulty 4 (Orange)", r = 255, g = 84, b = 0 },
+			{ name = "Difficulty 5 (Red)", r = 255, g = 0, b = 0 },
+		}
+	},
+	
+	-- Item Rarity Colors
+	{
+		category = "Item Rarity",
+		colors = {
+			{ name = "Rarity 1 (Grey)", r = 152, g = 152, b = 152 },
+			{ name = "Rarity 2 (Green)", r = 74, g = 177, b = 85 },
+			{ name = "Rarity 3 (Blue)", r = 76, g = 132, b = 196 },
+			{ name = "Rarity 4 (Purple)", r = 143, g = 94, b = 196 },
+			{ name = "Rarity 5 (Orange)", r = 208, g = 136, b = 48 },
+			{ name = "Rarity 6 (Red)", r = 198, g = 52, b = 53 },
+		}
+	},
+	
+	-- Basic/Common Colors
+	{
+		category = "Basic Colors",
+		colors = {
+			{ name = "White", r = 255, g = 255, b = 255 },
+			{ name = "Black", r = 0, g = 0, b = 0 },
+			{ name = "Red", r = 255, g = 0, b = 0 },
+			{ name = "Green", r = 0, g = 128, b = 0 },
+			{ name = "Blue", r = 0, g = 0, b = 255 },
+			{ name = "Yellow", r = 255, g = 255, b = 0 },
+			{ name = "Cyan", r = 0, g = 255, b = 255 },
+			{ name = "Magenta", r = 255, g = 0, b = 255 },
+			{ name = "Orange", r = 255, g = 165, b = 0 },
+			{ name = "Purple", r = 128, g = 0, b = 128 },
+			{ name = "Pink", r = 255, g = 192, b = 203 },
+			{ name = "Lime", r = 0, g = 255, b = 0 },
+			{ name = "Brown", r = 127, g = 51, b = 0 },
+			{ name = "Gray", r = 128, g = 128, b = 128 },
+			{ name = "Silver", r = 192, g = 192, b = 192 },
+			{ name = "Gold", r = 255, g = 215, b = 0 },
+			{ name = "Navy", r = 0, g = 0, b = 128 },
+			{ name = "Teal", r = 0, g = 128, b = 128 },
+			{ name = "Maroon", r = 128, g = 0, b = 0 },
+			{ name = "Olive", r = 128, g = 128, b = 0 },
+		}
+	},
+	
+	-- Reds & Pinks
+	{
+		category = "Reds & Pinks",
+		colors = {
+			{ name = "Maroon", r = 128, g = 0, b = 0 },
+			{ name = "Dark Red", r = 139, g = 0, b = 0 },
+			{ name = "Firebrick", r = 178, g = 34, b = 34 },
+			{ name = "Crimson", r = 220, g = 20, b = 60 },
+			{ name = "Tomato", r = 255, g = 99, b = 71 },
+			{ name = "Coral", r = 255, g = 127, b = 80 },
+			{ name = "Indian Red", r = 205, g = 92, b = 92 },
+			{ name = "Light Coral", r = 240, g = 128, b = 128 },
+			{ name = "Dark Salmon", r = 233, g = 150, b = 122 },
+			{ name = "Salmon", r = 250, g = 128, b = 114 },
+			{ name = "Light Salmon", r = 255, g = 160, b = 122 },
+			{ name = "Orange Red", r = 255, g = 69, b = 0 },
+			{ name = "Deep Pink", r = 255, g = 20, b = 147 },
+			{ name = "Hot Pink", r = 255, g = 105, b = 180 },
+			{ name = "Light Pink", r = 255, g = 182, b = 193 },
+			{ name = "Pink", r = 255, g = 192, b = 203 },
+			{ name = "Medium Violet Red", r = 199, g = 21, b = 133 },
+			{ name = "Pale Violet Red", r = 219, g = 112, b = 147 },
+		}
+	},
+	
+	-- Oranges & Yellows
+	{
+		category = "Oranges & Yellows",
+		colors = {
+			{ name = "Cheeseburger", r = 255, g = 168, b = 0 },
+			{ name = "Dark Orange", r = 255, g = 140, b = 0 },
+			{ name = "Orange", r = 255, g = 165, b = 0 },
+			{ name = "Gold", r = 255, g = 215, b = 0 },
+			{ name = "Dark Golden Rod", r = 184, g = 134, b = 11 },
+			{ name = "Golden Rod", r = 218, g = 165, b = 32 },
+			{ name = "Pale Golden Rod", r = 238, g = 232, b = 170 },
+			{ name = "Dark Khaki", r = 189, g = 183, b = 107 },
+			{ name = "Khaki", r = 240, g = 230, b = 140 },
+			{ name = "Yellow", r = 255, g = 255, b = 0 },
+			{ name = "Light Yellow", r = 255, g = 255, b = 224 },
+			{ name = "Lemon Chiffon", r = 255, g = 250, b = 205 },
+			{ name = "Light Golden Rod Yellow", r = 250, g = 250, b = 210 },
+		}
+	},
+	
+	-- Greens
+	{
+		category = "Greens",
+		colors = {
+			{ name = "Olive", r = 128, g = 128, b = 0 },
+			{ name = "Yellow Green", r = 154, g = 205, b = 50 },
+			{ name = "Online Green", r = 145, g = 226, b = 42 },
+			{ name = "Dark Olive Green", r = 85, g = 107, b = 47 },
+			{ name = "Olive Drab", r = 107, g = 142, b = 35 },
+			{ name = "Lawn Green", r = 124, g = 252, b = 0 },
+			{ name = "Chart Reuse", r = 127, g = 255, b = 0 },
+			{ name = "Green Yellow", r = 173, g = 255, b = 47 },
+			{ name = "Dark Green", r = 0, g = 100, b = 0 },
+			{ name = "Green", r = 0, g = 128, b = 0 },
+			{ name = "Forest Green", r = 34, g = 139, b = 34 },
+			{ name = "Lime", r = 0, g = 255, b = 0 },
+			{ name = "Lime Green", r = 50, g = 205, b = 50 },
+			{ name = "Light Green", r = 144, g = 238, b = 144 },
+			{ name = "Pale Green", r = 152, g = 251, b = 152 },
+			{ name = "Dark Sea Green", r = 143, g = 188, b = 143 },
+			{ name = "Medium Spring Green", r = 0, g = 250, b = 154 },
+			{ name = "Spring Green", r = 0, g = 255, b = 127 },
+			{ name = "Sea Green", r = 46, g = 139, b = 87 },
+			{ name = "Medium Aqua Marine", r = 102, g = 205, b = 170 },
+			{ name = "Medium Sea Green", r = 60, g = 179, b = 113 },
+			{ name = "Light Sea Green", r = 32, g = 178, b = 170 },
+		}
+	},
+	
+	-- Cyans & Teals
+	{
+		category = "Cyans & Teals",
+		colors = {
+			{ name = "Dark Slate Gray", r = 47, g = 79, b = 79 },
+			{ name = "Teal", r = 0, g = 128, b = 128 },
+			{ name = "Dark Cyan", r = 0, g = 139, b = 139 },
+			{ name = "Aqua", r = 0, g = 255, b = 255 },
+			{ name = "Cyan", r = 0, g = 255, b = 255 },
+			{ name = "Light Cyan", r = 224, g = 255, b = 255 },
+			{ name = "Dark Turquoise", r = 0, g = 206, b = 209 },
+			{ name = "Turquoise", r = 64, g = 224, b = 208 },
+			{ name = "Medium Turquoise", r = 72, g = 209, b = 204 },
+			{ name = "Pale Turquoise", r = 175, g = 238, b = 238 },
+			{ name = "Aqua Marine", r = 127, g = 255, b = 212 },
+			{ name = "Powder Blue", r = 176, g = 224, b = 230 },
+			{ name = "Cadet Blue", r = 95, g = 158, b = 160 },
+		}
+	},
+	
+	-- Blues
+	{
+		category = "Blues",
+		colors = {
+			{ name = "Steel Blue", r = 70, g = 130, b = 180 },
+			{ name = "Corn Flower Blue", r = 100, g = 149, b = 237 },
+			{ name = "Deep Sky Blue", r = 0, g = 191, b = 255 },
+			{ name = "Dodger Blue", r = 30, g = 144, b = 255 },
+			{ name = "Light Blue", r = 173, g = 216, b = 230 },
+			{ name = "Sky Blue", r = 135, g = 206, b = 235 },
+			{ name = "Light Sky Blue", r = 135, g = 206, b = 250 },
+			{ name = "Midnight Blue", r = 25, g = 25, b = 112 },
+			{ name = "Navy", r = 0, g = 0, b = 128 },
+			{ name = "Dark Blue", r = 0, g = 0, b = 139 },
+			{ name = "Medium Blue", r = 0, g = 0, b = 205 },
+			{ name = "Blue", r = 0, g = 0, b = 255 },
+			{ name = "Royal Blue", r = 65, g = 105, b = 225 },
+		}
+	},
+	
+	-- Purples & Violets
+	{
+		category = "Purples & Violets",
+		colors = {
+			{ name = "Blue Violet", r = 138, g = 43, b = 226 },
+			{ name = "Indigo", r = 75, g = 0, b = 130 },
+			{ name = "Dark Slate Blue", r = 72, g = 61, b = 139 },
+			{ name = "Slate Blue", r = 106, g = 90, b = 205 },
+			{ name = "Medium Slate Blue", r = 123, g = 104, b = 238 },
+			{ name = "Medium Purple", r = 147, g = 112, b = 219 },
+			{ name = "Dark Magenta", r = 139, g = 0, b = 139 },
+			{ name = "Dark Violet", r = 148, g = 0, b = 211 },
+			{ name = "Dark Orchid", r = 153, g = 50, b = 204 },
+			{ name = "Medium Orchid", r = 186, g = 85, b = 211 },
+			{ name = "Purple", r = 128, g = 0, b = 128 },
+			{ name = "Thistle", r = 216, g = 191, b = 216 },
+			{ name = "Plum", r = 221, g = 160, b = 221 },
+			{ name = "Violet", r = 238, g = 130, b = 238 },
+			{ name = "Magenta", r = 255, g = 0, b = 255 },
+			{ name = "Orchid", r = 218, g = 112, b = 214 },
+		}
+	},
+	
+	-- Browns & Earth Tones
+	{
+		category = "Browns & Earth",
+		colors = {
+			{ name = "Brown", r = 127, g = 51, b = 0 },
+			{ name = "Saddle Brown", r = 139, g = 69, b = 19 },
+			{ name = "Sienna", r = 160, g = 82, b = 45 },
+			{ name = "Chocolate", r = 210, g = 105, b = 30 },
+			{ name = "Peru", r = 205, g = 133, b = 63 },
+			{ name = "Sandy Brown", r = 244, g = 164, b = 96 },
+			{ name = "Burly Wood", r = 222, g = 184, b = 135 },
+			{ name = "Tan", r = 210, g = 180, b = 140 },
+			{ name = "Rosy Brown", r = 188, g = 143, b = 143 },
+		}
+	},
+	
+	-- Whites & Pastels
+	{
+		category = "Whites & Pastels",
+		colors = {
+			{ name = "White", r = 255, g = 255, b = 255 },
+			{ name = "Snow", r = 255, g = 250, b = 250 },
+			{ name = "Honeydew", r = 240, g = 255, b = 240 },
+			{ name = "Mint Cream", r = 245, g = 255, b = 250 },
+			{ name = "Azure", r = 240, g = 255, b = 255 },
+			{ name = "Alice Blue", r = 240, g = 248, b = 255 },
+			{ name = "Ghost White", r = 248, g = 248, b = 255 },
+			{ name = "White Smoke", r = 245, g = 245, b = 245 },
+			{ name = "Sea Shell", r = 255, g = 245, b = 238 },
+			{ name = "Beige", r = 245, g = 245, b = 220 },
+			{ name = "Old Lace", r = 253, g = 245, b = 230 },
+			{ name = "Floral White", r = 255, g = 250, b = 240 },
+			{ name = "Ivory", r = 255, g = 255, b = 240 },
+			{ name = "Antique White", r = 250, g = 235, b = 215 },
+			{ name = "Linen", r = 250, g = 240, b = 230 },
+			{ name = "Lavender Blush", r = 255, g = 240, b = 245 },
+			{ name = "Misty Rose", r = 255, g = 228, b = 225 },
+			{ name = "Bisque", r = 255, g = 228, b = 196 },
+			{ name = "Blanched Almond", r = 255, g = 235, b = 205 },
+			{ name = "Wheat", r = 245, g = 222, b = 179 },
+			{ name = "Corn Silk", r = 255, g = 248, b = 220 },
+			{ name = "Moccasin", r = 255, g = 228, b = 181 },
+			{ name = "Navajo White", r = 255, g = 222, b = 173 },
+			{ name = "Peach Puff", r = 255, g = 218, b = 185 },
+			{ name = "Papaya Whip", r = 255, g = 239, b = 213 },
+			{ name = "Lavender", r = 230, g = 230, b = 250 },
+		}
+	},
+	
+	-- Grays & Blacks
+	{
+		category = "Grays & Blacks",
+		colors = {
+			{ name = "Black", r = 0, g = 0, b = 0 },
+			{ name = "Dim Gray", r = 105, g = 105, b = 105 },
+			{ name = "Gray", r = 128, g = 128, b = 128 },
+			{ name = "Dark Gray", r = 169, g = 169, b = 169 },
+			{ name = "Silver", r = 192, g = 192, b = 192 },
+			{ name = "Light Gray", r = 211, g = 211, b = 211 },
+			{ name = "Gainsboro", r = 220, g = 220, b = 220 },
+			{ name = "Slate Gray", r = 112, g = 128, b = 144 },
+			{ name = "Light Slate Gray", r = 119, g = 136, b = 153 },
+			{ name = "Light Steel Blue", r = 176, g = 196, b = 222 },
+		}
+	},
+	
+	-- Citadel Base Paints
+	{
+		category = "Citadel Base",
+		colors = {
+			{ name = "Abaddon Black", r = 35, g = 31, b = 32 },
+			{ name = "Averland Sunset", r = 253, g = 184, b = 37 },
+			{ name = "Balthasar Gold", r = 164, g = 117, b = 82 },
+			{ name = "Bugmans Glow", r = 131, g = 79, b = 68 },
+			{ name = "Caledor Sky", r = 57, g = 110, b = 158 },
+			{ name = "Caliban Green", r = 0, g = 64, b = 31 },
+			{ name = "Castellan Green", r = 49, g = 72, b = 33 },
+			{ name = "Celestra Grey", r = 144, g = 168, b = 168 },
+			{ name = "Ceramite White", r = 255, g = 255, b = 255 },
+			{ name = "Daemonette Hide", r = 105, g = 102, b = 132 },
+			{ name = "Death Guard Green", r = 132, g = 138, b = 102 },
+			{ name = "Deathworld Forest", r = 92, g = 103, b = 48 },
+			{ name = "Dryad Bark", r = 51, g = 49, b = 45 },
+			{ name = "Incubi Darkness", r = 11, g = 71, b = 74 },
+			{ name = "Jokaero Orange", r = 238, g = 56, b = 35 },
+			{ name = "Kantor Blue", r = 0, g = 33, b = 81 },
+			{ name = "Khorne Red", r = 106, g = 0, b = 1 },
+			{ name = "Leadbelcher", r = 136, g = 141, b = 143 },
+			{ name = "Macragge Blue", r = 13, g = 64, b = 127 },
+			{ name = "Mechanicus Grey", r = 61, g = 75, b = 77 },
+			{ name = "Mephiston Red", r = 154, g = 17, b = 21 },
+			{ name = "Mournfang Brown", r = 100, g = 9, b = 9 },
+			{ name = "Naggaroth Night", r = 61, g = 51, b = 84 },
+			{ name = "Rakarth Flesh", r = 162, g = 158, b = 145 },
+			{ name = "Ratskin Flesh", r = 173, g = 107, b = 76 },
+			{ name = "Retributor Armour", r = 195, g = 158, b = 129 },
+			{ name = "Rhinox Hide", r = 73, g = 52, b = 53 },
+			{ name = "Screamer Pink", r = 124, g = 22, b = 69 },
+			{ name = "Screaming Bell", r = 193, g = 111, b = 69 },
+			{ name = "Steel Legion Drab", r = 94, g = 81, b = 52 },
+			{ name = "Stegadon Scale Green", r = 7, g = 72, b = 99 },
+			{ name = "The Fang Grey", r = 67, g = 97, b = 116 },
+			{ name = "Thousand Sons Blue", r = 24, g = 171, b = 204 },
+			{ name = "Waaagh Flesh", r = 31, g = 84, b = 41 },
+			{ name = "Warplock Bronze", r = 146, g = 125, b = 123 },
+			{ name = "XV88", r = 114, g = 73, b = 30 },
+			{ name = "Zandri Dust", r = 158, g = 145, b = 92 },
+		}
+	},
+	
+	-- Citadel Layer Paints
+	{
+		category = "Citadel Layer",
+		colors = {
+			{ name = "Administratum Grey", r = 148, g = 155, b = 149 },
+			{ name = "Ahriman Blue", r = 31, g = 140, b = 156 },
+			{ name = "Alaitoc Blue", r = 41, g = 87, b = 136 },
+			{ name = "Altdorf Guard Blue", r = 31, g = 86, b = 167 },
+			{ name = "Auric Armour Gold", r = 232, g = 188, b = 109 },
+			{ name = "Balor Brown", r = 139, g = 89, b = 16 },
+			{ name = "Baneblade Brown", r = 147, g = 127, b = 109 },
+			{ name = "Bestigor Flesh", r = 211, g = 138, b = 87 },
+			{ name = "Brass Scorpion", r = 183, g = 136, b = 95 },
+			{ name = "Cadian Fleshtone", r = 199, g = 121, b = 88 },
+			{ name = "Calgar Blue", r = 66, g = 114, b = 184 },
+			{ name = "Dark Reaper", r = 59, g = 81, b = 80 },
+			{ name = "Dawnstone", r = 112, g = 117, b = 110 },
+			{ name = "Deathclaw Brown", r = 179, g = 104, b = 83 },
+			{ name = "Doombull Brown", r = 93, g = 0, b = 9 },
+			{ name = "Elysian Green", r = 116, g = 143, b = 57 },
+			{ name = "Emperors Children", r = 185, g = 66, b = 120 },
+			{ name = "Eshin Grey", r = 74, g = 79, b = 82 },
+			{ name = "Evil Sunz Scarlet", r = 194, g = 25, b = 31 },
+			{ name = "Fenrisian Grey", r = 113, g = 155, b = 183 },
+			{ name = "Fire Dragon Bright", r = 245, g = 134, b = 82 },
+			{ name = "Flash Gitz Yellow", r = 255, g = 242, b = 0 },
+			{ name = "Flayed One Flesh", r = 240, g = 217, b = 184 },
+			{ name = "Fulgurite Copper", r = 252, g = 252, b = 222 },
+			{ name = "Gehennas Gold", r = 219, g = 166, b = 116 },
+			{ name = "Genestealer Purple", r = 119, g = 97, b = 171 },
+			{ name = "Gorthor Brown", r = 101, g = 71, b = 65 },
+			{ name = "Hashut Copper", r = 183, g = 118, b = 71 },
+			{ name = "Hoeth Blue", r = 76, g = 127, b = 180 },
+			{ name = "Ironbreaker", r = 161, g = 166, b = 169 },
+			{ name = "Kabalite Green", r = 3, g = 140, b = 103 },
+			{ name = "Karak Stone", r = 187, g = 150, b = 98 },
+			{ name = "Kislev Flesh", r = 214, g = 168, b = 117 },
+			{ name = "Liberator Gold", r = 211, g = 181, b = 135 },
+			{ name = "Loren Forest", r = 80, g = 112, b = 45 },
+			{ name = "Lothern Blue", r = 52, g = 162, b = 207 },
+			{ name = "Moot Green", r = 82, g = 178, b = 68 },
+			{ name = "Nurgling Green", r = 132, g = 156, b = 99 },
+			{ name = "Ogryn Camo", r = 157, g = 169, b = 75 },
+			{ name = "Pallid Wych Flesh", r = 205, g = 206, b = 190 },
+			{ name = "Pink Horror", r = 144, g = 48, b = 93 },
+			{ name = "Runefang Steel", r = 195, g = 202, b = 206 },
+			{ name = "Runelord Brass", r = 182, g = 168, b = 154 },
+			{ name = "Russ Grey", r = 84, g = 117, b = 136 },
+			{ name = "Screaming Skull", r = 210, g = 212, b = 162 },
+			{ name = "Skarsnik Green", r = 95, g = 147, b = 112 },
+			{ name = "Skavenblight Dinge", r = 71, g = 65, b = 59 },
+			{ name = "Skrag Brown", r = 144, g = 73, b = 15 },
+			{ name = "Skullcrusher Brass", r = 241, g = 199, b = 142 },
+			{ name = "Slaanesh Grey", r = 142, g = 140, b = 151 },
+			{ name = "Sotek Green", r = 11, g = 105, b = 116 },
+			{ name = "Squig Orange", r = 170, g = 79, b = 68 },
+			{ name = "Stormhost Silver", r = 187, g = 198, b = 201 },
+			{ name = "Stormvermin Fur", r = 115, g = 107, b = 101 },
+			{ name = "Straken Green", r = 98, g = 129, b = 38 },
+			{ name = "Sybarite Green", r = 48, g = 165, b = 108 },
+			{ name = "Sycorax Bronze", r = 203, g = 179, b = 148 },
+			{ name = "Tallarn Sand", r = 166, g = 118, b = 16 },
+			{ name = "Tau Light Ochre", r = 191, g = 110, b = 29 },
+			{ name = "Teclis Blue", r = 49, g = 126, b = 193 },
+			{ name = "Temple Guard Blue", r = 51, g = 154, b = 141 },
+			{ name = "Thunderhawk Blue", r = 65, g = 112, b = 116 },
+			{ name = "Troll Slayer Orange", r = 243, g = 109, b = 45 },
+			{ name = "Tuskgor Fur", r = 136, g = 54, b = 54 },
+			{ name = "Ulthuan Grey", r = 199, g = 224, b = 217 },
+			{ name = "Ungor Flesh", r = 214, g = 167, b = 102 },
+			{ name = "Ushabti Bone", r = 187, g = 187, b = 127 },
+			{ name = "Warboss Green", r = 62, g = 128, b = 93 },
+			{ name = "Warpfiend Grey", r = 107, g = 106, b = 116 },
+			{ name = "Warpstone Glow", r = 30, g = 115, b = 49 },
+			{ name = "Wazdakka Red", r = 140, g = 10, b = 12 },
+			{ name = "White Scar", r = 255, g = 255, b = 255 },
+			{ name = "Wild Rider Red", r = 234, g = 47, b = 40 },
+			{ name = "Xereus Purple", r = 71, g = 31, b = 95 },
+			{ name = "Yriel Yellow", r = 255, g = 218, b = 0 },
+			{ name = "Zamesi Desert", r = 221, g = 160, b = 38 },
+		}
+	},
+	
+	-- Citadel Shade Paints
+	{
+		category = "Citadel Shades",
+		colors = {
+			{ name = "Agrax Earthshade", r = 90, g = 87, b = 63 },
+			{ name = "Athonian Camoshade", r = 109, g = 142, b = 68 },
+			{ name = "Biel-Tan Green", r = 27, g = 161, b = 105 },
+			{ name = "Carroburg Crimson", r = 168, g = 42, b = 112 },
+			{ name = "Casandora Yellow", r = 254, g = 206, b = 90 },
+			{ name = "Coelia Greenshade", r = 14, g = 127, b = 120 },
+			{ name = "Drakenhof Nightshade", r = 18, g = 88, b = 153 },
+			{ name = "Druchii Violet", r = 122, g = 70, b = 140 },
+			{ name = "Fuegan Orange", r = 199, g = 126, b = 77 },
+			{ name = "Nuln Oil", r = 20, g = 16, b = 14 },
+			{ name = "Reikland Fleshshade", r = 202, g = 108, b = 77 },
+			{ name = "Seraphim Sepia", r = 215, g = 130, b = 75 },
+		}
+	},
+	
+	-- Citadel Dry Paints
+	{
+		category = "Citadel Dry",
+		colors = {
+			{ name = "Astorath Red", r = 221, g = 72, b = 43 },
+			{ name = "Changeling Pink", r = 244, g = 175, b = 205 },
+			{ name = "Chronus Blue", r = 114, g = 168, b = 209 },
+			{ name = "Eldar Flesh", r = 236, g = 192, b = 131 },
+			{ name = "Etherium Blue", r = 162, g = 186, b = 210 },
+			{ name = "Golden Griffon", r = 169, g = 144, b = 88 },
+			{ name = "Golgfag Brown", r = 194, g = 128, b = 79 },
+			{ name = "Hellion Green", r = 132, g = 195, b = 170 },
+			{ name = "Hexos Palesun", r = 255, g = 242, b = 0 },
+			{ name = "Imrik Blue", r = 103, g = 174, b = 208 },
+			{ name = "Kindleflame", r = 247, g = 158, b = 134 },
+			{ name = "Longbeard Grey", r = 206, g = 206, b = 175 },
+			{ name = "Lucius Lilac", r = 182, g = 159, b = 204 },
+			{ name = "Necron Compound", r = 130, g = 139, b = 142 },
+			{ name = "Niblet Green", r = 125, g = 199, b = 52 },
+			{ name = "Praxeti White", r = 255, g = 255, b = 255 },
+			{ name = "Ryza Rust", r = 236, g = 99, b = 26 },
+			{ name = "Sigmarite", r = 202, g = 173, b = 118 },
+			{ name = "Skink Blue", r = 88, g = 193, b = 205 },
+			{ name = "Stormfang", r = 128, g = 167, b = 193 },
+			{ name = "Sylvaneth Bark", r = 172, g = 130, b = 98 },
+			{ name = "Terminatus Stone", r = 189, g = 177, b = 146 },
+			{ name = "Tyrant Skull", r = 205, g = 197, b = 134 },
+			{ name = "Underhive Ash", r = 192, g = 189, b = 129 },
+			{ name = "Verminlord Hide", r = 161, g = 105, b = 84 },
+			{ name = "Wrack White", r = 252, g = 251, b = 25 },
+		}
+	},
+	
+	-- Citadel Technical (Selected)
+	{
+		category = "Citadel Technical",
+		colors = {
+			{ name = "Baharroth Blue", r = 88, g = 193, b = 205 },
+			{ name = "Blue Horror", r = 162, g = 186, b = 210 },
+			{ name = "Dechala Lilac", r = 182, g = 159, b = 204 },
+			{ name = "Dorn Yellow", r = 255, g = 242, b = 0 },
+			{ name = "Fulgrim Pink", r = 244, g = 175, b = 205 },
+			{ name = "Gauss Blaster Green", r = 132, g = 195, b = 170 },
+			{ name = "Krieg Khaki", r = 192, g = 189, b = 129 },
+			{ name = "Lugganath Orange", r = 247, g = 158, b = 13 },
+			{ name = "Bloodletter", r = 243, g = 115, b = 85 },
+			{ name = "Guilliman Blue", r = 47, g = 154, b = 214 },
+			{ name = "Lamenters Yellow", r = 255, g = 245, b = 107 },
+			{ name = "Waywatcher Green", r = 109, g = 192, b = 10 },
+		}
+	},
+}
+
+return color_presets
