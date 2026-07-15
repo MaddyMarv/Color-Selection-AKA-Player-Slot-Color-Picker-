@@ -471,6 +471,17 @@ local function apply_widget_color(panel)
 		return
 	end
 	
+	-- Check if account ID has changed for this slot, and trigger a slot color update if so
+	if slot >= 1 and slot <= 4 and mod.apply_slot_colors and not is_in_non_mission_context() then
+		if not mod._known_slot_account_ids then mod._known_slot_account_ids = {} end
+		if mod._known_slot_account_ids[slot] ~= account_id then
+			mod._known_slot_account_ids[slot] = account_id
+			mod:pcall(function()
+				mod.apply_slot_colors()
+			end)
+		end
+	end
+
 	local color = get_color_for_account_id(account_id, slot)
 	
 	local widget = panel._widgets_by_name.player_name
@@ -1265,6 +1276,9 @@ apply_slot_colors_internal = function()
 	if is_in_non_mission_context() then
 		return
 	end
+	
+	-- Force player cache refresh to ensure we have the latest players
+	_player_cache.last_update = 0
 	
 	if not UISettings.player_slot_colors then
 		UISettings.player_slot_colors = {}
