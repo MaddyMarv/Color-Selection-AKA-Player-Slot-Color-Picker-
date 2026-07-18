@@ -1,6 +1,3 @@
-
-
-
 local color_presets = {
 	
 	{
@@ -13,7 +10,6 @@ local color_presets = {
 			{ name = "Bot (Gray)", r = 128, g = 128, b = 128 },
 		}
 	},
-	
 	
 	{
 		category = "UI Colors",
@@ -58,7 +54,6 @@ local color_presets = {
 		}
 	},
 	
-	
 	{
 		category = "HUD Colors",
 		colors = {
@@ -79,7 +74,6 @@ local color_presets = {
 		}
 	},
 	
-	
 	{
 		category = "Difficulty Colors",
 		colors = {
@@ -90,7 +84,6 @@ local color_presets = {
 			{ name = "Difficulty 5 (Red)", r = 255, g = 0, b = 0 },
 		}
 	},
-	
 	
 	{
 		category = "Item Rarity",
@@ -103,7 +96,6 @@ local color_presets = {
 			{ name = "Rarity 6 (Red)", r = 198, g = 52, b = 53 },
 		}
 	},
-	
 	
 	{
 		category = "Basic Colors",
@@ -131,7 +123,6 @@ local color_presets = {
 		}
 	},
 	
-	
 	{
 		category = "Reds & Pinks",
 		colors = {
@@ -156,7 +147,6 @@ local color_presets = {
 		}
 	},
 	
-	
 	{
 		category = "Oranges & Yellows",
 		colors = {
@@ -175,7 +165,6 @@ local color_presets = {
 			{ name = "Light Golden Rod Yellow", r = 250, g = 250, b = 210 },
 		}
 	},
-	
 	
 	{
 		category = "Greens",
@@ -205,7 +194,6 @@ local color_presets = {
 		}
 	},
 	
-	
 	{
 		category = "Cyans & Teals",
 		colors = {
@@ -225,7 +213,6 @@ local color_presets = {
 		}
 	},
 	
-	
 	{
 		category = "Blues",
 		colors = {
@@ -244,7 +231,6 @@ local color_presets = {
 			{ name = "Royal Blue", r = 65, g = 105, b = 225 },
 		}
 	},
-	
 	
 	{
 		category = "Purples & Violets",
@@ -268,7 +254,6 @@ local color_presets = {
 		}
 	},
 	
-	
 	{
 		category = "Browns & Earth",
 		colors = {
@@ -283,7 +268,6 @@ local color_presets = {
 			{ name = "Rosy Brown", r = 188, g = 143, b = 143 },
 		}
 	},
-	
 	
 	{
 		category = "Whites & Pastels",
@@ -317,7 +301,6 @@ local color_presets = {
 		}
 	},
 	
-	
 	{
 		category = "Grays & Blacks",
 		colors = {
@@ -333,7 +316,6 @@ local color_presets = {
 			{ name = "Light Steel Blue", r = 176, g = 196, b = 222 },
 		}
 	},
-	
 	
 	{
 		category = "Citadel Base",
@@ -377,7 +359,6 @@ local color_presets = {
 			{ name = "Zandri Dust", r = 158, g = 145, b = 92 },
 		}
 	},
-	
 	
 	{
 		category = "Citadel Layer",
@@ -461,7 +442,6 @@ local color_presets = {
 		}
 	},
 	
-	
 	{
 		category = "Citadel Shades",
 		colors = {
@@ -479,7 +459,6 @@ local color_presets = {
 			{ name = "Seraphim Sepia", r = 215, g = 130, b = 75 },
 		}
 	},
-	
 	
 	{
 		category = "Citadel Dry",
@@ -512,7 +491,6 @@ local color_presets = {
 			{ name = "Wrack White", r = 252, g = 251, b = 25 },
 		}
 	},
-	
 	
 	{
 		category = "Citadel Technical",

@@ -14,11 +14,7 @@ local CONSTANTS = {
 	LINE_HEIGHT = 30
 }
 
-
-
 local DEFAULT_HUB_COLOR = {255, 169, 191, 153}
-
-
 
 local ColorUtils = {}
 
@@ -62,7 +58,6 @@ mod._local_player_account_id = nil
 
 mod.account_id_color_map = mod:persistent_table("account_id_color_map")
 
-
 function mod.get_default_color_value(prefix, component)
 	local defaults = {
 		slot1 = {r = 226, g = 210, b = 117},  
@@ -87,7 +82,6 @@ function mod.get_default_color_value(prefix, component)
 	return CONSTANTS.MAX_COLOR_VALUE
 end
 
-
 local function update_local_player_id()
 	local pm = Managers and Managers.player
 	if pm then
@@ -107,7 +101,6 @@ local function pcall_safe(func)
 	local success, result = pcall(func)
 	return success and result or nil
 end
-
 
 local get_color_for_account_id
 
@@ -159,7 +152,6 @@ function mod.open_color_customizer()
 
     Managers.ui:open_view(color_customizer_view_name)
 end
-
 
 local function color_for_slot(slot)
 	if not slot or slot < 1 then
@@ -235,7 +227,7 @@ local function is_in_non_mission_context()
 			end
 		end
 	end
-	
+
 	return false
 end
 
@@ -381,7 +373,6 @@ local function update_player_cache()
 			end
 		end
 	end
-	
 	_player_cache.last_update = os.clock()
 end
 
@@ -407,7 +398,6 @@ local function get_player_by_account_id(account_id)
 	return _player_cache.by_account_id[account_id]
 end
 
-
 local function apply_color_to_name_only(text, color)
 	if not text or type(text) ~= "string" or not color then
 		return text
@@ -415,11 +405,6 @@ local function apply_color_to_name_only(text, color)
 	
 	local c = color
 	local target_color_tag = string.format("{#color(%d,%d,%d)}", c[2], c[3], c[4])
-
-	
-	
-	
-	
 	local stripped_text = text:gsub("^{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}$", "")
 
 	return target_color_tag .. stripped_text .. "{#reset()}"
@@ -471,7 +456,6 @@ local function apply_widget_color(panel)
 		return
 	end
 	
-	
 	if slot >= 1 and slot <= 4 and mod.apply_slot_colors and not is_in_non_mission_context() then
 		if not mod._known_slot_account_ids then mod._known_slot_account_ids = {} end
 		if mod._known_slot_account_ids[slot] ~= account_id then
@@ -505,8 +489,6 @@ local function apply_widget_color(panel)
 		end
 	end
 
-	
-	
 	if widget.content and widget.content.text then
 		local current_text = widget.content.text
 		local new_text = apply_color_to_name_only(current_text, color)
@@ -625,15 +607,10 @@ local function apply_nameplate_color(marker)
     local marker_type = marker.type
     local is_companion = marker_type and marker_type:match("companion")
     
-    
-    
-    
     if is_companion then
         local widget = marker.widget
         local content = widget and widget.content
         if not content or not player then return end
-        
-        
         local current_header = content.header_text or ""
         if current_header == "" then
             
@@ -672,11 +649,9 @@ local function apply_nameplate_color(marker)
         return
     end
 
-    
     local slot = pcall_safe(function() return player:slot() end)
     local account_id = pcall_safe(function() return player:account_id() end)
 
-    
     local color = get_color_for_account_id(account_id)
     if not color then
         local in_non_mission = is_in_non_mission_context()
@@ -687,7 +662,6 @@ local function apply_nameplate_color(marker)
         end
     end
 
-    
     local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
 
     local widget = marker.widget
@@ -698,7 +672,6 @@ local function apply_nameplate_color(marker)
 
     local header = content.header_text
 
-    
     local player_name = pcall_safe(function() return player:name() end)
     if not player_name or player_name == "" then
         
@@ -706,24 +679,17 @@ local function apply_nameplate_color(marker)
         player_name = name_part and name_part:match("%w+") or header:match("%w+") or header
     end
     
-    
     player_name = player_name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
 
-    
     local escaped_name = player_name:gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1")
 
-    
     local name_part, title_part = header:match("^([^\n]*)\n?(.*)$")
     if not name_part then
         name_part = header
         title_part = ""
     end
     
-    
     local clean_name_part = name_part:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
-    
-    
-    
     
     local name_start, name_end = clean_name_part:find(escaped_name, 1, true)
     
@@ -871,9 +837,6 @@ mod:hook_safe("HudElementNameplates", "update", function(self, dt, t, ui_rendere
 		end
 	end
 end)
-
-
-
 
 mod:hook(CLASS.ConstantElementChat, "_participant_displayname", function(func, self, participant)
 	local display_name = func(self, participant)
@@ -1137,7 +1100,6 @@ local function update_world_markers()
 		pcall_safe(function() nameplates_element:_nameplate_extension_scan() end)
 	end
 	
-	
 	for marker_id, marker in pairs(world_markers._markers_by_id) do
 		local marker_type = marker.type
 
@@ -1154,17 +1116,12 @@ local function update_world_markers()
 					unit_data.synced = false
 				end
 			end
-			
-			
-			
 		end
 	end
-	
 	
 	if nameplates_element._nameplate_extension_scan then
 		pcall_safe(function() nameplates_element:_nameplate_extension_scan() end)
 	end
-	
 	
 	return true
 end
@@ -1241,16 +1198,13 @@ local function process_next_in_queue()
 	while #color_assignment_queue > 0 do
 		local operation = table.remove(color_assignment_queue, 1)
 		operation_count = operation_count + 1
-		
 		if debug_mode then
 			local msg = string.format("[ColorSelection] Executing queued operation %d/%d", operation_count, queue_size)
 			mod:info(msg)
 			mod:echo(msg)
 		end
-
 		operation()
 	end
-
 	is_processing_queue = false
 end
 
@@ -1276,7 +1230,6 @@ apply_slot_colors_internal = function()
 	if is_in_non_mission_context() then
 		return
 	end
-	
 	
 	_player_cache.last_update = 0
 	
@@ -1350,7 +1303,6 @@ mod.CONSTANTS = CONSTANTS
 mod.get_player_by_account_id = get_player_by_account_id
 mod.get_player_by_slot = get_player_by_slot
 mod.get_color_for_account_id = get_color_for_account_id
-
 
 local function _strip_cs_color_tags(text)
     if not text or type(text) ~= "string" then
@@ -1469,7 +1421,6 @@ mod:hook_safe("OutlineSystem", "update", function(self)
 	end
 end)
 
-
 mod.on_disabled = function()
     
     restore_previous()
@@ -1562,7 +1513,6 @@ mod.on_all_mods_loaded = function()
 		mod:echo("{#color(255,50,50)}[ColorSelection] WARNING:{#reset()} CareerColourOutlines is enabled! It conflicts with this mod and will cause outline colors to bug out. Please disable it!")
 	end
 
-	
 	mod:add_global_localize_strings({
 		players_list_title = {
 			en = "Customized Players",
@@ -1598,7 +1548,6 @@ mod.on_all_mods_loaded = function()
 			return func()
 		end)
 	end
-	
 	
 	mod:hook_safe("HumanGameplay", "on_player_removed", function(self, player)
 		_on_player_removed(player)
@@ -1657,8 +1606,6 @@ mod.on_disabled = function()
 end
 
 mod.on_setting_changed = function(setting_id)
-
-	
 	local triggers_update = false
 	if string.find(setting_id, "slot%d") or string.find(setting_id, "bot_") then
 		triggers_update = true

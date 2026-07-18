@@ -153,7 +153,6 @@ local loc = {
   debug_mode_tooltip = {
     en = "When enabled, shows debug messages in console for troubleshooting slot assignments and color mappings. Turn this off for normal gameplay.",
   },
-
   
   color_customizer_title = {
     en = "Player Color Customizer",
@@ -261,7 +260,6 @@ local loc = {
   slot_color_reset = {
     en = "Slot {#color(255,255,255)}%s{#reset()} color reset to default",
   },
-  
   
   slot1 = {
     en = "Slot 1 (Local Player)",
@@ -390,7 +388,6 @@ local loc = {
   },
 }
 
-
 local default_slot_colors = {
     {r = 226, g = 210, b = 117}, 
     {r = 180, g = 88,  b = 108}, 
@@ -405,10 +402,8 @@ for slot = 1, 4 do
     loc["default_slot" .. slot] = { en = text }
 end
 
-
 local bot_c = default_slot_colors[5]
 loc.default_bot = { en = string.format("{#color(%s,%s,%s)}Default{#reset()}", bot_c.r, bot_c.g, bot_c.b) }
-
 
 local default_class_colors = {
     veteran = {r = 84,  g = 172, b = 121},
@@ -423,10 +418,7 @@ for class_name, c in pairs(default_class_colors) do
     loc["default_" .. class_name] = { en = string.format("{#color(%s,%s,%s)}Default{#reset()}", c.r, c.g, c.b) }
 end
 
-
 loc.default = { en = "Default" }
-
-
 
 for _, color_name in ipairs(Color.list) do
     local c = Color[color_name](255, true)
