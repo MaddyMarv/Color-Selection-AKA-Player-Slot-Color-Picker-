@@ -67,7 +67,7 @@ local loc = {
     en = "Blue",
   },
 
-  -- UI Element Name Coloring
+  
   ui_coloring_header = {
     en = "UI Element Name Coloring",
   },
@@ -124,7 +124,7 @@ local loc = {
     en = "Color player names in this UI element. Colors are applied at the source, so they appear consistently across all game menus.",
   },
 
-  -- Bot Color
+  
   bot_color_header = {
     en = "Bot Color",
   },
@@ -141,7 +141,7 @@ local loc = {
     en = "All bots will use this color. This ensures bots don't conflict with human player colors.",
   },
 
-  -- Debug Mode
+  
   debug_mode_group = {
     en = "Debug Mode",
   },
@@ -154,7 +154,7 @@ local loc = {
     en = "When enabled, shows debug messages in console for troubleshooting slot assignments and color mappings. Turn this off for normal gameplay.",
   },
 
-  -- Color Customizer
+  
   color_customizer_title = {
     en = "Player Color Customizer",
   },
@@ -262,7 +262,7 @@ local loc = {
     en = "Slot {#color(255,255,255)}%s{#reset()} color reset to default",
   },
   
-  -- Slot Settings
+  
   slot1 = {
     en = "Slot 1 (Local Player)",
   },
@@ -390,13 +390,13 @@ local loc = {
   },
 }
 
--- Add colored "Default" text for each slot's default color
+
 local default_slot_colors = {
-    {r = 226, g = 210, b = 117}, -- Slot 1 yellow
-    {r = 180, g = 88,  b = 108}, -- Slot 2 red
-    {r = 84,  g = 172, b = 121}, -- Slot 3 green
-    {r = 126, g = 153, b = 230}, -- Slot 4 blue
-    {r = 128, g = 128, b = 128}, -- Bot gray
+    {r = 226, g = 210, b = 117}, 
+    {r = 180, g = 88,  b = 108}, 
+    {r = 84,  g = 172, b = 121}, 
+    {r = 126, g = 153, b = 230}, 
+    {r = 128, g = 128, b = 128}, 
 }
 
 for slot = 1, 4 do
@@ -405,11 +405,11 @@ for slot = 1, 4 do
     loc["default_slot" .. slot] = { en = text }
 end
 
--- Bot default
+
 local bot_c = default_slot_colors[5]
 loc.default_bot = { en = string.format("{#color(%s,%s,%s)}Default{#reset()}", bot_c.r, bot_c.g, bot_c.b) }
 
--- Class defaults
+
 local default_class_colors = {
     veteran = {r = 84,  g = 172, b = 121},
     zealot  = {r = 180, g = 88,  b = 108},
@@ -423,11 +423,11 @@ for class_name, c in pairs(default_class_colors) do
     loc["default_" .. class_name] = { en = string.format("{#color(%s,%s,%s)}Default{#reset()}", c.r, c.g, c.b) }
 end
 
--- Generic default (fallback)
+
 loc.default = { en = "Default" }
 
--- Auto-generate localization for all color names from Color.list
--- Display each color name in its actual color (like True Level does)
+
+
 for _, color_name in ipairs(Color.list) do
     local c = Color[color_name](255, true)
     local text = string.format("{#color(%s,%s,%s)}%s{#reset()}", c[2], c[3], c[4], string.gsub(color_name, "_", " "))

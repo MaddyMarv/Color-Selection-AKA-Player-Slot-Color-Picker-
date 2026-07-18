@@ -1,15 +1,15 @@
 local mod = get_mod("ColorSelection")
 
--- Default game slot colors
+
 local default_slot_colors = {
-    {r = 226, g = 210, b = 117}, -- Slot 1 yellow
-    {r = 180, g = 88,  b = 108}, -- Slot 2 red
-    {r = 84,  g = 172, b = 121}, -- Slot 3 green
-    {r = 126, g = 153, b = 230}, -- Slot 4 blue
-    {r = 128, g = 128, b = 128}, -- Bot gray
+    {r = 226, g = 210, b = 117}, 
+    {r = 180, g = 88,  b = 108}, 
+    {r = 84,  g = 172, b = 121}, 
+    {r = 126, g = 153, b = 230}, 
+    {r = 128, g = 128, b = 128}, 
 }
 
--- Helper to generate widgets for a player slot
+
 local function slot_widgets(slot)
     local prefix = string.format("slot%d", slot)
     local defaults = default_slot_colors[slot]
@@ -41,18 +41,18 @@ local function slot_widgets(slot)
     }
 end
 
--- Default game class colors
+
 local default_class_colors = {
-    veteran = {r = 84,  g = 172, b = 121}, -- Greenish
-    zealot  = {r = 180, g = 88,  b = 108}, -- Redish
-    psyker  = {r = 126, g = 153, b = 230}, -- Blueish
-    ogryn   = {r = 226, g = 210, b = 117}, -- Yellowish
-    broker  = {r = 217, g = 104, b = 41},  -- Orange
-    adamant = {r = 138, g = 43,  b = 226}, -- Purple
-    cryptic = {r = 32,  g = 178, b = 170}, -- Teal
+    veteran = {r = 84,  g = 172, b = 121}, 
+    zealot  = {r = 180, g = 88,  b = 108}, 
+    psyker  = {r = 126, g = 153, b = 230}, 
+    ogryn   = {r = 226, g = 210, b = 117}, 
+    broker  = {r = 217, g = 104, b = 41},  
+    adamant = {r = 138, g = 43,  b = 226}, 
+    cryptic = {r = 32,  g = 178, b = 170}, 
 }
 
--- Helper to generate widgets for a class
+
 local function class_widgets(class_name)
     local defaults = default_class_colors[class_name]
     
@@ -124,18 +124,18 @@ local widgets = {
   }
 }
 
--- Add slot color settings
+
 for slot=1,4 do
     widgets[#widgets+1] = slot_widgets(slot)
 end
 
--- Add class color settings
+
 local classes = {"veteran", "zealot", "psyker", "ogryn", "broker", "adamant", "cryptic"}
 for _, class_name in ipairs(classes) do
     widgets[#widgets+1] = class_widgets(class_name)
 end
 
--- Bot color settings
+
 widgets[#widgets+1] = {
     setting_id = "bot",
     type = "group",
@@ -162,7 +162,7 @@ widgets[#widgets+1] = {
     }
 }
 
--- Debug mode
+
 widgets[#widgets+1] = {
   setting_id = "debug_mode_group",
   type = "group",

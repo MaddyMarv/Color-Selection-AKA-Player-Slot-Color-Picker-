@@ -1,8 +1,8 @@
--- Complete color presets from Darktide's Color system
--- Organized by category for easy browsing
+
+
 
 local color_presets = {
-	-- Team/Slot Colors (Default game colors)
+	
 	{
 		category = "Team Colors",
 		colors = {
@@ -14,7 +14,7 @@ local color_presets = {
 		}
 	},
 	
-	-- UI Colors
+	
 	{
 		category = "UI Colors",
 		colors = {
@@ -58,7 +58,7 @@ local color_presets = {
 		}
 	},
 	
-	-- HUD Colors
+	
 	{
 		category = "HUD Colors",
 		colors = {
@@ -79,7 +79,7 @@ local color_presets = {
 		}
 	},
 	
-	-- Difficulty Colors
+	
 	{
 		category = "Difficulty Colors",
 		colors = {
@@ -91,7 +91,7 @@ local color_presets = {
 		}
 	},
 	
-	-- Item Rarity Colors
+	
 	{
 		category = "Item Rarity",
 		colors = {
@@ -104,7 +104,7 @@ local color_presets = {
 		}
 	},
 	
-	-- Basic/Common Colors
+	
 	{
 		category = "Basic Colors",
 		colors = {
@@ -131,7 +131,7 @@ local color_presets = {
 		}
 	},
 	
-	-- Reds & Pinks
+	
 	{
 		category = "Reds & Pinks",
 		colors = {
@@ -156,7 +156,7 @@ local color_presets = {
 		}
 	},
 	
-	-- Oranges & Yellows
+	
 	{
 		category = "Oranges & Yellows",
 		colors = {
@@ -176,7 +176,7 @@ local color_presets = {
 		}
 	},
 	
-	-- Greens
+	
 	{
 		category = "Greens",
 		colors = {
@@ -205,7 +205,7 @@ local color_presets = {
 		}
 	},
 	
-	-- Cyans & Teals
+	
 	{
 		category = "Cyans & Teals",
 		colors = {
@@ -225,7 +225,7 @@ local color_presets = {
 		}
 	},
 	
-	-- Blues
+	
 	{
 		category = "Blues",
 		colors = {
@@ -245,7 +245,7 @@ local color_presets = {
 		}
 	},
 	
-	-- Purples & Violets
+	
 	{
 		category = "Purples & Violets",
 		colors = {
@@ -268,7 +268,7 @@ local color_presets = {
 		}
 	},
 	
-	-- Browns & Earth Tones
+	
 	{
 		category = "Browns & Earth",
 		colors = {
@@ -284,7 +284,7 @@ local color_presets = {
 		}
 	},
 	
-	-- Whites & Pastels
+	
 	{
 		category = "Whites & Pastels",
 		colors = {
@@ -317,7 +317,7 @@ local color_presets = {
 		}
 	},
 	
-	-- Grays & Blacks
+	
 	{
 		category = "Grays & Blacks",
 		colors = {
@@ -334,7 +334,7 @@ local color_presets = {
 		}
 	},
 	
-	-- Citadel Base Paints
+	
 	{
 		category = "Citadel Base",
 		colors = {
@@ -378,7 +378,7 @@ local color_presets = {
 		}
 	},
 	
-	-- Citadel Layer Paints
+	
 	{
 		category = "Citadel Layer",
 		colors = {
@@ -461,7 +461,7 @@ local color_presets = {
 		}
 	},
 	
-	-- Citadel Shade Paints
+	
 	{
 		category = "Citadel Shades",
 		colors = {
@@ -480,7 +480,7 @@ local color_presets = {
 		}
 	},
 	
-	-- Citadel Dry Paints
+	
 	{
 		category = "Citadel Dry",
 		colors = {
@@ -513,7 +513,7 @@ local color_presets = {
 		}
 	},
 	
-	-- Citadel Technical (Selected)
+	
 	{
 		category = "Citadel Technical",
 		colors = {

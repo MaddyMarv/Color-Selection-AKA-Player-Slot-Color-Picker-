@@ -14,8 +14,8 @@ local CONSTANTS = {
 	LINE_HEIGHT = 30
 }
 
--- Default hub color: terminal_text_body (pale greenish/yellowish)
--- RGB(169, 191, 153) - the default color for player names in hub panels
+
+
 local DEFAULT_HUB_COLOR = {255, 169, 191, 153}
 
 
@@ -58,18 +58,18 @@ function ColorUtils.argb_to_rgb(argb)
 end
 
 mod._player_custom_colors = {}
-mod._local_player_account_id = nil  -- Store local player's account ID
+mod._local_player_account_id = nil  
 
 mod.account_id_color_map = mod:persistent_table("account_id_color_map")
 
--- Default color values for each slot (base game colors)
+
 function mod.get_default_color_value(prefix, component)
 	local defaults = {
-		slot1 = {r = 226, g = 210, b = 117},  -- Slot 1: Yellow
-		slot2 = {r = 180, g = 88, b = 108},  -- Slot 2: Magenta/Pinkish-Red
-		slot3 = {r = 84, g = 172, b = 121},  -- Slot 3: Green
-		slot4 = {r = 126, g = 153, b = 230}, -- Slot 4: Blue
-		bot = {r = 128, g = 128, b = 128},     -- Bot: Gray
+		slot1 = {r = 226, g = 210, b = 117},  
+		slot2 = {r = 180, g = 88, b = 108},  
+		slot3 = {r = 84, g = 172, b = 121},  
+		slot4 = {r = 126, g = 153, b = 230}, 
+		bot = {r = 128, g = 128, b = 128},     
 		veteran = {r = 84,  g = 172, b = 121},
 		zealot  = {r = 180, g = 88,  b = 108},
 		psyker  = {r = 126, g = 153, b = 230},
@@ -87,7 +87,7 @@ function mod.get_default_color_value(prefix, component)
 	return CONSTANTS.MAX_COLOR_VALUE
 end
 
--- Update local player account ID (call this whenever player might be available)
+
 local function update_local_player_id()
 	local pm = Managers and Managers.player
 	if pm then
@@ -108,7 +108,7 @@ local function pcall_safe(func)
 	return success and result or nil
 end
 
--- Forward declaration
+
 local get_color_for_account_id
 
 local color_customizer_view_name = "color_customizer"
@@ -205,7 +205,7 @@ local function get_slot_color(slot, is_local_player, is_bot)
 	if slot and slot >= 1 and slot <= 4 then
 		local lp_slot = get_local_player_slot()
 		if lp_slot ~= 1 and slot == 1 then
-			-- Swap: The real slot 1 player gets the local player's original color
+			
 			return get_color("slot" .. lp_slot)
 		end
 		return get_color("slot" .. slot)
@@ -416,10 +416,10 @@ local function apply_color_to_name_only(text, color)
 	local c = color
 	local target_color_tag = string.format("{#color(%d,%d,%d)}", c[2], c[3], c[4])
 
-	-- Simple approach: Strip existing color tags and reapply our color
-	-- This works because ColorSelection loads AFTER TrueLevel and WhoAreYou
-	-- Their text additions (like level info and account names) are preserved,
-	-- we just change the color of the entire text
+	
+	
+	
+	
 	local stripped_text = text:gsub("^{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}$", "")
 
 	return target_color_tag .. stripped_text .. "{#reset()}"
@@ -471,7 +471,7 @@ local function apply_widget_color(panel)
 		return
 	end
 	
-	-- Check if account ID has changed for this slot, and trigger a slot color update if so
+	
 	if slot >= 1 and slot <= 4 and mod.apply_slot_colors and not is_in_non_mission_context() then
 		if not mod._known_slot_account_ids then mod._known_slot_account_ids = {} end
 		if mod._known_slot_account_ids[slot] ~= account_id then
@@ -490,14 +490,14 @@ local function apply_widget_color(panel)
 	end
 	
 	if not color then
-		-- No custom color - apply default based on context
+		
 		local in_non_mission = is_in_non_mission_context()
 		
 		if in_non_mission then
-			-- In hub: apply default terminal_text_body color
+			
 			color = DEFAULT_HUB_COLOR
 		else
-			-- In mission: try to get slot color
+			
 			color = get_color_for_account_id(account_id, slot)
 			if not color then
 				color = DEFAULT_HUB_COLOR
@@ -505,8 +505,8 @@ local function apply_widget_color(panel)
 		end
 	end
 
-	-- Only color the text content (like nameplates), don't modify widget style colors
-	-- The icon will color automatically via UISettings.player_slot_colors
+	
+	
 	if widget.content and widget.content.text then
 		local current_text = widget.content.text
 		local new_text = apply_color_to_name_only(current_text, color)
@@ -534,7 +534,7 @@ mod:hook_safe("HudElementPlayerPanelBase",     "destroy", function(self) alias_a
 
 mod:hook_safe("HudElementPersonalPlayerPanelHub", "update", function(self)
 	if mod:is_enabled() then
-		-- Personal panel in hub is always local player
+		
 		local color = {
 			255,
 			mod:get("slot1_r") or 226,
@@ -572,7 +572,7 @@ end)
 
 mod:hook_safe("HudElementTeamPlayerPanelHub", "update", function(self)
 	if mod:is_enabled() then
-		-- In hub, only color local player or players with custom colors
+		
 		local player = self._player
 		if not player and self._data then
 			player = self._data.player
@@ -585,17 +585,17 @@ mod:hook_safe("HudElementTeamPlayerPanelHub", "update", function(self)
 				account_id = id_result
 			end
 			
-			-- Check if local player or has custom color
+			
 			local color = get_color_for_account_id(account_id)
 			
-			-- In hub, if no custom color, use default terminal_text_body color
+			
 			if not color then
 				color = DEFAULT_HUB_COLOR
 			end
 			
 			local widget = self._widgets_by_name and self._widgets_by_name.player_name
 			
-			-- Only color the text content (like nameplates), don't modify widget style colors
+			
 			if widget and widget.content and widget.content.text and not self.tl_modified and not self.wru_modified then
 				local current_text = widget.content.text
 				local new_text = apply_color_to_name_only(current_text, color)
@@ -625,18 +625,18 @@ local function apply_nameplate_color(marker)
     local marker_type = marker.type
     local is_companion = marker_type and marker_type:match("companion")
     
-    -- For companions, refresh colors from UISettings.player_slot_colors
-    -- Only apply colors if the nameplate is visible (header_text is not empty)
-    -- Empty header_text means the game has hidden it based on settings
+    
+    
+    
     if is_companion then
         local widget = marker.widget
         local content = widget and widget.content
         if not content or not player then return end
         
-        -- Check if nameplate is visible - empty header_text means it's hidden
+        
         local current_header = content.header_text or ""
         if current_header == "" then
-            -- Nameplate is hidden by game settings, don't modify it
+            
             return
         end
         
@@ -672,11 +672,11 @@ local function apply_nameplate_color(marker)
         return
     end
 
-    -- Fetch account_id and slot
+    
     local slot = pcall_safe(function() return player:slot() end)
     local account_id = pcall_safe(function() return player:account_id() end)
 
-    -- Determine colour (use custom colour first, then allocator, then default hub)
+    
     local color = get_color_for_account_id(account_id)
     if not color then
         local in_non_mission = is_in_non_mission_context()
@@ -687,7 +687,7 @@ local function apply_nameplate_color(marker)
         end
     end
 
-    -- Build colour tag
+    
     local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
 
     local widget = marker.widget
@@ -698,50 +698,50 @@ local function apply_nameplate_color(marker)
 
     local header = content.header_text
 
-    -- Determine player name; prefer data from player object
+    
     local player_name = pcall_safe(function() return player:name() end)
     if not player_name or player_name == "" then
-        -- Fallback: extract first word from header (before newline if present)
+        
         local name_part = header:match("^([^\n]*)")
         player_name = name_part and name_part:match("%w+") or header:match("%w+") or header
     end
     
-    -- Strip color tags from player_name (in case player:name() hook returned colored text)
+    
     player_name = player_name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
 
-    -- Escape magic chars for gsub
+    
     local escaped_name = player_name:gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1")
 
-    -- Split header by newline to preserve title colors
+    
     local name_part, title_part = header:match("^([^\n]*)\n?(.*)$")
     if not name_part then
         name_part = header
         title_part = ""
     end
     
-    -- Strip color tags only from the name part (before newline)
+    
     local clean_name_part = name_part:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
     
-    -- Find where the player name starts in the clean text
-    -- The format is typically: icon " " name " - " level " icon"
-    -- We want to color both the icon and the name
+    
+    
+    
     local name_start, name_end = clean_name_part:find(escaped_name, 1, true)
     
     if name_start then
-        -- Color everything from the start (icon) through the player name
+        
         local before_name = clean_name_part:sub(1, name_start - 1)
         local after_name = clean_name_part:sub(name_end + 1)
         local new_name_part = color_tag .. before_name .. player_name .. "{#reset()}" .. after_name
         
-        -- Recombine: colored icon+name+rest + preserved title (with its colors intact)
+        
         local new_header = new_name_part
         if title_part and title_part ~= "" then
             new_header = new_header .. "\n" .. title_part
         end
         
         content.header_text = new_header
-        marker._cs_last_header = nil  -- Clear cache to force update
-        -- Mark widget as dirty to force immediate redraw
+        marker._cs_last_header = nil  
+        
         if widget then
             widget.dirty = true
             if widget.content then
@@ -762,15 +762,15 @@ local nameplate_template_path = "scripts/ui/hud/elements/world_markers/templates
 mod:hook_require(nameplate_template_path, function(template)
 	if not template then return end
 	
-	-- Hook on_enter to apply colors after nameplate is created
+	
 	if template.on_enter then
 		local original_on_enter = template.on_enter
 		template.on_enter = function(widget, marker)
 			original_on_enter(widget, marker)
 			
 			if mod:is_enabled() and marker and marker.data then
-				-- Apply color after _create_character_text runs (called in on_enter)
-				-- Try immediately, update hook will catch it if header_text isn't ready yet
+				
+				
 				if marker.widget and marker.widget.content and marker.widget.content.header_text then
 					apply_nameplate_color(marker)
 				end
@@ -801,10 +801,10 @@ for _, template_path in ipairs(companion_templates) do
 			local player_slot = pcall_safe(function() return data:slot() end)
 			local player_slot_color = player_slot and UISettings and UISettings.player_slot_colors and UISettings.player_slot_colors[player_slot]
 			
-			-- Check if nameplate is visible - empty header_text means it's hidden
+			
 			local current_header = content.header_text or ""
 			if current_header == "" then
-				-- Nameplate is hidden by game settings, don't modify it
+				
 				return
 			end
 			
@@ -840,8 +840,8 @@ mod:hook_safe("HudElementWorldMarkers", "event_add_world_marker_unit", function(
 		if self._markers_by_id then
 			for marker_id, marker in pairs(self._markers_by_id) do
 				if marker.unit == unit then
-					-- Try to apply color immediately if header_text is ready
-					-- The update hook will catch it on the next frame if not ready yet
+					
+					
 					if marker.widget and marker.widget.content and marker.widget.content.header_text then
 						apply_nameplate_color(marker)
 					end
@@ -899,7 +899,7 @@ mod:hook(CLASS.ConstantElementChat, "_participant_displayname", function(func, s
 	
 	local color = get_color_for_account_id(account_id, slot)
 	if not color then
-		return display_name  -- Skip color modification (hub without custom color)
+		return display_name  
 	end
 	
 	if color then
@@ -1131,12 +1131,12 @@ local function update_world_markers()
 	local nameplate_units = nameplates_element._nameplate_units
 	local companion_nameplates = nameplates_element._companion_nameplates
 	
-	-- Force immediate scan by bypassing delay and calling scan methods directly
+	
 	nameplates_element._scan_delay_duration = 0
 	if nameplates_element._nameplate_extension_scan then
 		pcall_safe(function() nameplates_element:_nameplate_extension_scan() end)
 	end
-	-- Don't force companion scan - let game handle visibility based on settings
+	
 	
 	for marker_id, marker in pairs(world_markers._markers_by_id) do
 		local marker_type = marker.type
@@ -1147,7 +1147,7 @@ local function update_world_markers()
 			marker._cs_last_header = nil
 			apply_nameplate_color(marker)
 			
-			-- Force resync for player nameplates
+			
 			if nameplate_units and marker.unit then
 				local unit_data = nameplate_units[marker.unit]
 				if unit_data then
@@ -1155,16 +1155,16 @@ local function update_world_markers()
 				end
 			end
 			
-			-- Don't force resync for companion nameplates - let game handle visibility
-			-- Only apply colors if they're already visible (respects game settings)
+			
+			
 		end
 	end
 	
-	-- Trigger another immediate scan to process the synced=false changes
+	
 	if nameplates_element._nameplate_extension_scan then
 		pcall_safe(function() nameplates_element:_nameplate_extension_scan() end)
 	end
-	-- Don't force companion scan - let game handle visibility based on settings	
+	
 	
 	return true
 end
@@ -1183,17 +1183,17 @@ local function update_player_panel_colors()
 		if element then
 			local class_name = element.__class_name
 			if class_name == "HudElementPersonalPlayerPanel" or class_name == "HudElementPersonalPlayerPanelHub" then
-				-- Reset mod compatibility flags so who_are_you and true_level re-apply
+				
 				element.wru_modified = false
 				element.tl_modified = false
 				apply_widget_color(element)
 			elseif class_name == "HudElementTeamPlayerPanel" or class_name == "HudElementTeamPlayerPanelHub" then
-				-- Reset mod compatibility flags so who_are_you and true_level re-apply
+				
 				element.wru_modified = false
 				element.tl_modified = false
 				apply_widget_color(element)
 			elseif class_name == "HudElementTeamPanelHandler" then
-				-- Reset flags on all panels in handler
+				
 				if element._player_panels_array then
 					for _, data in ipairs(element._player_panels_array) do
 						if data.panel then
@@ -1212,8 +1212,8 @@ local function update_player_panel_colors()
 	return true
 end
 
-local last_debug_state = ""  -- Track last debug output to prevent spam
-local logged_reassignments = {}  -- Track which players we've logged reassignments for
+local last_debug_state = ""  
+local logged_reassignments = {}  
 
 local apply_slot_colors_internal
 
@@ -1231,9 +1231,9 @@ local function process_next_in_queue()
 	
 	if queue_size > 1 then
 		local msg = string.format("[ColorSelection] Processing queue with %d operations (RACE CONDITION PREVENTED!)", queue_size)
-		mod:info(msg)  -- Always log to file
+		mod:info(msg)  
 		if debug_mode then
-			mod:echo(msg)  -- Also show in chat if debug mode
+			mod:echo(msg)  
 		end
 	end
 
@@ -1277,7 +1277,7 @@ apply_slot_colors_internal = function()
 		return
 	end
 	
-	-- Force player cache refresh to ensure we have the latest players
+	
 	_player_cache.last_update = 0
 	
 	if not UISettings.player_slot_colors then
@@ -1351,12 +1351,12 @@ mod.get_player_by_account_id = get_player_by_account_id
 mod.get_player_by_slot = get_player_by_slot
 mod.get_color_for_account_id = get_color_for_account_id
 
--- Reset helpers: remove ColorSelection colour when the mod is disabled
+
 local function _strip_cs_color_tags(text)
     if not text or type(text) ~= "string" then
         return text
     end
-    -- Remove a leading CS color tag (four numbers) and trailing reset
+    
     local cleaned = text:gsub("^{#color%(%d+,%d+,%d+,%d+%)}", ""):gsub("{#reset%(%)}$", "")
     return cleaned
 end
@@ -1469,11 +1469,11 @@ mod:hook_safe("OutlineSystem", "update", function(self)
 	end
 end)
 
--- Override on_disabled to clear stale colors
+
 mod.on_disabled = function()
-    -- Restore slot colors already handled in restore_previous
+    
     restore_previous()
-    -- Reset panels & nameplates to default hub colors
+    
     reset_team_panel_colors()
     reset_nameplate_colors()
     reset_character_outlines()
@@ -1562,7 +1562,7 @@ mod.on_all_mods_loaded = function()
 		mod:echo("{#color(255,50,50)}[ColorSelection] WARNING:{#reset()} CareerColourOutlines is enabled! It conflicts with this mod and will cause outline colors to bug out. Please disable it!")
 	end
 
-	-- Register localization strings for ViewElementGrid titles
+	
 	mod:add_global_localize_strings({
 		players_list_title = {
 			en = "Customized Players",
@@ -1572,7 +1572,7 @@ mod.on_all_mods_loaded = function()
 		}
 	})
 	
-	update_local_player_id()  -- Try to get local player ID early
+	update_local_player_id()  
 	if mod.command then
 		mod:command("cs_menu", "open color customizer menu", function() mod.open_color_customizer() end)
 		mod:command("cs_sync", "sync/apply color settings", function()
@@ -1599,11 +1599,11 @@ mod.on_all_mods_loaded = function()
 		end)
 	end
 	
-	-- Hook player removal to clean up color allocations and reapply colors
+	
 	mod:hook_safe("HumanGameplay", "on_player_removed", function(self, player)
 		_on_player_removed(player)
 		
-		-- Reapply colors after a short delay to allow for reassignment
+		
 		if in_gameplay_state then
 			mod:pcall(function()
 				apply_slot_colors()
@@ -1628,7 +1628,7 @@ mod.on_all_mods_loaded = function()
 end
 
 mod.on_game_state_changed = function(status, state_name)
-	update_local_player_id()  -- Update local player ID on state change
+	update_local_player_id()  
 	
 	if status == "enter" and state_name == "StateGameplay" then
 		in_gameplay_state = true
@@ -1640,7 +1640,7 @@ mod.on_game_state_changed = function(status, state_name)
 end
 
 mod.on_enabled = function()
-	update_local_player_id()  -- Update local player ID when mod enabled
+	update_local_player_id()  
 	if UISettings and in_gameplay_state then
 		apply_slot_colors()
 	end
@@ -1681,7 +1681,7 @@ mod.on_setting_changed = function(setting_id)
 		update_player_panel_colors()
 	end
 	
-	-- Handle Outline toggle change
+	
 	if setting_id == "color_outlines" then
 	    if not mod:get("color_outlines") and in_gameplay_state then
 	        reset_character_outlines()

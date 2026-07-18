@@ -39,7 +39,7 @@ local players_grid_settings = {
 	edge_padding = 20,
 }
 
--- Scenegraph definition
+
 local scenegraph_definition = {
     screen = UIWorkspaceSettings.screen,
     background = {
@@ -288,7 +288,7 @@ local scenegraph_definition = {
     },
 }
 
--- RGB Slider pass template (similar to loadout_config stat sliders)
+
 local function item_change_function(content, style)
 	local hotspot = content.hotspot
 	local is_selected = hotspot.is_selected
@@ -442,7 +442,7 @@ local blueprints = {
 		end,
 		update = function (parent, widget, input_service, dt, t, ui_renderer)
 			local content = widget.content
-			content.hotspot.is_selected = false -- No selection state persistence needed for now, or add it later
+			content.hotspot.is_selected = false 
 		end,
 	},
 	preset_header = {
@@ -613,9 +613,9 @@ local function create_rgb_slider_passes(label_text)
             change_function = function(content, style)
                 local hotspot = content.hotspot_bar
                 if hotspot and hotspot.is_hover then
-                    style.color[1] = 60  -- Bright highlight on hover
+                    style.color[1] = 60  
                 else
-                    style.color[1] = 0   -- Invisible when not hovering
+                    style.color[1] = 0   
                 end
             end
         },
@@ -653,13 +653,13 @@ local function create_rgb_slider_passes(label_text)
                     return
                 end
                 
-                -- Handle mouse wheel scrolling
+                
                 local input_service = renderer.input_service
                 if input_service then
                     local scroll_axis = input_service:get("scroll_axis")
                     if scroll_axis and scroll_axis ~= 0 then
                         local current_value = content.value or 0
-                        local step = 0.02  -- Scroll by 5 units (0.02 * 255 ≈ 5)
+                        local step = 0.02  
                         content.value = math.clamp(current_value + (scroll_axis[2] * step), 0, 1)
                     end
                 end
@@ -710,7 +710,7 @@ local function create_rgb_slider_passes(label_text)
                 local on_pressed = hotspot.on_pressed
                 local is_held = hotspot.is_held
                 
-                -- Handle initial press
+                
                 if on_pressed then
                     Managers.ui:play_2d_sound(UISoundEvents.default_click)
                     local current_value = content.value or 0
@@ -718,17 +718,17 @@ local function create_rgb_slider_passes(label_text)
                     hotspot._last_press_time = 0
                 end
                 
-                -- Handle continuous hold
+                
                 if is_held then
                     local dt = renderer.dt
                     local last_press_time = hotspot._last_press_time or 0
                     last_press_time = last_press_time + dt
                     hotspot._last_press_time = last_press_time
                     
-                    -- After initial delay, update continuously
+                    
                     if last_press_time > 0.5 then
                         local current_value = content.value or 0
-                        local step = 0.01 * dt * 8  -- Smooth continuous adjustment
+                        local step = 0.01 * dt * 8  
                         content.value = math.clamp(current_value - step, 0, 1)
                     end
                 elseif hotspot.on_released then
@@ -781,7 +781,7 @@ local function create_rgb_slider_passes(label_text)
                 local on_pressed = hotspot.on_pressed
                 local is_held = hotspot.is_held
                 
-                -- Handle initial press
+                
                 if on_pressed then
                     Managers.ui:play_2d_sound(UISoundEvents.default_click)
                     local current_value = content.value or 0
@@ -789,17 +789,17 @@ local function create_rgb_slider_passes(label_text)
                     hotspot._last_press_time = 0
                 end
                 
-                -- Handle continuous hold
+                
                 if is_held then
                     local dt = renderer.dt
                     local last_press_time = hotspot._last_press_time or 0
                     last_press_time = last_press_time + dt
                     hotspot._last_press_time = last_press_time
                     
-                    -- After initial delay, update continuously
+                    
                     if last_press_time > 0.5 then
                         local current_value = content.value or 0
-                        local step = 0.01 * dt * 8  -- Smooth continuous adjustment
+                        local step = 0.01 * dt * 8  
                         content.value = math.clamp(current_value + step, 0, 1)
                     end
                 elseif hotspot.on_released then
@@ -823,7 +823,7 @@ local function create_rgb_slider_passes(label_text)
     }
 end
 
--- Widget definitions
+
 local widget_definitions = {
     background = UIWidget.create_definition({
         {
@@ -1193,7 +1193,7 @@ local widget_definitions = {
         {
             input_text = "",
             placeholder_text = mod:localize("account_id_placeholder"),
-            max_length = 36  -- UUID max length (with hyphens: 36 chars, without: 32 chars)
+            max_length = 36  
         }
     ),
     
@@ -1206,7 +1206,7 @@ local widget_definitions = {
                 horizontal_alignment = "center",
                 color = { 255, 255, 255, 255 },
                 size = { 150, 150 },
-                offset = { 0, 0, 2 }  -- Higher z-order so it's above the frame
+                offset = { 0, 0, 2 }  
             }
         },
         {
@@ -1216,7 +1216,7 @@ local widget_definitions = {
                 vertical_alignment = "center",
                 horizontal_alignment = "center",
                 color = Color.terminal_frame(255, true),
-                offset = { 0, 0, 1 }  -- Frame behind the color rect
+                offset = { 0, 0, 1 }  
             }
         }
     }, "color_preview"),
@@ -1275,7 +1275,7 @@ local widget_definitions = {
         {
             input_text = "FFFFFF",
             placeholder_text = "FFFFFF",
-            max_length = 7  -- Allow 7 chars to accommodate #FFFFFF, then strip the #
+            max_length = 7  
         }
     ),
     
@@ -1346,7 +1346,7 @@ local widget_definitions = {
     )
 }
 
--- Legend inputs
+
 local legend_inputs = {
     {
         input_action = "back",
