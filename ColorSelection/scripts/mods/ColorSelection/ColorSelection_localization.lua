@@ -67,7 +67,7 @@ local loc = {
     en = "Blue",
   },
 
-  
+
   ui_coloring_header = {
     en = "UI Element Name Coloring",
   },
@@ -124,11 +124,11 @@ local loc = {
     en = "Color player names in this UI element. Colors are applied at the source, so they appear consistently across all game menus.",
   },
 
-  
+
   bot_color_header = {
     en = "Bot Color",
   },
-  
+
   color_bots = {
     en = "Color Bots",
   },
@@ -141,7 +141,7 @@ local loc = {
     en = "All bots will use this color. This ensures bots don't conflict with human player colors.",
   },
 
-  
+
   debug_mode_group = {
     en = "Debug Mode",
   },
@@ -153,7 +153,7 @@ local loc = {
   debug_mode_tooltip = {
     en = "When enabled, shows debug messages in console for troubleshooting slot assignments and color mappings. Turn this off for normal gameplay.",
   },
-  
+
   color_customizer_title = {
     en = "Player Color Customizer",
   },
@@ -260,7 +260,7 @@ local loc = {
   slot_color_reset = {
     en = "Slot {#color(255,255,255)}%s{#reset()} color reset to default",
   },
-  
+
   slot1 = {
     en = "Slot 1 (Local Player)",
   },
@@ -276,7 +276,7 @@ local loc = {
   slot1_b = {
     en = "Blue",
   },
-  
+
   slot2 = {
     en = "Slot 2",
   },
@@ -292,7 +292,7 @@ local loc = {
   slot2_b = {
     en = "Blue",
   },
-  
+
   slot3 = {
     en = "Slot 3",
   },
@@ -308,7 +308,7 @@ local loc = {
   slot3_b = {
     en = "Blue",
   },
-  
+
   slot4 = {
     en = "Slot 4",
   },
@@ -324,7 +324,7 @@ local loc = {
   slot4_b = {
     en = "Blue",
   },
-  
+
   bot = {
     en = "Bot Color",
   },
@@ -340,7 +340,7 @@ local loc = {
   bot_b = {
     en = "Blue",
   },
-  
+
   veteran = { en = "Veteran Color" },
   veteran_preset = { en = "Color Preset" },
   veteran_r = { en = "Red" },
@@ -364,7 +364,7 @@ local loc = {
   ogryn_r = { en = "Red" },
   ogryn_g = { en = "Green" },
   ogryn_b = { en = "Blue" },
-  
+
   broker = { en = "Hive Scum Color" },
   broker_preset = { en = "Color Preset" },
   broker_r = { en = "Red" },
@@ -389,11 +389,11 @@ local loc = {
 }
 
 local default_slot_colors = {
-    {r = 226, g = 210, b = 117}, 
-    {r = 180, g = 88,  b = 108}, 
-    {r = 84,  g = 172, b = 121}, 
-    {r = 126, g = 153, b = 230}, 
-    {r = 128, g = 128, b = 128}, 
+    {r = 226, g = 210, b = 117},
+    {r = 180, g = 88,  b = 108},
+    {r = 84,  g = 172, b = 121},
+    {r = 126, g = 153, b = 230},
+    {r = 128, g = 128, b = 128},
 }
 
 for slot = 1, 4 do

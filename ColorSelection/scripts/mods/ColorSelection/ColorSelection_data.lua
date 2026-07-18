@@ -1,17 +1,17 @@
 local mod = get_mod("ColorSelection")
 
 local default_slot_colors = {
-    {r = 226, g = 210, b = 117}, 
-    {r = 180, g = 88,  b = 108}, 
-    {r = 84,  g = 172, b = 121}, 
-    {r = 126, g = 153, b = 230}, 
-    {r = 128, g = 128, b = 128}, 
+    {r = 226, g = 210, b = 117},
+    {r = 180, g = 88,  b = 108},
+    {r = 84,  g = 172, b = 121},
+    {r = 126, g = 153, b = 230},
+    {r = 128, g = 128, b = 128},
 }
 
 local function slot_widgets(slot)
     local prefix = string.format("slot%d", slot)
     local defaults = default_slot_colors[slot]
-    
+
     return {
         setting_id = prefix,
         type = "group",
@@ -40,18 +40,18 @@ local function slot_widgets(slot)
 end
 
 local default_class_colors = {
-    veteran = {r = 84,  g = 172, b = 121}, 
-    zealot  = {r = 180, g = 88,  b = 108}, 
-    psyker  = {r = 126, g = 153, b = 230}, 
-    ogryn   = {r = 226, g = 210, b = 117}, 
-    broker  = {r = 217, g = 104, b = 41},  
-    adamant = {r = 138, g = 43,  b = 226}, 
-    cryptic = {r = 32,  g = 178, b = 170}, 
+    veteran = {r = 84,  g = 172, b = 121},
+    zealot  = {r = 180, g = 88,  b = 108},
+    psyker  = {r = 126, g = 153, b = 230},
+    ogryn   = {r = 226, g = 210, b = 117},
+    broker  = {r = 217, g = 104, b = 41},
+    adamant = {r = 138, g = 43,  b = 226},
+    cryptic = {r = 32,  g = 178, b = 170},
 }
 
 local function class_widgets(class_name)
     local defaults = default_class_colors[class_name]
-    
+
     return {
         setting_id = class_name,
         type = "group",

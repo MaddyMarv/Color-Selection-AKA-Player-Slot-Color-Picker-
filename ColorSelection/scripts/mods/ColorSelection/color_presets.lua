@@ -1,5 +1,5 @@
 local color_presets = {
-	
+
 	{
 		category = "Team Colors",
 		colors = {
@@ -10,7 +10,7 @@ local color_presets = {
 			{ name = "Bot (Gray)", r = 128, g = 128, b = 128 },
 		}
 	},
-	
+
 	{
 		category = "UI Colors",
 		colors = {
@@ -53,7 +53,7 @@ local color_presets = {
 			{ name = "Disabled Text", r = 60, g = 60, b = 60 },
 		}
 	},
-	
+
 	{
 		category = "HUD Colors",
 		colors = {
@@ -73,7 +73,7 @@ local color_presets = {
 			{ name = "Warp Charge High", r = 246, g = 69, b = 69 },
 		}
 	},
-	
+
 	{
 		category = "Difficulty Colors",
 		colors = {
@@ -84,7 +84,7 @@ local color_presets = {
 			{ name = "Difficulty 5 (Red)", r = 255, g = 0, b = 0 },
 		}
 	},
-	
+
 	{
 		category = "Item Rarity",
 		colors = {
@@ -96,7 +96,7 @@ local color_presets = {
 			{ name = "Rarity 6 (Red)", r = 198, g = 52, b = 53 },
 		}
 	},
-	
+
 	{
 		category = "Basic Colors",
 		colors = {
@@ -122,7 +122,7 @@ local color_presets = {
 			{ name = "Olive", r = 128, g = 128, b = 0 },
 		}
 	},
-	
+
 	{
 		category = "Reds & Pinks",
 		colors = {
@@ -146,7 +146,7 @@ local color_presets = {
 			{ name = "Pale Violet Red", r = 219, g = 112, b = 147 },
 		}
 	},
-	
+
 	{
 		category = "Oranges & Yellows",
 		colors = {
@@ -165,7 +165,7 @@ local color_presets = {
 			{ name = "Light Golden Rod Yellow", r = 250, g = 250, b = 210 },
 		}
 	},
-	
+
 	{
 		category = "Greens",
 		colors = {
@@ -193,7 +193,7 @@ local color_presets = {
 			{ name = "Light Sea Green", r = 32, g = 178, b = 170 },
 		}
 	},
-	
+
 	{
 		category = "Cyans & Teals",
 		colors = {
@@ -212,7 +212,7 @@ local color_presets = {
 			{ name = "Cadet Blue", r = 95, g = 158, b = 160 },
 		}
 	},
-	
+
 	{
 		category = "Blues",
 		colors = {
@@ -231,7 +231,7 @@ local color_presets = {
 			{ name = "Royal Blue", r = 65, g = 105, b = 225 },
 		}
 	},
-	
+
 	{
 		category = "Purples & Violets",
 		colors = {
@@ -253,7 +253,7 @@ local color_presets = {
 			{ name = "Orchid", r = 218, g = 112, b = 214 },
 		}
 	},
-	
+
 	{
 		category = "Browns & Earth",
 		colors = {
@@ -268,7 +268,7 @@ local color_presets = {
 			{ name = "Rosy Brown", r = 188, g = 143, b = 143 },
 		}
 	},
-	
+
 	{
 		category = "Whites & Pastels",
 		colors = {
@@ -300,7 +300,7 @@ local color_presets = {
 			{ name = "Lavender", r = 230, g = 230, b = 250 },
 		}
 	},
-	
+
 	{
 		category = "Grays & Blacks",
 		colors = {
@@ -316,7 +316,7 @@ local color_presets = {
 			{ name = "Light Steel Blue", r = 176, g = 196, b = 222 },
 		}
 	},
-	
+
 	{
 		category = "Citadel Base",
 		colors = {
@@ -359,7 +359,7 @@ local color_presets = {
 			{ name = "Zandri Dust", r = 158, g = 145, b = 92 },
 		}
 	},
-	
+
 	{
 		category = "Citadel Layer",
 		colors = {
@@ -441,7 +441,7 @@ local color_presets = {
 			{ name = "Zamesi Desert", r = 221, g = 160, b = 38 },
 		}
 	},
-	
+
 	{
 		category = "Citadel Shades",
 		colors = {
@@ -459,7 +459,7 @@ local color_presets = {
 			{ name = "Seraphim Sepia", r = 215, g = 130, b = 75 },
 		}
 	},
-	
+
 	{
 		category = "Citadel Dry",
 		colors = {
@@ -491,7 +491,7 @@ local color_presets = {
 			{ name = "Wrack White", r = 252, g = 251, b = 25 },
 		}
 	},
-	
+
 	{
 		category = "Citadel Technical",
 		colors = {

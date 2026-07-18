@@ -442,7 +442,7 @@ local blueprints = {
 		end,
 		update = function (parent, widget, input_service, dt, t, ui_renderer)
 			local content = widget.content
-			content.hotspot.is_selected = false 
+			content.hotspot.is_selected = false
 		end,
 	},
 	preset_header = {
@@ -556,7 +556,7 @@ local blueprints = {
 			content.hotspot.pressed_callback = callback_name and callback(parent, callback_name, widget, element)
 			content.player_name = element.player_name or ""
 			content.account_id = element.account_id_short or ""
-			
+
 			if element.color and style.color_swatch then
 				local rgb = element.color
 				if type(rgb) == "table" then
@@ -613,9 +613,9 @@ local function create_rgb_slider_passes(label_text)
             change_function = function(content, style)
                 local hotspot = content.hotspot_bar
                 if hotspot and hotspot.is_hover then
-                    style.color[1] = 60  
+                    style.color[1] = 60
                 else
-                    style.color[1] = 0   
+                    style.color[1] = 0
                 end
             end
         },
@@ -652,14 +652,14 @@ local function create_rgb_slider_passes(label_text)
                 if not hotspot or not hotspot.is_hover then
                     return
                 end
-                
-                
+
+
                 local input_service = renderer.input_service
                 if input_service then
                     local scroll_axis = input_service:get("scroll_axis")
                     if scroll_axis and scroll_axis ~= 0 then
                         local current_value = content.value or 0
-                        local step = 0.02  
+                        local step = 0.02
                         content.value = math.clamp(current_value + (scroll_axis[2] * step), 0, 1)
                     end
                 end
@@ -706,29 +706,29 @@ local function create_rgb_slider_passes(label_text)
                 if not hotspot then
                     return
                 end
-                
+
                 local on_pressed = hotspot.on_pressed
                 local is_held = hotspot.is_held
-                
-                
+
+
                 if on_pressed then
                     Managers.ui:play_2d_sound(UISoundEvents.default_click)
                     local current_value = content.value or 0
                     content.value = math.clamp(current_value - 0.01, 0, 1)
                     hotspot._last_press_time = 0
                 end
-                
-                
+
+
                 if is_held then
                     local dt = renderer.dt
                     local last_press_time = hotspot._last_press_time or 0
                     last_press_time = last_press_time + dt
                     hotspot._last_press_time = last_press_time
-                    
-                    
+
+
                     if last_press_time > 0.5 then
                         local current_value = content.value or 0
-                        local step = 0.01 * dt * 8  
+                        local step = 0.01 * dt * 8
                         content.value = math.clamp(current_value - step, 0, 1)
                     end
                 elseif hotspot.on_released then
@@ -777,29 +777,29 @@ local function create_rgb_slider_passes(label_text)
                 if not hotspot then
                     return
                 end
-                
+
                 local on_pressed = hotspot.on_pressed
                 local is_held = hotspot.is_held
-                
-                
+
+
                 if on_pressed then
                     Managers.ui:play_2d_sound(UISoundEvents.default_click)
                     local current_value = content.value or 0
                     content.value = math.clamp(current_value + 0.01, 0, 1)
                     hotspot._last_press_time = 0
                 end
-                
-                
+
+
                 if is_held then
                     local dt = renderer.dt
                     local last_press_time = hotspot._last_press_time or 0
                     last_press_time = last_press_time + dt
                     hotspot._last_press_time = last_press_time
-                    
-                    
+
+
                     if last_press_time > 0.5 then
                         local current_value = content.value or 0
-                        local step = 0.01 * dt * 8  
+                        local step = 0.01 * dt * 8
                         content.value = math.clamp(current_value + step, 0, 1)
                     end
                 elseif hotspot.on_released then
@@ -834,7 +834,7 @@ local widget_definitions = {
             }
         }
     }, "background"),
-    
+
     window = UIWidget.create_definition({
         {
             pass_type = "texture",
@@ -911,7 +911,7 @@ local widget_definitions = {
             }
         }
     }, "window"),
-    
+
     player_info_text = UIWidget.create_definition({
         {
             pass_type = "text",
@@ -927,7 +927,7 @@ local widget_definitions = {
             }
         }
     }, "player_info_text"),
-    
+
     slot1_button = UIWidget.create_definition({
         {
             pass_type = "hotspot",
@@ -969,7 +969,7 @@ local widget_definitions = {
             }
         }
     }, "slot1_button"),
-    
+
     slot2_button = UIWidget.create_definition({
         {
             pass_type = "hotspot",
@@ -1011,7 +1011,7 @@ local widget_definitions = {
             }
         }
     }, "slot2_button"),
-    
+
     slot3_button = UIWidget.create_definition({
         {
             pass_type = "hotspot",
@@ -1053,7 +1053,7 @@ local widget_definitions = {
             }
         }
     }, "slot3_button"),
-    
+
     slot4_button = UIWidget.create_definition({
         {
             pass_type = "hotspot",
@@ -1095,7 +1095,7 @@ local widget_definitions = {
             }
         }
     }, "slot4_button"),
-    
+
     bot_button = UIWidget.create_definition({
         {
             pass_type = "hotspot",
@@ -1137,66 +1137,66 @@ local widget_definitions = {
             }
         }
     }, "bot_button"),
-    
+
     veteran_button = UIWidget.create_definition({
         { pass_type = "hotspot", content_id = "hotspot", content = { on_pressed_sound = UISoundEvents.default_click } },
         { pass_type = "rect", style = { vertical_alignment = "center", horizontal_alignment = "center", color = Color.terminal_background(255, true), offset = { 0, 0, 0 } } },
         { pass_type = "rect", style_id = "color_swatch", style = { vertical_alignment = "top", horizontal_alignment = "left", color = { 255, 255, 255, 255 }, size = { 70, 8 }, offset = { 0, 0, 1 } } },
         { pass_type = "text", value = mod:localize("button_veteran"), style = { text_vertical_alignment = "center", text_horizontal_alignment = "center", font_type = "machine_medium", font_size = 14, text_color = Color.terminal_text_body(255, true), offset = { 0, 0, 2 } } }
     }, "veteran_button"),
-    
+
     zealot_button = UIWidget.create_definition({
         { pass_type = "hotspot", content_id = "hotspot", content = { on_pressed_sound = UISoundEvents.default_click } },
         { pass_type = "rect", style = { vertical_alignment = "center", horizontal_alignment = "center", color = Color.terminal_background(255, true), offset = { 0, 0, 0 } } },
         { pass_type = "rect", style_id = "color_swatch", style = { vertical_alignment = "top", horizontal_alignment = "left", color = { 255, 255, 255, 255 }, size = { 70, 8 }, offset = { 0, 0, 1 } } },
         { pass_type = "text", value = mod:localize("button_zealot"), style = { text_vertical_alignment = "center", text_horizontal_alignment = "center", font_type = "machine_medium", font_size = 14, text_color = Color.terminal_text_body(255, true), offset = { 0, 0, 2 } } }
     }, "zealot_button"),
-    
+
     psyker_button = UIWidget.create_definition({
         { pass_type = "hotspot", content_id = "hotspot", content = { on_pressed_sound = UISoundEvents.default_click } },
         { pass_type = "rect", style = { vertical_alignment = "center", horizontal_alignment = "center", color = Color.terminal_background(255, true), offset = { 0, 0, 0 } } },
         { pass_type = "rect", style_id = "color_swatch", style = { vertical_alignment = "top", horizontal_alignment = "left", color = { 255, 255, 255, 255 }, size = { 70, 8 }, offset = { 0, 0, 1 } } },
         { pass_type = "text", value = mod:localize("button_psyker"), style = { text_vertical_alignment = "center", text_horizontal_alignment = "center", font_type = "machine_medium", font_size = 14, text_color = Color.terminal_text_body(255, true), offset = { 0, 0, 2 } } }
     }, "psyker_button"),
-    
+
     ogryn_button = UIWidget.create_definition({
         { pass_type = "hotspot", content_id = "hotspot", content = { on_pressed_sound = UISoundEvents.default_click } },
         { pass_type = "rect", style = { vertical_alignment = "center", horizontal_alignment = "center", color = Color.terminal_background(255, true), offset = { 0, 0, 0 } } },
         { pass_type = "rect", style_id = "color_swatch", style = { vertical_alignment = "top", horizontal_alignment = "left", color = { 255, 255, 255, 255 }, size = { 70, 8 }, offset = { 0, 0, 1 } } },
         { pass_type = "text", value = mod:localize("button_ogryn"), style = { text_vertical_alignment = "center", text_horizontal_alignment = "center", font_type = "machine_medium", font_size = 14, text_color = Color.terminal_text_body(255, true), offset = { 0, 0, 2 } } }
     }, "ogryn_button"),
-    
+
     broker_button = UIWidget.create_definition({
         { pass_type = "hotspot", content_id = "hotspot", content = { on_pressed_sound = UISoundEvents.default_click } },
         { pass_type = "rect", style = { vertical_alignment = "center", horizontal_alignment = "center", color = Color.terminal_background(255, true), offset = { 0, 0, 0 } } },
         { pass_type = "rect", style_id = "color_swatch", style = { vertical_alignment = "top", horizontal_alignment = "left", color = { 255, 255, 255, 255 }, size = { 70, 8 }, offset = { 0, 0, 1 } } },
         { pass_type = "text", value = mod:localize("button_broker"), style = { text_vertical_alignment = "center", text_horizontal_alignment = "center", font_type = "machine_medium", font_size = 14, text_color = Color.terminal_text_body(255, true), offset = { 0, 0, 2 } } }
     }, "broker_button"),
-    
+
     adamant_button = UIWidget.create_definition({
         { pass_type = "hotspot", content_id = "hotspot", content = { on_pressed_sound = UISoundEvents.default_click } },
         { pass_type = "rect", style = { vertical_alignment = "center", horizontal_alignment = "center", color = Color.terminal_background(255, true), offset = { 0, 0, 0 } } },
         { pass_type = "rect", style_id = "color_swatch", style = { vertical_alignment = "top", horizontal_alignment = "left", color = { 255, 255, 255, 255 }, size = { 70, 8 }, offset = { 0, 0, 1 } } },
         { pass_type = "text", value = mod:localize("button_adamant"), style = { text_vertical_alignment = "center", text_horizontal_alignment = "center", font_type = "machine_medium", font_size = 14, text_color = Color.terminal_text_body(255, true), offset = { 0, 0, 2 } } }
     }, "adamant_button"),
-    
+
     cryptic_button = UIWidget.create_definition({
         { pass_type = "hotspot", content_id = "hotspot", content = { on_pressed_sound = UISoundEvents.default_click } },
         { pass_type = "rect", style = { vertical_alignment = "center", horizontal_alignment = "center", color = Color.terminal_background(255, true), offset = { 0, 0, 0 } } },
         { pass_type = "rect", style_id = "color_swatch", style = { vertical_alignment = "top", horizontal_alignment = "left", color = { 255, 255, 255, 255 }, size = { 70, 8 }, offset = { 0, 0, 1 } } },
         { pass_type = "text", value = mod:localize("button_cryptic"), style = { text_vertical_alignment = "center", text_horizontal_alignment = "center", font_type = "machine_medium", font_size = 14, text_color = Color.terminal_text_body(255, true), offset = { 0, 0, 2 } } }
     }, "cryptic_button"),
-    
+
     account_id_input = UIWidget.create_definition(
         TextInputPassTemplates.terminal_input_field,
         "account_id_input",
         {
             input_text = "",
             placeholder_text = mod:localize("account_id_placeholder"),
-            max_length = 36  
+            max_length = 36
         }
     ),
-    
+
     color_preview = UIWidget.create_definition({
         {
             pass_type = "rect",
@@ -1206,7 +1206,7 @@ local widget_definitions = {
                 horizontal_alignment = "center",
                 color = { 255, 255, 255, 255 },
                 size = { 150, 150 },
-                offset = { 0, 0, 2 }  
+                offset = { 0, 0, 2 }
             }
         },
         {
@@ -1216,29 +1216,29 @@ local widget_definitions = {
                 vertical_alignment = "center",
                 horizontal_alignment = "center",
                 color = Color.terminal_frame(255, true),
-                offset = { 0, 0, 1 }  
+                offset = { 0, 0, 1 }
             }
         }
     }, "color_preview"),
-    
+
     red_slider = UIWidget.create_definition(
         create_rgb_slider_passes(mod:localize("label_red")),
         "red_slider",
         { value = 1.0 }
     ),
-    
+
     green_slider = UIWidget.create_definition(
         create_rgb_slider_passes(mod:localize("label_green")),
         "green_slider",
         { value = 1.0 }
     ),
-    
+
     blue_slider = UIWidget.create_definition(
         create_rgb_slider_passes(mod:localize("label_blue")),
         "blue_slider",
         { value = 1.0 }
     ),
-    
+
     red_input = UIWidget.create_definition(
         TextInputPassTemplates.terminal_input_field,
         "red_input",
@@ -1248,7 +1248,7 @@ local widget_definitions = {
             max_length = 3
         }
     ),
-    
+
     green_input = UIWidget.create_definition(
         TextInputPassTemplates.terminal_input_field,
         "green_input",
@@ -1258,7 +1258,7 @@ local widget_definitions = {
             max_length = 3
         }
     ),
-    
+
     blue_input = UIWidget.create_definition(
         TextInputPassTemplates.terminal_input_field,
         "blue_input",
@@ -1268,17 +1268,17 @@ local widget_definitions = {
             max_length = 3
         }
     ),
-    
+
     hex_input = UIWidget.create_definition(
         TextInputPassTemplates.terminal_input_field,
         "hex_input",
         {
             input_text = "FFFFFF",
             placeholder_text = "FFFFFF",
-            max_length = 7  
+            max_length = 7
         }
     ),
-    
+
     apply_button = UIWidget.create_definition(
         ButtonPassTemplates.terminal_button_small,
         "apply_button",
@@ -1289,7 +1289,7 @@ local widget_definitions = {
             }
         }
     ),
-    
+
     save_button = UIWidget.create_definition(
         ButtonPassTemplates.terminal_button_small,
         "save_button",
@@ -1300,7 +1300,7 @@ local widget_definitions = {
             }
         }
     ),
-    
+
     reset_button = UIWidget.create_definition(
         ButtonPassTemplates.terminal_button_small,
         "reset_button",
@@ -1311,7 +1311,7 @@ local widget_definitions = {
             }
         }
     ),
-    
+
     reset_all_button = UIWidget.create_definition(
         ButtonPassTemplates.terminal_button_small,
         "reset_all_button",
@@ -1322,7 +1322,7 @@ local widget_definitions = {
             }
         }
     ),
-    
+
     reset_all_slots_button = UIWidget.create_definition(
         ButtonPassTemplates.terminal_button_small,
         "reset_all_slots_button",
@@ -1333,7 +1333,7 @@ local widget_definitions = {
             }
         }
     ),
-    
+
     close_button = UIWidget.create_definition(
         ButtonPassTemplates.terminal_button_small,
         "close_button",
