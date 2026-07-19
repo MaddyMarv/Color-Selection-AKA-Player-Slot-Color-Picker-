@@ -1,5 +1,6 @@
 ### [Color Selection (Player Slot Color Picker)](https://www.nexusmods.com/warhammer40kdarktide/mods/631)
-<img width="688" height="378" alt="image" src="https://github.com/user-attachments/assets/22f2f22c-815a-48ec-af11-e54cbc263d50" />
+<img width="688" height="378" alt="image" src="https://github.com/user-attachments/assets/3c4b5596-b0e3-43b8-bed4-3b7bb8867aac" />
+
 
 Standalone mod that lets you pick exactly what colors you want to see for player slots instead of the random colors the game assigns. You can set custom colors for yourself and slots 2, 3, and 4. 
 
