@@ -302,6 +302,10 @@ get_color_for_account_id = function(account_id, slot)
 		end
 	end
 
+	if is_local then
+		return get_slot_color(slot or 1, true, false)
+	end
+
 	if mod:get("color_by_class") and player then
 		local class_color = get_class_color(player)
 		if class_color then return class_color end
