@@ -14,7 +14,6 @@ local CONSTANTS = {
 	LINE_HEIGHT = 30
 }
 
-local DEFAULT_HUB_COLOR = {255, 169, 191, 153}
 
 local ColorUtils = {}
 
@@ -207,25 +206,32 @@ local function get_slot_color(slot, is_local_player, is_bot)
 end
 
 local function is_in_non_mission_context()
-	local is_shooting_range = false
-	if Managers.state and Managers.state.game_mode then
-		local success, game_mode_name = pcall(function() return Managers.state.game_mode:game_mode_name() end)
-		if success and game_mode_name then
-			if game_mode_name == "shooting_range" or game_mode_name == "training_grounds" then
-				is_shooting_range = true
-			elseif game_mode_name == "hub" or game_mode_name == "prologue_hub" then
-				return true
-			end
-		end
+	local mechanism_name = nil
+	if Managers.mechanism then
+		local success, result = pcall(function() return Managers.mechanism:mechanism_name() end)
+		if success then mechanism_name = result end
 	end
 
-	if not is_shooting_range and Managers.mechanism then
-		local success, mechanism_name = pcall(function() return Managers.mechanism:mechanism_name() end)
-		if success and mechanism_name then
-			if mechanism_name == "hub" or mechanism_name == "onboarding" then
-				return true
-			end
-		end
+	local mission_name = nil
+	if Managers.state and Managers.state.mission then
+		local success, result = pcall(function() return Managers.state.mission:mission_name() end)
+		if success then mission_name = result end
+	end
+
+	if mechanism_name == "left_session" or mechanism_name == "hub" then
+		return true
+	end
+
+	if not mission_name then
+		return true
+	end
+
+	if mission_name == "hub_ship" then
+		return true
+	end
+
+	if mechanism_name == "onboarding" and mission_name ~= "tg_shooting_range" then
+		return true
 	end
 
 	return false
@@ -248,18 +254,6 @@ get_color_for_account_id = function(account_id, slot)
 		update_local_player_id()
 	end
 
-	local is_local = account_id and account_id ~= "" and mod._local_player_account_id == account_id
-
-	if is_local then
-		return get_color("slot1")
-	end
-
-	if not account_id or account_id == "" then
-		if mod:get("color_bots") ~= false then
-			return get_color("bot")
-		end
-	end
-
 	local saved_colors = mod:get("saved_player_colors")
 	if saved_colors and type(saved_colors) == "table" and saved_colors[account_id] then
 		local c = saved_colors[account_id]
@@ -268,8 +262,16 @@ get_color_for_account_id = function(account_id, slot)
 		end
 	end
 
+	local is_local = account_id and account_id ~= "" and mod._local_player_account_id == account_id
+
 	if is_in_non_mission_context() and not is_local then
-		return nil
+		return {255, 169, 191, 153}
+	end
+
+	if not account_id or account_id == "" then
+		if mod:get("color_bots") ~= false then
+			return get_color("bot")
+		end
 	end
 
 	local player = nil
@@ -474,19 +476,15 @@ local function apply_widget_color(panel)
 	end
 
 	if not color then
-
-		local in_non_mission = is_in_non_mission_context()
-
-		if in_non_mission then
-
-			color = DEFAULT_HUB_COLOR
-		else
-
-			color = get_color_for_account_id(account_id, slot)
-			if not color then
-				color = DEFAULT_HUB_COLOR
+		if widget.content and widget.content.text then
+			local stripped = widget.content.text:gsub("^{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}$", "")
+			if widget.content.text ~= stripped then
+				widget.content.text = stripped
+				widget.dirty = true
+				widget.content.dirty = true
 			end
 		end
+		return
 	end
 
 	if widget.content and widget.content.text then
@@ -516,21 +514,7 @@ mod:hook_safe("HudElementPlayerPanelBase",     "destroy", function(self) alias_a
 
 mod:hook_safe("HudElementPersonalPlayerPanelHub", "update", function(self)
 	if mod:is_enabled() then
-
-		local color = {
-			255,
-			mod:get("slot1_r") or 226,
-			mod:get("slot1_g") or 210,
-			mod:get("slot1_b") or 117,
-		}
-
-		local widget = self._widgets_by_name and self._widgets_by_name.player_name
-		if widget and widget.content and widget.content.text then
-			local current_text = widget.content.text
-			local new_text = apply_color_to_name_only(current_text, color)
-			widget.content.text = new_text
-			widget.dirty = true
-		end
+		apply_widget_color(self)
 	end
 end)
 
@@ -570,12 +554,18 @@ mod:hook_safe("HudElementTeamPlayerPanelHub", "update", function(self)
 
 			local color = get_color_for_account_id(account_id)
 
+			local widget = self._widgets_by_name and self._widgets_by_name.player_name
 
 			if not color then
-				color = DEFAULT_HUB_COLOR
+				if widget and widget.content and widget.content.text then
+					local stripped = widget.content.text:gsub("^{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}$", "")
+					if widget.content.text ~= stripped then
+						widget.content.text = stripped
+						widget.dirty = true
+					end
+				end
+				return
 			end
-
-			local widget = self._widgets_by_name and self._widgets_by_name.player_name
 
 
 			if widget and widget.content and widget.content.text and not self.tl_modified and not self.wru_modified then
@@ -604,47 +594,6 @@ local function apply_nameplate_color(marker)
     end
 
     local player = marker.data
-    local marker_type = marker.type
-    local is_companion = marker_type and marker_type:match("companion")
-
-    if is_companion then
-        local widget = marker.widget
-        local content = widget and widget.content
-        if not content or not player then return end
-        local current_header = content.header_text or ""
-        if current_header == "" then
-
-            return
-        end
-
-        local player_slot = pcall_safe(function() return player:slot() end)
-        local player_slot_color = player_slot and UISettings and UISettings.player_slot_colors and UISettings.player_slot_colors[player_slot]
-
-        if player_slot_color then
-            local color_string = "{#color(" .. player_slot_color[2] .. "," .. player_slot_color[3] .. "," .. player_slot_color[4] .. ")}"
-            local companion_glyph = ""
-
-            if content.icon_text then
-                content.icon_text = color_string .. companion_glyph .. "{#reset()}"
-            end
-
-            if content.header_text and content.header_text ~= "" then
-                local companion_name = pcall_safe(function() return player:companion_name() end) or content.header_text:match(companion_glyph .. "%s*(.-)$") or content.header_text:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", ""):gsub(companion_glyph, ""):match("%s*(.-)$")
-                if companion_name then
-                    local is_player_blocked = pcall_safe(function() return player:is_player_blocked() end) or false
-                    local companion_name_text = not is_player_blocked and companion_name or Localize("loc_blocking_player")
-                    content.header_text = color_string .. companion_glyph .. "{#reset()} " .. companion_name_text
-                end
-            end
-
-            widget.dirty = true
-            if content then
-                content.dirty = true
-            end
-        end
-        return
-    end
-
     if not player then
         return
     end
@@ -652,23 +601,81 @@ local function apply_nameplate_color(marker)
     local slot = pcall_safe(function() return player:slot() end)
     local account_id = pcall_safe(function() return player:account_id() end)
 
-    local color = get_color_for_account_id(account_id)
-    if not color then
-        local in_non_mission = is_in_non_mission_context()
-        if in_non_mission then
-            color = DEFAULT_HUB_COLOR
-        else
-            color = get_color_for_account_id(account_id, slot) or DEFAULT_HUB_COLOR
-        end
+    local is_saved_friend = false
+    local saved_colors = mod:get("saved_player_colors")
+    if account_id and saved_colors and type(saved_colors) == "table" and saved_colors[account_id] then
+        is_saved_friend = true
     end
 
-    local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
+    local is_local_player = account_id and account_id ~= "" and mod._local_player_account_id == account_id
 
+    if is_in_non_mission_context() and not is_saved_friend and not is_local_player then
+        return
+    end
+
+    local marker_type = marker.type
+    if not is_saved_friend and not is_local_player and marker_type and marker_type:match("hub") then
+        local widget = marker.widget
+        local content = widget and widget.content
+        if content then
+            local changed = false
+            if content.header_text then
+                local stripped = content.header_text:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+                if content.header_text ~= stripped then
+                    content.header_text = stripped
+                    changed = true
+                end
+            end
+            if content.icon_text then
+                local stripped_icon = content.icon_text:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+                if content.icon_text ~= stripped_icon then
+                    content.icon_text = stripped_icon
+                    changed = true
+                end
+            end
+            if changed then
+                widget.dirty = true
+                content.dirty = true
+            end
+        end
+        return
+    end
+
+    local color = get_color_for_account_id(account_id, slot)
+    
     local widget = marker.widget
-    local content = widget.content
+    local content = widget and widget.content
+    
+    if not color then
+        if content then
+            local changed = false
+            if content.header_text then
+                local stripped = content.header_text:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+                if content.header_text ~= stripped then
+                    content.header_text = stripped
+                    changed = true
+                end
+            end
+            if content.icon_text then
+                local stripped_icon = content.icon_text:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+                if content.icon_text ~= stripped_icon then
+                    content.icon_text = stripped_icon
+                    changed = true
+                end
+            end
+            if changed then
+                widget.dirty = true
+                content.dirty = true
+            end
+        end
+        return
+    end
+
     if not content or not content.header_text then
         return
     end
+
+    local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
 
     local header = content.header_text
 
@@ -765,17 +772,16 @@ for _, template_path in ipairs(companion_templates) do
 			if not content then return end
 
 			local player_slot = pcall_safe(function() return data:slot() end)
-			local player_slot_color = player_slot and UISettings and UISettings.player_slot_colors and UISettings.player_slot_colors[player_slot]
-
+			local account_id = pcall_safe(function() return data:account_id() end)
 
 			local current_header = content.header_text or ""
 			if current_header == "" then
-
 				return
 			end
 
-			if player_slot_color then
-				local color_string = "{#color(" .. player_slot_color[2] .. "," .. player_slot_color[3] .. "," .. player_slot_color[4] .. ")}"
+			local color = get_color_for_account_id(account_id, player_slot)
+			if color then
+				local color_string = "{#color(" .. color[2] .. "," .. color[3] .. "," .. color[4] .. ")}"
 				local companion_glyph = ""
 
 				if content.icon_text then
@@ -1227,10 +1233,6 @@ apply_slot_colors_internal = function()
 		return
 	end
 
-	if is_in_non_mission_context() then
-		return
-	end
-
 	_player_cache.last_update = 0
 
 	if not UISettings.player_slot_colors then
@@ -1333,13 +1335,6 @@ local function reset_team_panel_colors()
         local p = handler._player_panels_array[i] and handler._player_panels_array[i].panel
         if p and p._widgets_by_name and p._widgets_by_name.player_name then
             local widget = p._widgets_by_name.player_name
-            local header_style = widget.style and widget.style.text
-            if header_style and header_style.text_color then
-                header_style.text_color = table.clone(DEFAULT_HUB_COLOR)
-                if header_style.default_text_color then
-                    header_style.default_text_color = table.clone(DEFAULT_HUB_COLOR)
-                end
-            end
             if widget.content and widget.content.text then
                 widget.content.text = _strip_cs_color_tags(widget.content.text)
                 widget.dirty = true
