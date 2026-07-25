@@ -876,9 +876,20 @@ mod:hook(CLASS.ConstantElementChat, "_participant_displayname", function(func, s
 		local slot = player and pcall_safe(function() return player:slot() end) or 1
 		local color = get_color_for_account_id(account_id, slot)
 
-		local display_name = mod:localize("loc_color_selection_you")
-		if type(display_name) ~= "string" or display_name == "" or display_name == "<loc_color_selection_you>" then
-			display_name = "You"
+		local display_name
+		local style = mod:get("chat_local_name_style") or "colored_you"
+		if style == "character" then
+			display_name = func(self, participant)
+		elseif style == "account" then
+			local player_info = account_id and Managers.data_service.social:get_player_info_by_account_id(account_id)
+			display_name = player_info and pcall_safe(function() return player_info:user_display_name(nil, true) end)
+		end
+		
+		if not display_name then
+			display_name = mod:localize("loc_color_selection_you")
+			if type(display_name) ~= "string" or display_name == "" or display_name == "<loc_color_selection_you>" then
+				display_name = "You"
+			end
 		end
 
 		if color then
@@ -929,10 +940,9 @@ mod:hook(CLASS.ConstantElementChat, "cb_chat_manager_message_recieved", function
 
 	local participant_current = participant and participant.is_current_user
 	local message_current = message and message.is_current_user
-	local color_you = mod:get("color_chat_you")
-	if color_you == nil then color_you = true end
+	local style = mod:get("chat_local_name_style") or "colored_you"
 
-	if (participant_current or message_current) and color_you then
+	if (participant_current or message_current) and style ~= "vanilla" then
 		local cloned_participant = participant and table.clone(participant) or nil
 		local cloned_message = message and table.clone(message) or nil
 		

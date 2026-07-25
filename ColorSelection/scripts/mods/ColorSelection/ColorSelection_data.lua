@@ -117,11 +117,17 @@ local widgets = {
         tooltip = "color_bots_tooltip",
       },
       {
-        setting_id = "color_chat_you",
-        type = "checkbox",
-        default_value = true,
-        title = "color_chat_you",
-        tooltip = "color_chat_you_tooltip",
+        setting_id = "chat_local_name_style",
+        type = "dropdown",
+        default_value = "colored_you",
+        options = {
+          { text = "chat_style_vanilla", value = "vanilla" },
+          { text = "chat_style_colored_you", value = "colored_you" },
+          { text = "chat_style_character", value = "character" },
+          { text = "chat_style_account", value = "account" },
+        },
+        title = "chat_local_name_style",
+        tooltip = "chat_local_name_style_tooltip",
       },
     }
   }

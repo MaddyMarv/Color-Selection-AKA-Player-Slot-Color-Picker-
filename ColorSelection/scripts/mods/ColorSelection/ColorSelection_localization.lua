@@ -267,12 +267,16 @@ local loc = {
   loc_color_selection_you = {
     en = "You",
   },
-  color_chat_you = {
-    en = "Color 'You' in Chat",
+  chat_local_name_style = {
+    en = "Local Chat Name Style",
   },
-  color_chat_you_tooltip = {
-    en = "When enabled, your own name ('You') in the chat log will be colored using your slot color.",
+  chat_local_name_style_tooltip = {
+    en = "Choose how your name appears to yourself in chat.\n'Vanilla' uses the uncolored game default.\n'Colored You' colors the word 'You'.\n'Character Name' uses your character's name.\n'Account Name' uses your account name.",
   },
+  chat_style_vanilla = { en = "Vanilla (Uncolored 'You')" },
+  chat_style_colored_you = { en = "Colored 'You'" },
+  chat_style_character = { en = "Colored Character Name" },
+  chat_style_account = { en = "Colored Account Name" },
   slot1_preset = {
     en = "Color Preset",
   },
