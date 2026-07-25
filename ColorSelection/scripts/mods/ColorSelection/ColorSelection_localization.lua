@@ -264,6 +264,15 @@ local loc = {
   slot1 = {
     en = "Slot 1 (Local Player)",
   },
+  loc_color_selection_you = {
+    en = "You",
+  },
+  color_chat_you = {
+    en = "Color 'You' in Chat",
+  },
+  color_chat_you_tooltip = {
+    en = "When enabled, your own name ('You') in the chat log will be colored using your slot color.",
+  },
   slot1_preset = {
     en = "Color Preset",
   },

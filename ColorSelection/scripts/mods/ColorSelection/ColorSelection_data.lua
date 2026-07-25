@@ -116,6 +116,13 @@ local widgets = {
         title = "color_bots",
         tooltip = "color_bots_tooltip",
       },
+      {
+        setting_id = "color_chat_you",
+        type = "checkbox",
+        default_value = true,
+        title = "color_chat_you",
+        tooltip = "color_chat_you_tooltip",
+      },
     }
   }
 }

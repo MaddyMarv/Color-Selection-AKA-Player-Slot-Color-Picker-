@@ -856,7 +856,43 @@ mod:hook(CLASS.ConstantElementChat, "_participant_displayname", function(func, s
 	end
 
 	if not mod:is_enabled() then
-		return display_name
+		return func(self, participant)
+	end
+
+	local is_local = false
+	if participant then
+		if participant.is_current_user then
+			is_local = true
+		elseif participant.account_id and mod._local_player_account_id and participant.account_id == mod._local_player_account_id then
+			is_local = true
+		end
+	end
+
+	-- Explicitly handle the local player BEFORE calling the original function
+	if is_local then
+		local account_id = mod._local_player_account_id
+		local pm = Managers.player
+		local player = pm and pm:local_player_safe(1)
+		local slot = player and pcall_safe(function() return player:slot() end) or 1
+		local color = get_color_for_account_id(account_id, slot)
+
+		local display_name = mod:localize("loc_color_selection_you")
+		if type(display_name) ~= "string" or display_name == "" or display_name == "<loc_color_selection_you>" then
+			display_name = "You"
+		end
+
+		if color then
+			local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
+			return color_tag .. display_name .. "{#reset()}"
+		else
+			return display_name
+		end
+	end
+
+	local display_name = func(self, participant)
+
+	if not display_name then
+		return nil
 	end
 
 	local account_id = participant and participant.account_id
@@ -866,6 +902,7 @@ mod:hook(CLASS.ConstantElementChat, "_participant_displayname", function(func, s
 
 	local slot = nil
 	local player = get_player_by_account_id(account_id)
+	
 	if player then
 		slot = pcall_safe(function() return player:slot() end)
 	end
@@ -877,12 +914,38 @@ mod:hook(CLASS.ConstantElementChat, "_participant_displayname", function(func, s
 
 	if color then
 		local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
-		local result = color_tag .. display_name .. "{#reset()}"
+		local stripped_display_name = display_name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+		local result = color_tag .. stripped_display_name .. "{#reset()}"
 		return result
 	end
 
 	return display_name
 end)
+
+mod:hook(CLASS.ConstantElementChat, "cb_chat_manager_message_recieved", function(func, self, channel_handle, participant, message)
+	if not mod:is_enabled() then
+		return func(self, channel_handle, participant, message)
+	end
+
+	local participant_current = participant and participant.is_current_user
+	local message_current = message and message.is_current_user
+	local color_you = mod:get("color_chat_you")
+	if color_you == nil then color_you = true end
+
+	if (participant_current or message_current) and color_you then
+		local cloned_participant = participant and table.clone(participant) or nil
+		local cloned_message = message and table.clone(message) or nil
+		
+		if cloned_participant then cloned_participant.is_current_user = false end
+		if cloned_message then cloned_message.is_current_user = false end
+
+		return func(self, channel_handle, cloned_participant, cloned_message)
+	end
+
+	return func(self, channel_handle, participant, message)
+end)
+
+
 
 local function apply_color_to_player_name(name, player)
 	if not name or name == "" or not player then
