@@ -868,7 +868,7 @@ mod:hook(CLASS.ConstantElementChat, "_participant_displayname", function(func, s
 		end
 	end
 
-	-- Explicitly handle the local player BEFORE calling the original function
+
 	if is_local then
 		local account_id = mod._local_player_account_id
 		local pm = Managers.player
