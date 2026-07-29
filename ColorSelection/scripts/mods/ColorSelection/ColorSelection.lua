@@ -495,6 +495,15 @@ local function apply_widget_color(panel)
 
 	local color = get_color_for_account_id(account_id, slot)
 
+	local class_icon = panel._widgets_by_name.class_icon or panel._widgets_by_name.character_portrait
+	if class_icon and class_icon.style and class_icon.style.texture and color then
+		local c = class_icon.style.texture.color
+		if c and type(c) == "table" then
+			c[1], c[2], c[3], c[4] = 255, color[2], color[3], color[4]
+			class_icon.dirty = true
+		end
+	end
+
 	local widget = panel._widgets_by_name.player_name
 	if not widget or not widget.style or not widget.style.text then
 		return
@@ -658,6 +667,16 @@ local function apply_nameplate_color(marker)
                     changed = true
                 end
             end
+            if widget.style then
+                local icon_style = widget.style.icon or widget.style.class_icon
+                if icon_style and icon_style.color then
+                    local c = icon_style.color
+                    if c[2] ~= 169 or c[3] ~= 191 or c[4] ~= 153 then
+                        c[1], c[2], c[3], c[4] = 255, 169, 191, 153
+                        changed = true
+                    end
+                end
+            end
             if changed then
                 widget.dirty = true
                 content.dirty = true
@@ -691,6 +710,16 @@ local function apply_nameplate_color(marker)
                     changed = true
                 end
             end
+            if widget.style then
+                local icon_style = widget.style.icon or widget.style.class_icon
+                if icon_style and icon_style.color then
+                    local c = icon_style.color
+                    if c[2] ~= 169 or c[3] ~= 191 or c[4] ~= 153 then
+                        c[1], c[2], c[3], c[4] = 255, 169, 191, 153
+                        changed = true
+                    end
+                end
+            end
             if changed then
                 widget.dirty = true
                 content.dirty = true
@@ -711,10 +740,31 @@ local function apply_nameplate_color(marker)
     local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
 
     if marker._cs_applied_color == color_tag and marker._cs_colored_header == (content.header_text or "") then
-        return
+        local skip = true
+        if widget and widget.style then
+            local icon_style = widget.style.icon or widget.style.class_icon
+            if icon_style and icon_style.color then
+                local c = icon_style.color
+                if c[2] ~= color[2] or c[3] ~= color[3] or c[4] ~= color[4] then
+                    skip = false
+                end
+            end
+        end
+        if skip then return end
     end
 
     local changed = false
+
+    if widget and widget.style then
+        local icon_style = widget.style.icon or widget.style.class_icon
+        if icon_style and icon_style.color then
+            local c = icon_style.color
+            if c[2] ~= color[2] or c[3] ~= color[3] or c[4] ~= color[4] then
+                c[1], c[2], c[3], c[4] = 255, color[2], color[3], color[4]
+                changed = true
+            end
+        end
+    end
 
     if content.header_text then
         local header = content.header_text
@@ -1492,9 +1542,18 @@ local function reset_team_panel_colors()
 
     for i = 1, #handler._player_panels_array do
         local p = handler._player_panels_array[i] and handler._player_panels_array[i].panel
-        if p and p._widgets_by_name and p._widgets_by_name.player_name then
+        if p and p._widgets_by_name then
+            local class_icon = p._widgets_by_name.class_icon or p._widgets_by_name.character_portrait
+            if class_icon and class_icon.style and class_icon.style.texture then
+                local c = class_icon.style.texture.color
+                if c and type(c) == "table" then
+                    c[1], c[2], c[3], c[4] = 255, 255, 255, 255
+                    class_icon.dirty = true
+                end
+            end
+
             local widget = p._widgets_by_name.player_name
-            if widget.content and widget.content.text then
+            if widget and widget.content and widget.content.text then
                 widget.content.text = _strip_cs_color_tags(widget.content.text)
                 widget.dirty = true
             end
@@ -1525,6 +1584,16 @@ local function reset_nameplate_colors()
                 end
                 if marker_type:match("companion") and marker.widget.content.icon_text then
                     marker.widget.content.icon_text = _strip_cs_color_tags(marker.widget.content.icon_text)
+                end
+            end
+            if marker.widget and marker.widget.style then
+                local icon_style = marker.widget.style.icon or marker.widget.style.class_icon
+                if icon_style and icon_style.color then
+                    local c = icon_style.color
+                    if c[2] ~= 169 or c[3] ~= 191 or c[4] ~= 153 then
+                        c[1], c[2], c[3], c[4] = 255, 169, 191, 153
+                        marker.widget.dirty = true
+                    end
                 end
             end
         end
