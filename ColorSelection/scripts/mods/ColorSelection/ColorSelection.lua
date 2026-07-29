@@ -14,7 +14,6 @@ local CONSTANTS = {
 	LINE_HEIGHT = 30
 }
 
-
 local ColorUtils = {}
 
 local function _get_player_slot(p) if not p then return nil end; local s, r = pcall(function() return p:slot() end); return s and r or nil end
@@ -124,8 +123,6 @@ local function _get_cached_saved_colors()
     end
     return cached_saved_colors
 end
-
-
 
 local get_color_for_account_id
 
@@ -496,11 +493,17 @@ local function apply_widget_color(panel)
 	local color = get_color_for_account_id(account_id, slot)
 
 	local class_icon = panel._widgets_by_name.class_icon or panel._widgets_by_name.character_portrait
-	if class_icon and class_icon.style and class_icon.style.texture and color then
-		local c = class_icon.style.texture.color
-		if c and type(c) == "table" then
-			c[1], c[2], c[3], c[4] = 255, color[2], color[3], color[4]
-			class_icon.dirty = true
+	if class_icon and class_icon.style and color then
+		local style_keys = {"texture", "icon", "class_icon", "text"}
+		for i = 1, #style_keys do
+			local style_pass = class_icon.style[style_keys[i]]
+			if style_pass then
+				local c = style_pass.color or style_pass.text_color
+				if c and type(c) == "table" then
+					c[1], c[2], c[3], c[4] = 255, color[2], color[3], color[4]
+					class_icon.dirty = true
+				end
+			end
 		end
 	end
 
@@ -587,6 +590,21 @@ mod:hook_safe("HudElementTeamPlayerPanelHub", "update", function(self)
 
 
 			local color = get_color_for_account_id(account_id)
+
+			local class_icon = self._widgets_by_name and (self._widgets_by_name.class_icon or self._widgets_by_name.character_portrait)
+			if class_icon and class_icon.style and color then
+				local style_keys = {"texture", "icon", "class_icon", "text"}
+				for i = 1, #style_keys do
+					local style_pass = class_icon.style[style_keys[i]]
+					if style_pass then
+						local c = style_pass.color or style_pass.text_color
+						if c and type(c) == "table" then
+							c[1], c[2], c[3], c[4] = 255, color[2], color[3], color[4]
+							class_icon.dirty = true
+						end
+					end
+				end
+			end
 
 			local widget = self._widgets_by_name and self._widgets_by_name.player_name
 
@@ -733,7 +751,7 @@ local function apply_nameplate_color(marker)
 
     local is_companion = marker.type and string.find(marker.type, "companion", 1, true)
 
-    if not content or (not content.header_text and not (is_companion and content.icon_text)) then
+    if not content or (not content.header_text and not content.icon_text) then
         return
     end
 
@@ -804,12 +822,14 @@ local function apply_nameplate_color(marker)
         end
     end
 
-    if is_companion and content.icon_text then
+    if content.icon_text then
         local stripped_icon = content.icon_text:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
-        local new_icon = color_tag .. stripped_icon .. "{#reset()}"
-        if content.icon_text ~= new_icon then
-            content.icon_text = new_icon
-            changed = true
+        if stripped_icon ~= "" then
+            local new_icon = color_tag .. stripped_icon .. "{#reset()}"
+            if content.icon_text ~= new_icon then
+                content.icon_text = new_icon
+                changed = true
+            end
         end
     end
 
