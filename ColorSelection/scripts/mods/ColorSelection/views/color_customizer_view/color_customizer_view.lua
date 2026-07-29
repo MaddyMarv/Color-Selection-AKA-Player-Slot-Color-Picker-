@@ -23,6 +23,11 @@ local CONSTANTS = {
 local ColorUtils = mod.ColorUtils or {}
 local MOD_CONSTANTS = mod.CONSTANTS or CONSTANTS
 
+local function _get_player_slot(p) return p:slot() end
+local function _get_player_account_id(p) return p:account_id() end
+local function _nameplate_extension_scan(e) e:_nameplate_extension_scan() end
+local function _companion_nameplate_extension_scan(e) e:_companion_nameplate_extension_scan() end
+
 local ColorCustomizerView = class("ColorCustomizerView", "BaseView")
 
 function ColorCustomizerView:init(settings)
@@ -1042,7 +1047,7 @@ function ColorCustomizerView:_load_player_info()
                         if color and type(color) == "table" then
                             color.account_name = name
                             saved_colors[self._account_id] = color
-                            mod:set("saved_player_colors", saved_colors)
+                            mod.save_custom_player_colors( saved_colors)
                         end
                     end
                 end
@@ -1067,7 +1072,7 @@ function ColorCustomizerView:_load_player_info()
                 for unique_id, p in pairs(human_players) do
 
                     if p and p.account_id then
-                        local success, account_id = pcall(function() return p:account_id() end)
+                        local success, account_id = pcall(_get_player_account_id, p)
                         if success and account_id == self._account_id then
                             player = p
                             break
@@ -1089,7 +1094,7 @@ function ColorCustomizerView:_load_player_info()
                     self._player_name = player:name() or ""
                 end
 
-                local slot_success, slot = pcall(function() return player:slot() end)
+                local slot_success, slot = pcall(_get_player_slot, player)
                 if slot_success and slot then
                     player_slot = slot
                 end
@@ -1219,10 +1224,10 @@ function ColorCustomizerView:_on_apply_pressed()
 
                     nameplates_element._scan_delay_duration = 0
                     if nameplates_element._nameplate_extension_scan then
-                        pcall(function() nameplates_element:_nameplate_extension_scan() end)
+                        pcall(_nameplate_extension_scan, nameplates_element)
                     end
                     if nameplates_element._companion_nameplate_extension_scan then
-                        pcall(function() nameplates_element:_companion_nameplate_extension_scan() end)
+                        pcall(_companion_nameplate_extension_scan, nameplates_element)
                     end
                 end
             end
@@ -1290,7 +1295,7 @@ function ColorCustomizerView:_on_apply_pressed()
     }
 
 
-    mod:set("saved_player_colors", colors)
+    mod.save_custom_player_colors( colors)
 
 
 
@@ -1328,10 +1333,10 @@ function ColorCustomizerView:_on_apply_pressed()
 
                 nameplates_element._scan_delay_duration = 0
                 if nameplates_element._nameplate_extension_scan then
-                    pcall(function() nameplates_element:_nameplate_extension_scan() end)
+                    pcall(_nameplate_extension_scan, nameplates_element)
                 end
                 if nameplates_element._companion_nameplate_extension_scan then
-                    pcall(function() nameplates_element:_companion_nameplate_extension_scan() end)
+                    pcall(_companion_nameplate_extension_scan, nameplates_element)
                 end
             end
         end
@@ -1401,7 +1406,7 @@ function ColorCustomizerView:_on_save_pressed()
     }
 
 
-    mod:set("saved_player_colors", colors)
+    mod.save_custom_player_colors( colors)
 
 
     if mod.apply_slot_colors and type(mod.apply_slot_colors) == "function" then
@@ -1521,7 +1526,7 @@ function ColorCustomizerView:_on_reset_pressed()
     end
 
 
-    mod:set("saved_player_colors", colors)
+    mod.save_custom_player_colors( colors)
 
     if mod.apply_slot_colors and type(mod.apply_slot_colors) == "function" then
         mod.apply_slot_colors()
@@ -1633,7 +1638,7 @@ function ColorCustomizerView:_on_reset_all_pressed()
     end
 
 
-    mod:set("saved_player_colors", {})
+    mod.save_custom_player_colors( {})
 
 
     if mod.apply_slot_colors and type(mod.apply_slot_colors) == "function" then
@@ -1745,7 +1750,7 @@ function ColorCustomizerView:_load_players_list()
 
                                 if saved_colors[account_id] then
                                     saved_colors[account_id].account_name = name
-                                    mod:set("saved_player_colors", saved_colors)
+                                    mod.save_custom_player_colors( saved_colors)
 
                                     if self._players_panel_open then
                                         self:_load_players_list()
@@ -1783,7 +1788,7 @@ function ColorCustomizerView:_load_players_list()
         end
 
 
-        mod:set("saved_player_colors", saved_colors)
+        mod.save_custom_player_colors( saved_colors)
     end
 
 
