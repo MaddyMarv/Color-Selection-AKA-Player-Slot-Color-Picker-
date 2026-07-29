@@ -23,6 +23,7 @@ local function _get_player_name(p) if not p then return nil end; local s, r = pc
 local function _get_player_profile(p) if not p then return nil end; local s, r = pcall(function() return p:profile() end); return s and r or nil end
 local function _get_user_display_name(p) if not p then return nil end; local s, r = pcall(function() return p:user_display_name(nil, true) end); return s and r or nil end
 local function _nameplate_extension_scan(e) if not e then return end; pcall(function() e:_nameplate_extension_scan() end) end
+local function _companion_nameplate_extension_scan(e) if not e then return end; pcall(function() e:_companion_nameplate_extension_scan() end) end
 local function _set_vector3_for_materials(unit, param, color, val) if Unit and Unit.set_vector3_for_materials then Unit.set_vector3_for_materials(unit, param, color, val) end end
 local function _get_is_human_controlled(p) if not p then return false end; local s, r = pcall(function() return p:is_human_controlled() end); return s and r or false end
 local function _get_is_bot(p) if not p then return false end; local s, r = pcall(function() return p:is_bot() end); return s and r or false end
@@ -1230,6 +1231,9 @@ local function update_world_markers()
 	if nameplates_element._nameplate_extension_scan then
 		pcall_safe(_nameplate_extension_scan, nameplates_element)
 	end
+	if nameplates_element._companion_nameplate_extension_scan then
+		pcall_safe(_companion_nameplate_extension_scan, nameplates_element)
+	end
 
 	for marker_id, marker in pairs(world_markers._markers_by_id) do
 		local marker_type = marker.type
@@ -1247,11 +1251,20 @@ local function update_world_markers()
 					unit_data.synced = false
 				end
 			end
+			if companion_nameplates and marker.unit then
+				local companion_data = companion_nameplates[marker.unit]
+				if companion_data then
+					companion_data.synced = false
+				end
+			end
 		end
 	end
 
 	if nameplates_element._nameplate_extension_scan then
 		pcall_safe(_nameplate_extension_scan, nameplates_element)
+	end
+	if nameplates_element._companion_nameplate_extension_scan then
+		pcall_safe(_companion_nameplate_extension_scan, nameplates_element)
 	end
 
 	local rh_mod = get_mod("RingHud")
@@ -1505,9 +1518,14 @@ local function reset_nameplate_colors()
     for _, marker in pairs(world_markers._markers_by_id) do
         local marker_type = marker.type
         if marker_type and (marker_type:match("nameplate") or marker_type:match("companion")) then
-            if marker.widget and marker.widget.content and marker.widget.content.header_text then
-                marker.widget.content.header_text = _strip_cs_color_tags(marker.widget.content.header_text)
-                marker._cs_last_header = nil
+            if marker.widget and marker.widget.content then
+                if marker.widget.content.header_text then
+                    marker.widget.content.header_text = _strip_cs_color_tags(marker.widget.content.header_text)
+                    marker._cs_last_header = nil
+                end
+                if marker_type:match("companion") and marker.widget.content.icon_text then
+                    marker.widget.content.icon_text = _strip_cs_color_tags(marker.widget.content.icon_text)
+                end
             end
         end
     end
