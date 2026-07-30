@@ -117,6 +117,20 @@ local widgets = {
         tooltip = "color_bots_tooltip",
       },
       {
+        setting_id = "color_local_outside_mission",
+        type = "checkbox",
+        default_value = true,
+        title = "color_local_outside_mission",
+        tooltip = "color_local_outside_mission_tooltip",
+      },
+      {
+        setting_id = "color_custom_outside_mission",
+        type = "checkbox",
+        default_value = true,
+        title = "color_custom_outside_mission",
+        tooltip = "color_custom_outside_mission_tooltip",
+      },
+      {
         setting_id = "chat_local_name_style",
         type = "dropdown",
         default_value = "colored_you",

@@ -137,6 +137,20 @@ local loc = {
     en = "When enabled, bots will use the color specified below. When disabled, they will use the default game color.",
   },
 
+  color_local_outside_mission = {
+    en = "Color Own Name Outside Missions",
+  },
+  color_local_outside_mission_tooltip = {
+    en = "When enabled, your own name and HUD elements show in your custom color even in the hub and Mourningstar. When disabled, your color only appears during actual missions.",
+  },
+
+  color_custom_outside_mission = {
+    en = "Color Custom Players Outside Missions",
+  },
+  color_custom_outside_mission_tooltip = {
+    en = "When enabled, players you have saved a custom color for (via the Color Menu) will show that color in the hub and Mourningstar. When disabled, custom colors only appear during actual missions.",
+  },
+
   bot_color_tooltip = {
     en = "All bots will use this color. This ensures bots don't conflict with human player colors.",
   },

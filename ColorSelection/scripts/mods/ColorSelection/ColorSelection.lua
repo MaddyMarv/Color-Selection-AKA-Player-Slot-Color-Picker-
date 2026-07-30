@@ -284,7 +284,9 @@ get_color_for_account_id = function(account_id, slot)
 	if saved_colors and type(saved_colors) == "table" and saved_colors[account_id] then
 		local c = saved_colors[account_id]
 		if c and type(c) == "table" then
-			return {255, c.r or 255, c.g or 255, c.b or 255}
+			if not is_in_non_mission_context() or mod:get("color_custom_outside_mission") then
+				return {255, c.r or 255, c.g or 255, c.b or 255}
+			end
 		end
 	end
 
@@ -320,7 +322,10 @@ get_color_for_account_id = function(account_id, slot)
 	end
 
 	if is_local then
-		return get_slot_color(slot or 1, true, false)
+		if not is_in_non_mission_context() or mod:get("color_local_outside_mission") then
+			return get_slot_color(slot or 1, true, false)
+		end
+		return nil
 	end
 
 	if mod:get("color_by_class") and player then
@@ -1856,7 +1861,8 @@ mod.on_setting_changed = function(setting_id)
 	end
 	if string.find(setting_id, "slot%d") or string.find(setting_id, "bot_") then
 		triggers_update = true
-	elseif setting_id == "color_bots" or setting_id == "color_by_class" then
+	elseif setting_id == "color_bots" or setting_id == "color_by_class"
+			or setting_id == "color_local_outside_mission" or setting_id == "color_custom_outside_mission" then
 		triggers_update = true
 	else
 		local classes = {"veteran", "zealot", "psyker", "ogryn", "broker", "adamant", "cryptic"}
