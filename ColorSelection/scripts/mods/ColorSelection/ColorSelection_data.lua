@@ -96,6 +96,11 @@ local widgets = {
         function_name = "open_color_customizer"
       },
       {
+        setting_id = "force_local_slot_1",
+        type = "checkbox",
+        default_value = true,
+      },
+      {
         setting_id = "color_by_class",
         type = "checkbox",
         default_value = false,

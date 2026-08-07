@@ -206,7 +206,9 @@ local function get_local_player_slot()
 end
 
 local function get_slot_color(slot, is_local_player, is_bot)
-	if is_local_player then
+    local force_slot_1 = mod:get("force_local_slot_1") ~= false
+
+	if is_local_player and force_slot_1 then
 		return get_color("slot1")
 	end
 
@@ -218,7 +220,7 @@ local function get_slot_color(slot, is_local_player, is_bot)
 
 	if slot and slot >= 1 and slot <= 4 then
 		local lp_slot = get_local_player_slot()
-		if lp_slot ~= 1 and slot == 1 then
+		if force_slot_1 and lp_slot ~= 1 and slot == 1 then
 
 			return get_color("slot" .. lp_slot)
 		end
@@ -293,7 +295,7 @@ get_color_for_account_id = function(account_id, slot)
 	local is_local = account_id and account_id ~= "" and mod._local_player_account_id == account_id
 
 	if is_in_non_mission_context() and not is_local then
-		return {255, 169, 191, 153}
+		return nil
 	end
 
 	if not account_id or account_id == "" then
@@ -321,18 +323,6 @@ get_color_for_account_id = function(account_id, slot)
 		end
 	end
 
-	if is_local then
-		if not is_in_non_mission_context() or mod:get("color_local_outside_mission") then
-			return get_slot_color(slot or 1, true, false)
-		end
-		return nil
-	end
-
-	if mod:get("color_by_class") and player then
-		local class_color = get_class_color(player)
-		if class_color then return class_color end
-	end
-
 	if not slot then
 		local player_slot = nil
 		if player then
@@ -343,14 +333,28 @@ get_color_for_account_id = function(account_id, slot)
 		end
 
 		if not player_slot then
-			if is_local then
+			if is_local and mod:get("force_local_slot_1") ~= false then
 				slot = 1
-			else
-				return nil
 			end
 		else
 			slot = player_slot
 		end
+	end
+
+	if is_local then
+		if not is_in_non_mission_context() or mod:get("color_local_outside_mission") then
+			return get_slot_color(slot, true, false)
+		end
+		return nil
+	end
+
+	if mod:get("color_by_class") and player then
+		local class_color = get_class_color(player)
+		if class_color then return class_color end
+	end
+
+	if not slot then
+		return nil
 	end
 
 	return get_slot_color(slot, is_local, false)
@@ -682,9 +686,21 @@ local function apply_nameplate_color(marker)
         if content then
             local changed = false
             if content.header_text and string.find(content.header_text, "{#color", 1, true) then
-                local stripped = content.header_text:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
-                if content.header_text ~= stripped then
-                    content.header_text = stripped
+                local name_part, title_part = content.header_text:match("^([^\n]*)\n?(.*)$")
+                if not name_part then
+                    name_part = content.header_text
+                    title_part = ""
+                end
+                
+                local stripped_name = name_part:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+                
+                local new_header = stripped_name
+                if title_part and title_part ~= "" then
+                    new_header = new_header .. "\n" .. title_part
+                end
+                
+                if content.header_text ~= new_header then
+                    content.header_text = new_header
                     changed = true
                 end
             end
@@ -729,9 +745,21 @@ local function apply_nameplate_color(marker)
         if content then
             local changed = false
             if content.header_text and string.find(content.header_text, "{#color", 1, true) then
-                local stripped = content.header_text:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
-                if content.header_text ~= stripped then
-                    content.header_text = stripped
+                local name_part, title_part = content.header_text:match("^([^\n]*)\n?(.*)$")
+                if not name_part then
+                    name_part = content.header_text
+                    title_part = ""
+                end
+                
+                local stripped_name = name_part:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+                
+                local new_header = stripped_name
+                if title_part and title_part ~= "" then
+                    new_header = new_header .. "\n" .. title_part
+                end
+                
+                if content.header_text ~= new_header then
+                    content.header_text = new_header
                     changed = true
                 end
             end
@@ -1506,6 +1534,7 @@ apply_slot_colors_internal = function()
 	local color_metatable = {
 		__index = function(_, k)
 			if type(k) ~= "number" or k < 1 then return nil end
+			if is_in_non_mission_context() then return nil end
 
 			local account_id = nil
 			local player = get_player_by_slot(k)
@@ -1525,6 +1554,8 @@ apply_slot_colors_internal = function()
 	end
 
 	for i = 1, 5 do
+		if is_in_non_mission_context() then break end
+
 		local account_id = nil
 		local player = get_player_by_slot(i)
 		if player then
@@ -1890,6 +1921,11 @@ mod.on_setting_changed = function(setting_id)
 		triggers_update = true
 	elseif setting_id == "color_bots" or setting_id == "color_by_class"
 			or setting_id == "color_local_outside_mission" or setting_id == "color_custom_outside_mission" then
+		triggers_update = true
+	elseif setting_id == "force_local_slot_1" then
+		if mod:get("force_local_slot_1") == false then
+			mod:set("color_local_outside_mission", false, true)
+		end
 		triggers_update = true
 	else
 		local classes = {"veteran", "zealot", "psyker", "ogryn", "broker", "adamant", "cryptic"}

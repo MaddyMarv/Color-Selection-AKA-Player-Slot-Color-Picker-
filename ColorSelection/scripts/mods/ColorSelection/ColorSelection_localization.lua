@@ -18,6 +18,13 @@ local loc = {
     en = "Press this key to open the color customization menu where you can edit slot colors and create custom colors for specific players.",
   },
 
+  force_local_slot_1 = {
+    en = "Always Use Slot 1 Color for Self",
+  },
+  force_local_slot_1_tooltip = {
+    en = "When enabled, you will always appear in the Slot 1 color on your own screen. When disabled, your color will be determined by your actual server slot (like everyone else).",
+  },
+
   color_outlines = {
     en = "Color Player Outlines",
   },
