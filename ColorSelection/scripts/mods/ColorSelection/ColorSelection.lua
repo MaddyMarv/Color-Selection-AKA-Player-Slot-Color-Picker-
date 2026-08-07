@@ -497,6 +497,11 @@ local function apply_widget_color(panel)
 
 	local color = get_color_for_account_id(account_id, slot)
 
+	if account_id and color and not is_in_non_mission_context() then
+		mod._mission_color_cache = mod._mission_color_cache or {}
+		mod._mission_color_cache[account_id] = color
+	end
+
 	local class_icon = panel._widgets_by_name.class_icon or panel._widgets_by_name.character_portrait
 	if class_icon and class_icon.style and color then
 		local style_keys = {"texture", "icon", "class_icon", "text"}
@@ -1844,6 +1849,7 @@ mod.on_game_state_changed = function(status, state_name)
 
 	if status == "enter" and state_name == "StateGameplay" then
 		in_gameplay_state = true
+		mod._mission_color_cache = {}
 		apply_slot_colors()
 	elseif status == "exit" and state_name == "StateGameplay" then
 		in_gameplay_state = false
@@ -1916,3 +1922,50 @@ mod.save_custom_player_colors = function(colors)
 		mod.on_setting_changed("saved_player_colors")
 	end
 end
+
+mod:hook_require("scripts/ui/views/end_view/end_view", function(instance)
+    if instance and instance._set_character_names then
+        mod:hook(instance, "_set_character_names", function(func, self)
+            local result = func(self)
+            
+            for index, slot in ipairs(self._spawn_slots or {}) do
+                local player_info = slot.player_info
+                local widget = slot.widget
+                
+                if player_info and widget and widget.content then
+                    local account_id = player_info.account_id and player_info:account_id()
+                    local is_local = account_id and account_id ~= "" and mod._local_player_account_id == account_id
+                    
+                    local color = nil
+                    if account_id and mod._mission_color_cache and mod._mission_color_cache[account_id] then
+                        color = mod._mission_color_cache[account_id]
+                    end
+                    
+                    if color then
+                        local color_tag = "{#color(" .. color[2] .. "," .. color[3] .. "," .. color[4] .. ")}"
+                        local content = widget.content
+                        
+                        local function colorize(field)
+                            if content[field] and type(content[field]) == "string" and not string.find(content[field], "{#color", 1, true) then
+                                content[field] = color_tag .. content[field] .. "{#reset()}"
+                            end
+                        end
+                        
+                        colorize("character_name")
+                        colorize("character_archetype_title")
+                        
+                        widget.dirty = true
+                    end
+                end
+            end
+            
+            return result
+        end)
+        
+        if instance.on_exit then
+            mod:hook_safe(instance, "on_exit", function()
+                mod._mission_color_cache = {}
+            end)
+        end
+    end
+end)
