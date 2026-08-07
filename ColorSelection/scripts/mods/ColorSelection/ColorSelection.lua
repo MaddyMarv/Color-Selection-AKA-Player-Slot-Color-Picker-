@@ -713,6 +713,10 @@ local function apply_nameplate_color(marker)
 
     local color = get_color_for_account_id(account_id, slot)
     
+    if is_in_non_mission_context() and marker.type and string.find(marker.type, "companion", 1, true) then
+        color = {255, 169, 191, 153}
+    end
+
     local widget = marker.widget
     local content = widget and widget.content
     
@@ -921,6 +925,9 @@ for _, template_path in ipairs(companion_templates) do
 			end
 
 			local color = get_color_for_account_id(account_id, player_slot)
+			if is_in_non_mission_context() then
+				color = {255, 169, 191, 153}
+			end
 			if color then
 				local color_string = "{#color(" .. color[2] .. "," .. color[3] .. "," .. color[4] .. ")}"
 				local companion_glyph = ""
