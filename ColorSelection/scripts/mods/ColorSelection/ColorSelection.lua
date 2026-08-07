@@ -792,38 +792,52 @@ local function apply_nameplate_color(marker)
     if content.header_text then
         local header = content.header_text
 
-        local player_name = pcall_safe(_get_player_name, player)
-        if not player_name or player_name == "" then
-            local name_part = header:match("^([^\n]*)")
-            player_name = name_part and name_part:match("%w+") or header:match("%w+") or header
-        end
-
-        player_name = player_name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
-        local escaped_name = player_name:gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1")
-
-        local name_part, title_part = header:match("^([^\n]*)\n?(.*)$")
-        if not name_part then
-            name_part = header
-            title_part = ""
-        end
-
-        local clean_name_part = name_part:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
-        local name_start, name_end = clean_name_part:find(escaped_name, 1, true)
-
-        if name_start then
-            local before_name = clean_name_part:sub(1, name_start - 1)
-            local after_name = clean_name_part:sub(name_end + 1)
-            local new_name_part = color_tag .. before_name .. player_name .. "{#reset()}" .. after_name
-
-            local new_header = new_name_part
-            if title_part and title_part ~= "" then
-                new_header = new_header .. "\n" .. title_part
+        if is_companion then
+            local companion_glyph = ""
+            local stripped_header = header:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+            local companion_name = stripped_header:match(companion_glyph .. "%s*(.-)$") or stripped_header:match("%s*(.-)$") or stripped_header
+            
+            local new_header = color_tag .. companion_glyph .. "{#reset()} " .. companion_name
+            if content.header_text ~= new_header then
+                content.header_text = new_header
+                marker._cs_last_header = nil
+                marker._cs_colored_header = new_header
+                changed = true
+            end
+        else
+            local player_name = pcall_safe(_get_player_name, player)
+            if not player_name or player_name == "" then
+                local name_part = header:match("^([^\n]*)")
+                player_name = name_part and name_part:match("%w+") or header:match("%w+") or header
             end
 
-            content.header_text = new_header
-            marker._cs_last_header = nil
-            marker._cs_colored_header = new_header
-            changed = true
+            player_name = player_name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+            local escaped_name = player_name:gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1")
+
+            local name_part, title_part = header:match("^([^\n]*)\n?(.*)$")
+            if not name_part then
+                name_part = header
+                title_part = ""
+            end
+
+            local clean_name_part = name_part:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+            local name_start, name_end = clean_name_part:find(escaped_name, 1, true)
+
+            if name_start then
+                local before_name = clean_name_part:sub(1, name_start - 1)
+                local after_name = clean_name_part:sub(name_end + 1)
+                local new_name_part = color_tag .. before_name .. player_name .. "{#reset()}" .. after_name
+
+                local new_header = new_name_part
+                if title_part and title_part ~= "" then
+                    new_header = new_header .. "\n" .. title_part
+                end
+
+                content.header_text = new_header
+                marker._cs_last_header = nil
+                marker._cs_colored_header = new_header
+                changed = true
+            end
         end
     end
 
