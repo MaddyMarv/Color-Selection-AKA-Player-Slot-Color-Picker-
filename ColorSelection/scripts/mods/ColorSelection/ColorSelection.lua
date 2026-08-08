@@ -247,6 +247,10 @@ local function is_in_non_mission_context()
 		return true
 	end
 
+	if mechanism_name == "adventure" then
+		return false
+	end
+
 	if not mission_name then
 		return true
 	end
@@ -343,6 +347,10 @@ get_color_for_account_id = function(account_id, slot)
 
 	if is_local then
 		if not is_in_non_mission_context() or mod:get("color_local_outside_mission") then
+			if mod:get("color_by_class") and player and mod:get("force_local_slot_1") == false then
+				local class_color = get_class_color(player)
+				if class_color then return class_color end
+			end
 			return get_slot_color(slot, true, false)
 		end
 		return nil
@@ -711,16 +719,7 @@ local function apply_nameplate_color(marker)
                     changed = true
                 end
             end
-            if widget.style then
-                local icon_style = widget.style.icon or widget.style.class_icon
-                if icon_style and icon_style.color then
-                    local c = icon_style.color
-                    if c[2] ~= 169 or c[3] ~= 191 or c[4] ~= 153 then
-                        c[1], c[2], c[3], c[4] = 255, 169, 191, 153
-                        changed = true
-                    end
-                end
-            end
+
             if changed then
                 widget.dirty = true
                 content.dirty = true
@@ -733,15 +732,14 @@ local function apply_nameplate_color(marker)
     end
 
     local color = get_color_for_account_id(account_id, slot)
-    
-    if is_in_non_mission_context() and marker.type and string.find(marker.type, "companion", 1, true) then
-        color = {255, 169, 191, 153}
-    end
 
     local widget = marker.widget
     local content = widget and widget.content
     
     if not color then
+        if is_local_player and is_in_non_mission_context() then
+            return
+        end
         if content then
             local changed = false
             if content.header_text and string.find(content.header_text, "{#color", 1, true) then
@@ -770,16 +768,7 @@ local function apply_nameplate_color(marker)
                     changed = true
                 end
             end
-            if widget.style then
-                local icon_style = widget.style.icon or widget.style.class_icon
-                if icon_style and icon_style.color then
-                    local c = icon_style.color
-                    if c[2] ~= 169 or c[3] ~= 191 or c[4] ~= 153 then
-                        c[1], c[2], c[3], c[4] = 255, 169, 191, 153
-                        changed = true
-                    end
-                end
-            end
+
             if changed then
                 widget.dirty = true
                 content.dirty = true
@@ -860,7 +849,7 @@ local function apply_nameplate_color(marker)
             local clean_name_part = name_part:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
             local name_start, name_end = clean_name_part:find(escaped_name, 1, true)
 
-            if name_start then
+            if name_start and player_name ~= "" then
                 local before_name = clean_name_part:sub(1, name_start - 1)
                 local after_name = clean_name_part:sub(name_end + 1)
                 local new_name_part = color_tag .. before_name .. player_name .. "{#reset()}" .. after_name
@@ -958,9 +947,6 @@ for _, template_path in ipairs(companion_templates) do
 			end
 
 			local color = get_color_for_account_id(account_id, player_slot)
-			if is_in_non_mission_context() then
-				color = {255, 169, 191, 153}
-			end
 			if color then
 				local color_string = "{#color(" .. color[2] .. "," .. color[3] .. "," .. color[4] .. ")}"
 				local companion_glyph = ""
@@ -1149,7 +1135,8 @@ local function apply_color_to_player_name(name, player)
 
 	if color then
 		local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
-		return color_tag .. name .. "{#reset()}"
+		local clean_name = name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+		return color_tag .. clean_name .. "{#reset()}"
 	end
 
 	return name
@@ -1668,16 +1655,7 @@ local function reset_nameplate_colors()
                     marker.widget.content.icon_text = _strip_cs_color_tags(marker.widget.content.icon_text)
                 end
             end
-            if marker.widget and marker.widget.style then
-                local icon_style = marker.widget.style.icon or marker.widget.style.class_icon
-                if icon_style and icon_style.color then
-                    local c = icon_style.color
-                    if c[2] ~= 169 or c[3] ~= 191 or c[4] ~= 153 then
-                        c[1], c[2], c[3], c[4] = 255, 169, 191, 153
-                        marker.widget.dirty = true
-                    end
-                end
-            end
+
         end
     end
 end
