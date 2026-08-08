@@ -243,6 +243,11 @@ local function is_in_non_mission_context()
 		if success then mission_name = result end
 	end
 
+	local ui = Managers.ui
+	if ui and (ui:view_active("end_view") or ui:view_active("end_player_view")) then
+		return false
+	end
+
 	if mechanism_name == "left_session" or mechanism_name == "hub" then
 		return true
 	end
@@ -1937,49 +1942,3 @@ mod.save_custom_player_colors = function(colors)
 	end
 end
 
-mod:hook_require("scripts/ui/views/end_view/end_view", function(instance)
-    if instance and instance._set_character_names then
-        mod:hook(instance, "_set_character_names", function(func, self)
-            local result = func(self)
-            
-            for index, slot in ipairs(self._spawn_slots or {}) do
-                local player_info = slot.player_info
-                local widget = slot.widget
-                
-                if player_info and widget and widget.content then
-                    local account_id = player_info.account_id and player_info:account_id()
-                    local is_local = account_id and account_id ~= "" and mod._local_player_account_id == account_id
-                    
-                    local color = nil
-                    if account_id and mod._mission_color_cache and mod._mission_color_cache[account_id] then
-                        color = mod._mission_color_cache[account_id]
-                    end
-                    
-                    if color then
-                        local color_tag = "{#color(" .. color[2] .. "," .. color[3] .. "," .. color[4] .. ")}"
-                        local content = widget.content
-                        
-                        local function colorize(field)
-                            if content[field] and type(content[field]) == "string" and not string.find(content[field], "{#color", 1, true) then
-                                content[field] = color_tag .. content[field] .. "{#reset()}"
-                            end
-                        end
-                        
-                        colorize("character_name")
-                        colorize("character_archetype_title")
-                        
-                        widget.dirty = true
-                    end
-                end
-            end
-            
-            return result
-        end)
-        
-        if instance.on_exit then
-            mod:hook_safe(instance, "on_exit", function()
-                mod._mission_color_cache = {}
-            end)
-        end
-    end
-end)
