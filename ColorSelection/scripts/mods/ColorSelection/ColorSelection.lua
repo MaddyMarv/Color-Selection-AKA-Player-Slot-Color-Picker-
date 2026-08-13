@@ -1676,7 +1676,17 @@ local function reset_character_outlines()
     for unit, extension in pairs(outline_system._unit_extension_data) do
         local pm = Managers.player
         local is_player = pm and pm:player_by_unit(unit)
-        if is_player then
+        
+        local is_dog = false
+        if not is_player then
+            local ext = ScriptUnit.has_extension(unit, "unit_data_system")
+            local breed = ext and ext.breed and ext:breed()
+            if breed and breed.name and (string.find(breed.name, "dog", 1, true) or string.find(breed.name, "mastiff", 1, true)) then
+                is_dog = true
+            end
+        end
+
+        if is_player or is_dog then
             pcall_safe(_set_vector3_for_materials, unit, "outline_color", default_outline_color, true)
         end
     end
@@ -1684,7 +1694,7 @@ end
 
 mod:hook_safe("OutlineSystem", "update", function(self)
 	if not mod:is_enabled() then return end
-	if not mod:get("color_outlines") then return end
+	if not mod:get("color_outlines") and not mod:get("color_dog_outlines") then return end
 	if self._total_num_outlines == 0 then return end
 	if not self._visible then return end
 
@@ -1694,7 +1704,7 @@ mod:hook_safe("OutlineSystem", "update", function(self)
 	for unit, extension in pairs(self._unit_extension_data) do
 		local player = pm:player_by_unit(unit)
 
-		if player then
+		if player and mod:get("color_outlines") then
 			local top_outline = extension.outlines[1]
 
 			if top_outline then
@@ -1706,6 +1716,50 @@ mod:hook_safe("OutlineSystem", "update", function(self)
 				if color then
 					local color_vector = Vector3(color[2] / 255, color[3] / 255, color[4] / 255)
 					Unit.set_vector3_for_materials(unit, "outline_color", color_vector, true)
+				end
+			end
+		elseif not player and mod:get("color_dog_outlines") then
+			local is_dog = false
+			local ext = ScriptUnit.has_extension(unit, "unit_data_system")
+			local breed = ext and ext.breed and ext:breed()
+			if breed and breed.name and (string.find(breed.name, "dog", 1, true) or string.find(breed.name, "mastiff", 1, true)) then
+				is_dog = true
+			end
+
+			if is_dog then
+				local owner = nil
+				local players = pm:players()
+				if players then
+					for _, p in pairs(players) do
+						local p_unit = p.player_unit
+						if p_unit and ALIVE[p_unit] then
+							local spawner_ext = ScriptUnit.has_extension(p_unit, "companion_spawner_system")
+							if spawner_ext and spawner_ext._spawned_units then
+								for _, u in ipairs(spawner_ext._spawned_units) do
+									if u == unit then
+										owner = p
+										break
+									end
+								end
+							end
+						end
+						if owner then break end
+					end
+				end
+
+				if owner then
+					local top_outline = extension.outlines[1]
+					if top_outline then
+						local account_id = pcall_safe(_get_player_account_id, owner)
+						local slot = pcall_safe(_get_player_slot, owner)
+
+						local color = get_color_for_account_id(account_id, slot)
+
+						if color then
+							local color_vector = Vector3(color[2] / 255, color[3] / 255, color[4] / 255)
+							Unit.set_vector3_for_materials(unit, "outline_color", color_vector, true)
+						end
+					end
 				end
 			end
 		end
@@ -1928,8 +1982,8 @@ mod.on_setting_changed = function(setting_id)
 	end
 
 
-	if setting_id == "color_outlines" then
-	    if not mod:get("color_outlines") and in_gameplay_state then
+	if setting_id == "color_outlines" or setting_id == "color_dog_outlines" then
+	    if in_gameplay_state then
 	        reset_character_outlines()
 	    end
 	end

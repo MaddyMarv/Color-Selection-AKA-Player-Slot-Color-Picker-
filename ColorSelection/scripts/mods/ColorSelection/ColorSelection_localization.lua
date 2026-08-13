@@ -32,6 +32,13 @@ local loc = {
     en = "Color the 3D player outlines (holograms visible through walls) using their customized slot colors. Requires a mod like PlayerOutlines that forces the game to render outlines.",
   },
 
+  color_dog_outlines = {
+    en = "Color Cyber-Mastiff Outlines",
+  },
+  color_dog_outlines_tooltip = {
+    en = "Color the outlines of the Arbites Cyber-Mastiff according to its owner's slot color.",
+  },
+
   color_by_class = {
     en = "Color by Class",
   },

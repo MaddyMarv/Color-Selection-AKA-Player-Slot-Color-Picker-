@@ -115,6 +115,13 @@ local widgets = {
         tooltip = "color_outlines_tooltip",
       },
       {
+        setting_id = "color_dog_outlines",
+        type = "checkbox",
+        default_value = true,
+        title = "color_dog_outlines",
+        tooltip = "color_dog_outlines_tooltip",
+      },
+      {
         setting_id = "color_bots",
         type = "checkbox",
         default_value = true,
