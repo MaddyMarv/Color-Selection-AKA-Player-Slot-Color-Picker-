@@ -3,7 +3,9 @@
     "author": "IndicaBunny",
     "version": "2.22",
     "source": "https://github.com/MaddyMarv/Color-Selection-AKA-Player-Slot-Color-Picker-",
-    "kofi": "https://ko-fi.com/indicabunny",
+    "funding": {
+        "kofi": "https://ko-fi.com/indicabunny"
+    },
     "description": "Lets you manually pick the HUD colors for you and your teammates.",
     "order": {
         "require": [
