@@ -74,6 +74,15 @@ local loc = {
   label_red = {
     en = "Red",
   },
+  general_settings = {
+    en = "General",
+  },
+  slot_colors_group = {
+    en = "Slot Colors",
+  },
+  class_colors_group = {
+    en = "Class Colors",
+  },
   label_green = {
     en = "Green",
   },

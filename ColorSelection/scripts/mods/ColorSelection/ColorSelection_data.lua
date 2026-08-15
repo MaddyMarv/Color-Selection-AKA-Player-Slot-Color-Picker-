@@ -14,28 +14,9 @@ local function slot_widgets(slot)
 
     return {
         setting_id = prefix,
-        type = "group",
+        type = "color",
         tab = "Colors",
-        sub_widgets = {
-            {
-                setting_id = prefix .. "_r",
-                type = "numeric",
-                default_value = defaults.r,
-                range = {0,255},
-            },
-            {
-                setting_id = prefix .. "_g",
-                type = "numeric",
-                default_value = defaults.g,
-                range = {0,255},
-            },
-            {
-                setting_id = prefix .. "_b",
-                type = "numeric",
-                default_value = defaults.b,
-                range = {0,255},
-            },
-        }
+        default_value = {255, defaults.r, defaults.g, defaults.b},
     }
 end
 
@@ -54,28 +35,9 @@ local function class_widgets(class_name)
 
     return {
         setting_id = class_name,
-        type = "group",
+        type = "color",
         tab = "Class Colors",
-        sub_widgets = {
-            {
-                setting_id = class_name .. "_r",
-                type = "numeric",
-                default_value = defaults.r,
-                range = {0,255},
-            },
-            {
-                setting_id = class_name .. "_g",
-                type = "numeric",
-                default_value = defaults.g,
-                range = {0,255},
-            },
-            {
-                setting_id = class_name .. "_b",
-                type = "numeric",
-                default_value = defaults.b,
-                range = {0,255},
-            },
-        }
+        default_value = {255, defaults.r, defaults.g, defaults.b},
     }
 end
 
@@ -159,39 +121,37 @@ local widgets = {
   }
 }
 
+local slot_sub_widgets = {}
 for slot=1,4 do
-    widgets[#widgets+1] = slot_widgets(slot)
+    slot_sub_widgets[#slot_sub_widgets+1] = slot_widgets(slot)
 end
+slot_sub_widgets[#slot_sub_widgets+1] = {
+    setting_id = "bot",
+    type = "color",
+    tab = "Colors",
+    default_value = {255, 128, 128, 128},
+}
 
+widgets[#widgets+1] = {
+    setting_id = "slot_colors_group",
+    type = "group",
+    tab = "Colors",
+    sub_widgets = slot_sub_widgets
+}
+
+local class_sub_widgets = {}
 local classes = {"veteran", "zealot", "psyker", "ogryn", "broker", "adamant", "cryptic"}
 for _, class_name in ipairs(classes) do
-    widgets[#widgets+1] = class_widgets(class_name)
+    local cw = class_widgets(class_name)
+    cw.tab = "Colors" -- Force it to stay on the same tab
+    class_sub_widgets[#class_sub_widgets+1] = cw
 end
 
 widgets[#widgets+1] = {
-    setting_id = "bot",
+    setting_id = "class_colors_group",
     type = "group",
     tab = "Colors",
-    sub_widgets = {
-        {
-            setting_id = "bot_r",
-            type = "numeric",
-            default_value = 128,
-            range = {0,255},
-        },
-        {
-            setting_id = "bot_g",
-            type = "numeric",
-            default_value = 128,
-            range = {0,255},
-        },
-        {
-            setting_id = "bot_b",
-            type = "numeric",
-            default_value = 128,
-            range = {0,255},
-        },
-    }
+    sub_widgets = class_sub_widgets
 }
 
 widgets[#widgets+1] = {

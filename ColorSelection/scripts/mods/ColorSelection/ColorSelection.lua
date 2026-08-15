@@ -183,11 +183,20 @@ local function color_for_slot(slot)
 end
 
 local function get_color(prefix)
+	local color_array = mod:get(prefix)
+	if color_array and type(color_array) == "table" and #color_array >= 3 then
+		return {
+			color_array[1] or 255,
+			color_array[2] or mod.get_default_color_value(prefix, "r"),
+			color_array[3] or mod.get_default_color_value(prefix, "g"),
+			color_array[4] or mod.get_default_color_value(prefix, "b"),
+		}
+	end
 	return {
-		mod:get(prefix .. "_a") or CONSTANTS.MAX_COLOR_VALUE,
-		mod:get(prefix .. "_r") or mod.get_default_color_value(prefix, "r"),
-		mod:get(prefix .. "_g") or mod.get_default_color_value(prefix, "g"),
-		mod:get(prefix .. "_b") or mod.get_default_color_value(prefix, "b"),
+		255,
+		mod.get_default_color_value(prefix, "r"),
+		mod.get_default_color_value(prefix, "g"),
+		mod.get_default_color_value(prefix, "b"),
 	}
 end
 
@@ -1203,12 +1212,7 @@ mod:hook(CLASS.PresenceEntryMyself, "character_name", function(func, self)
 		return name
 	end
 
-	local color = {
-		255,
-		mod:get("slot1_r"),
-		mod:get("slot1_g"),
-		mod:get("slot1_b"),
-	}
+	local color = get_color("slot1")
 	local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
 	return color_tag .. name .. "{#reset()}"
 end)
