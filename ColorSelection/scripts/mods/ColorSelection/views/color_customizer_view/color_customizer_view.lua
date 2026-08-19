@@ -8,7 +8,7 @@ local TextInputPassTemplates = require("scripts/ui/pass_templates/text_input_pas
 local ButtonPassTemplates = require("scripts/ui/pass_templates/button_pass_templates")
 
 local Definitions = mod:io_dofile("ColorSelection/scripts/mods/ColorSelection/views/color_customizer_view/color_customizer_view_definitions")
-local color_presets = mod:io_dofile("ColorSelection/scripts/mods/ColorSelection/color_presets") or {}
+local color_presets = mod:io_dofile("ColorSelection/scripts/mods/ColorSelection/views/color_customizer_view/color_presets") or {}
 
 
 local CONSTANTS = {
