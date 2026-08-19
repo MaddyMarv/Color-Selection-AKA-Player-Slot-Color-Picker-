@@ -6,7 +6,6 @@ local loc = {
         en = "Customize player colors in your game. Set default colors for each slot or create custom colors for specific players. Compatibility: For best results with TrueLevel and WhoAreYou mods, ensure ColorSelection loads AFTER them in your mod load order.",
     },
 
-    -- Group & Tab Names
     general_settings = {
         en = "General",
     },
@@ -20,7 +19,6 @@ local loc = {
         en = "Debug Mode",
     },
 
-    -- General Settings
     open_color_customizer_bind = {
         en = "Open Color Menu",
     },
@@ -94,7 +92,6 @@ local loc = {
         en = "When enabled, shows debug messages in console for troubleshooting slot assignments and color mappings. Turn this off for normal gameplay.",
     },
 
-    -- Color Menu UI Elements
     color_customizer_title = {
         en = "Player Color Customizer",
     },
@@ -182,7 +179,6 @@ local loc = {
         en = "Blue",
     },
 
-    -- Color Menu Text & Notifications
     players_list_title = {
         en = "Customized Players",
     },
@@ -233,7 +229,6 @@ local loc = {
         en = "You",
     },
 
-    -- Settings Sub-widgets Auto-localization
     slot1 = {
         en = "Slot 1 (Local Player)",
     },
