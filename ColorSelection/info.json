@@ -8,12 +8,13 @@
         "kofi": "https://ko-fi.com/indicabunny"
     },
     "description": "Lets you manually pick the HUD colors for you and your teammates.",
-    "order": {
-        "require": [
+    "dependencies": {
+        "required": [
             "SLOTFIX"
         ],
-        "this_before": [],
-        "this_after": []
+        "optional": [],
+        "self_before": [],
+        "self_after": []
     },
     "localization": {}
 }
