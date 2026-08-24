@@ -8,5 +8,13 @@ You can also select to colour bots a specific colour to identify them easier and
 
 REQUIRES SLOTFIX TO WORK PROPERLY. It works great with other mods and makes it easier to keep track of who is who.
 
+
+**Options:**
+- Open Color Menu (Hotkey)
+- Always Use Slot 1 Color for Self
+- Color Options (by Class, Player Outlines, Cyber-Mastiff Outlines, Bots, Own Name Outside Missions, Custom Players Outside Missions)
+- Local Chat Name Style [Vanilla (Uncolored 'You'), Colored 'You', Colored Character Name, Colored Account Name]
+- Bot
+
 🔗 **Links:** [Source Code](https://github.com/MaddyMarv/Color-Selection-AKA-Player-Slot-Color-Picker-) | [Nexus Mods Profile](https://www.nexusmods.com/profile/indicabunny) | [Support Me on Ko-fi](https://ko-fi.com/indicabunny)
 
