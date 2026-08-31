@@ -25,8 +25,6 @@ local MOD_CONSTANTS = mod.CONSTANTS or CONSTANTS
 
 local function _get_player_slot(p) return p:slot() end
 local function _get_player_account_id(p) return p:account_id() end
-local function _nameplate_extension_scan(e) e:_nameplate_extension_scan() end
-local function _companion_nameplate_extension_scan(e) e:_companion_nameplate_extension_scan() end
 
 local ColorCustomizerView = class("ColorCustomizerView", "BaseView")
 
@@ -1160,7 +1158,11 @@ function ColorCustomizerView:_load_player_info()
     end
 
 
-    if player_slot and player_slot >= 1 then
+    if type(player_slot) == "string" then
+        player_slot = tonumber(player_slot)
+    end
+
+    if type(player_slot) == "number" and player_slot >= 1 then
 
 
         local slot_prefix = "slot" .. tostring(player_slot)
@@ -1213,44 +1215,9 @@ function ColorCustomizerView:_on_apply_pressed()
 
         if mod.apply_slot_colors and type(mod.apply_slot_colors) == "function" then
             mod.apply_slot_colors()
-        end
-
-
-        if mod.update_player_panel_colors and type(mod.update_player_panel_colors) == "function" then
+        elseif mod.update_player_panel_colors and type(mod.update_player_panel_colors) == "function" then
             mod.update_player_panel_colors()
         end
-
-
-        local ui_manager = Managers and Managers.ui
-        if ui_manager then
-            local hud = ui_manager:get_hud()
-            if hud then
-                local nameplates_element = hud:element("HudElementNameplates")
-                if nameplates_element then
-
-                    if nameplates_element._nameplate_units then
-                        for unit, unit_data in pairs(nameplates_element._nameplate_units) do
-                            unit_data.synced = false
-                        end
-                    end
-
-                    if nameplates_element._companion_nameplates then
-                        for unit, companion_data in pairs(nameplates_element._companion_nameplates) do
-                            companion_data.synced = false
-                        end
-                    end
-
-                    nameplates_element._scan_delay_duration = 0
-                    if nameplates_element._nameplate_extension_scan then
-                        pcall(_nameplate_extension_scan, nameplates_element)
-                    end
-                    if nameplates_element._companion_nameplate_extension_scan then
-                        pcall(_companion_nameplate_extension_scan, nameplates_element)
-                    end
-                end
-            end
-        end
-
 
         self:_update_slot_button_colors()
 
@@ -1320,44 +1287,7 @@ function ColorCustomizerView:_on_apply_pressed()
     if mod.apply_slot_colors and type(mod.apply_slot_colors) == "function" then
         mod.apply_slot_colors()
     else
-
         mod.on_setting_changed("player_custom_color")
-    end
-
-
-    if mod.update_player_panel_colors and type(mod.update_player_panel_colors) == "function" then
-        mod.update_player_panel_colors()
-    end
-
-
-    local ui_manager = Managers and Managers.ui
-    if ui_manager then
-        local hud = ui_manager:get_hud()
-        if hud then
-            local nameplates_element = hud:element("HudElementNameplates")
-            if nameplates_element then
-
-                if nameplates_element._nameplate_units then
-                    for unit, unit_data in pairs(nameplates_element._nameplate_units) do
-                        unit_data.synced = false
-                    end
-                end
-
-                if nameplates_element._companion_nameplates then
-                    for unit, companion_data in pairs(nameplates_element._companion_nameplates) do
-                        companion_data.synced = false
-                    end
-                end
-
-                nameplates_element._scan_delay_duration = 0
-                if nameplates_element._nameplate_extension_scan then
-                    pcall(_nameplate_extension_scan, nameplates_element)
-                end
-                if nameplates_element._companion_nameplate_extension_scan then
-                    pcall(_companion_nameplate_extension_scan, nameplates_element)
-                end
-            end
-        end
     end
 
 
