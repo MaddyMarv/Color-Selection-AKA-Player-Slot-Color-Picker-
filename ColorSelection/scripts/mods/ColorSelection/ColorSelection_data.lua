@@ -5,6 +5,10 @@ local default_slot_colors = {
     {r = 180, g = 88,  b = 108},
     {r = 84,  g = 172, b = 121},
     {r = 126, g = 153, b = 230},
+    {r = 208, g = 136, b = 48},
+    {r = 198, g = 52,  b = 53},
+    {r = 74,  g = 177, b = 85},
+    {r = 76,  g = 132, b = 196},
     {r = 128, g = 128, b = 128},
 }
 
@@ -61,6 +65,12 @@ local widgets = {
         setting_id = "force_local_slot_1",
         type = "checkbox",
         default_value = true,
+      },
+      {
+        setting_id = "randomize_slot_colors",
+        type = "checkbox",
+        default_value = false,
+        tooltip = "randomize_slot_colors_tooltip",
       },
       {
         setting_id = "color_by_class",
@@ -122,7 +132,7 @@ local widgets = {
 }
 
 local slot_sub_widgets = {}
-for slot=1,4 do
+for slot=1,8 do
     slot_sub_widgets[#slot_sub_widgets+1] = slot_widgets(slot)
 end
 slot_sub_widgets[#slot_sub_widgets+1] = {

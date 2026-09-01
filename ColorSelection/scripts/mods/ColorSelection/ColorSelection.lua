@@ -79,6 +79,10 @@ function mod.get_default_color_value(prefix, component)
 		slot2 = {r = 180, g = 88, b = 108},
 		slot3 = {r = 84, g = 172, b = 121},
 		slot4 = {r = 126, g = 153, b = 230},
+		slot5 = {r = 230, g = 130, b = 50},
+		slot6 = {r = 150, g = 50, b = 230},
+		slot7 = {r = 50, g = 230, b = 200},
+		slot8 = {r = 230, g = 230, b = 50},
 		bot = {r = 128, g = 128, b = 128},
 		veteran = {r = 84,  g = 172, b = 121},
 		zealot  = {r = 180, g = 88,  b = 108},
@@ -235,8 +239,36 @@ local function get_slot_color(slot, is_local_player, is_bot)
 		slot = tonumber(slot)
 	end
 
-	if type(slot) == "number" and slot >= 1 and slot <= 4 then
+	if type(slot) == "number" and slot >= 1 and slot <= 8 then
 		local lp_slot = get_local_player_slot()
+		
+		if mod:get("randomize_slot_colors") then
+			if not mod._randomized_slot_map then
+				local pool = {1, 2, 3, 4, 5, 6, 7, 8}
+				local map = {}
+				
+				if force_slot_1 then
+					map[lp_slot] = 1
+					table.remove(pool, 1)
+				end
+				
+				for i = #pool, 2, -1 do
+					local j = math.random(i)
+					pool[i], pool[j] = pool[j], pool[i]
+				end
+				
+				local pool_idx = 1
+				for i = 1, 8 do
+					if not map[i] then
+						map[i] = pool[pool_idx]
+						pool_idx = pool_idx + 1
+					end
+				end
+				mod._randomized_slot_map = map
+			end
+			return get_color("slot" .. mod._randomized_slot_map[slot])
+		end
+
 		if force_slot_1 and lp_slot ~= 1 and slot == 1 then
 
 			return get_color("slot" .. lp_slot)
@@ -1882,6 +1914,12 @@ end
 mod.on_setting_changed = function(setting_id)
 	local triggers_update = false
 
+	if setting_id == "color_by_class" and mod:get("color_by_class") then
+		mod:set("randomize_slot_colors", false, true)
+	elseif setting_id == "randomize_slot_colors" and mod:get("randomize_slot_colors") then
+		mod:set("color_by_class", false, true)
+	end
+
 	if setting_id == "saved_player_colors" then
 		cached_saved_colors = mod:get("saved_player_colors")
 		cached_saved_colors_loaded = true
@@ -1891,6 +1929,9 @@ mod.on_setting_changed = function(setting_id)
 		triggers_update = true
 	elseif setting_id == "color_bots" or setting_id == "color_by_class"
 			or setting_id == "color_local_outside_mission" or setting_id == "color_custom_outside_mission" then
+		triggers_update = true
+	elseif setting_id == "randomize_slot_colors" then
+		mod._randomized_slot_map = nil
 		triggers_update = true
 	elseif setting_id == "force_local_slot_1" then
 		if mod:get("force_local_slot_1") == false then
@@ -1929,3 +1970,8 @@ mod.save_custom_player_colors = function(colors)
 	end
 end
 
+mod.on_game_state_changed = function(status, state_name)
+	if status == "enter" and state_name == "StateGameplay" then
+		mod._randomized_slot_map = nil
+	end
+end

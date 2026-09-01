@@ -208,6 +208,26 @@ function ColorCustomizerView:_setup_widgets()
         slot4_button.content.hotspot.pressed_callback = callback(self, "_on_slot_button_pressed", 4)
     end
 
+    local slot5_button = widgets_by_name.slot5_button
+    if slot5_button and slot5_button.content and slot5_button.content.hotspot then
+        slot5_button.content.hotspot.pressed_callback = callback(self, "_on_slot_button_pressed", 5)
+    end
+
+    local slot6_button = widgets_by_name.slot6_button
+    if slot6_button and slot6_button.content and slot6_button.content.hotspot then
+        slot6_button.content.hotspot.pressed_callback = callback(self, "_on_slot_button_pressed", 6)
+    end
+
+    local slot7_button = widgets_by_name.slot7_button
+    if slot7_button and slot7_button.content and slot7_button.content.hotspot then
+        slot7_button.content.hotspot.pressed_callback = callback(self, "_on_slot_button_pressed", 7)
+    end
+
+    local slot8_button = widgets_by_name.slot8_button
+    if slot8_button and slot8_button.content and slot8_button.content.hotspot then
+        slot8_button.content.hotspot.pressed_callback = callback(self, "_on_slot_button_pressed", 8)
+    end
+
     local bot_button = widgets_by_name.bot_button
     if bot_button and bot_button.content and bot_button.content.hotspot then
         bot_button.content.hotspot.pressed_callback = callback(self, "_on_slot_button_pressed", "bot")
@@ -892,7 +912,7 @@ function ColorCustomizerView:_update_slot_button_colors()
     local widgets_by_name = self._widgets_by_name
 
 
-    for slot = 1, 4 do
+    for slot = 1, 8 do
         local button_name = "slot" .. slot .. "_button"
         local button = widgets_by_name[button_name]
 
@@ -1413,6 +1433,14 @@ function ColorCustomizerView:_on_reset_pressed()
                 mod:set("slot3", {255, 84, 172, 121})
             elseif slot == 4 then
                 mod:set("slot4", {255, 126, 153, 230})
+            elseif slot == 5 then
+                mod:set("slot5", {255, 208, 136, 48})
+            elseif slot == 6 then
+                mod:set("slot6", {255, 198, 52, 53})
+            elseif slot == 7 then
+                mod:set("slot7", {255, 74, 177, 85})
+            elseif slot == 8 then
+                mod:set("slot8", {255, 76, 132, 196})
             end
         end
 
@@ -1498,6 +1526,10 @@ function ColorCustomizerView:_on_reset_all_slots_pressed()
     mod:set("slot2", {255, 180, 88, 108})
     mod:set("slot3", {255, 84, 172, 121})
     mod:set("slot4", {255, 126, 153, 230})
+    mod:set("slot5", {255, 208, 136, 48})
+    mod:set("slot6", {255, 198, 52, 53})
+    mod:set("slot7", {255, 74, 177, 85})
+    mod:set("slot8", {255, 76, 132, 196})
     mod:set("bot", {255, 128, 128, 128})
 
 

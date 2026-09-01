@@ -31,6 +31,12 @@ local loc = {
     force_local_slot_1_tooltip = {
         en = "When enabled, you will always appear in the Slot 1 color on your own screen. When disabled, your color will be determined by your actual server slot (like everyone else).",
     },
+    randomize_slot_colors = {
+        en = "Randomize Colors (Color Pool)",
+    },
+    randomize_slot_colors_tooltip = {
+        en = "When enabled, players will randomly receive one of the 8 slot colors each mission, instead of matching their strict lobby slot. No duplicates will be assigned. (Note: 'Always Use Slot 1 Color For Self' will still override this).",
+    },
     color_by_class = {
         en = "Color by Class",
     },
@@ -143,6 +149,18 @@ local loc = {
     },
     button_slot4 = {
         en = "Slot 4",
+    },
+    button_slot5 = {
+        en = "Slot 5",
+    },
+    button_slot6 = {
+        en = "Slot 6",
+    },
+    button_slot7 = {
+        en = "Slot 7",
+    },
+    button_slot8 = {
+        en = "Slot 8",
     },
     button_bot = {
         en = "Bot",
@@ -293,6 +311,70 @@ local loc = {
         en = "Blue",
     },
 
+    slot5 = {
+        en = "Slot 5",
+    },
+    slot5_preset = {
+        en = "Color Preset",
+    },
+    slot5_r = {
+        en = "Red",
+    },
+    slot5_g = {
+        en = "Green",
+    },
+    slot5_b = {
+        en = "Blue",
+    },
+
+    slot6 = {
+        en = "Slot 6",
+    },
+    slot6_preset = {
+        en = "Color Preset",
+    },
+    slot6_r = {
+        en = "Red",
+    },
+    slot6_g = {
+        en = "Green",
+    },
+    slot6_b = {
+        en = "Blue",
+    },
+
+    slot7 = {
+        en = "Slot 7",
+    },
+    slot7_preset = {
+        en = "Color Preset",
+    },
+    slot7_r = {
+        en = "Red",
+    },
+    slot7_g = {
+        en = "Green",
+    },
+    slot7_b = {
+        en = "Blue",
+    },
+
+    slot8 = {
+        en = "Slot 8",
+    },
+    slot8_preset = {
+        en = "Color Preset",
+    },
+    slot8_r = {
+        en = "Red",
+    },
+    slot8_g = {
+        en = "Green",
+    },
+    slot8_b = {
+        en = "Blue",
+    },
+
     bot = {
         en = "Bot Color",
     },
@@ -427,16 +509,20 @@ local default_slot_colors = {
     {r = 180, g = 88,  b = 108},
     {r = 84,  g = 172, b = 121},
     {r = 126, g = 153, b = 230},
+    {r = 230, g = 130, b = 50},
+    {r = 150, g = 50,  b = 230},
+    {r = 50,  g = 230, b = 200},
+    {r = 230, g = 230, b = 50},
     {r = 128, g = 128, b = 128},
 }
 
-for slot = 1, 4 do
+for slot = 1, 8 do
     local c = default_slot_colors[slot]
     local text = string.format("{#color(%s,%s,%s)}Default{#reset()}", c.r, c.g, c.b)
     loc["default_slot" .. slot] = { en = text }
 end
 
-local bot_c = default_slot_colors[5]
+local bot_c = default_slot_colors[9]
 loc.default_bot = { en = string.format("{#color(%s,%s,%s)}Default{#reset()}", bot_c.r, bot_c.g, bot_c.b) }
 
 local default_class_colors = {
