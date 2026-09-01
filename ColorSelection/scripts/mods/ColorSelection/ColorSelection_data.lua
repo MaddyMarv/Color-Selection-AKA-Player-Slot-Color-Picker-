@@ -100,6 +100,7 @@ local widgets = {
         title = "color_bots",
         tooltip = "color_bots_tooltip",
       },
+      
       {
         setting_id = "color_local_outside_mission",
         type = "checkbox",
@@ -141,6 +142,7 @@ slot_sub_widgets[#slot_sub_widgets+1] = {
     tab = "Colors",
     default_value = {255, 128, 128, 128},
 }
+
 
 widgets[#widgets+1] = {
     setting_id = "slot_colors_group",
@@ -187,3 +189,4 @@ return {
     widgets = widgets
   },
 }
+

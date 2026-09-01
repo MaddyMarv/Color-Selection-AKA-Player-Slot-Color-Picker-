@@ -419,7 +419,32 @@ get_color_for_account_id = function(account_id, slot)
 		return nil
 	end
 
-	return get_slot_color(slot, is_local, false)
+	local display_slot = slot
+	if display_slot and display_slot > 4 then
+		local pm = Managers and Managers.player
+		local human_players = pm and pm:human_players()
+		if human_players then
+			local occupied_by_humans = {}
+			for _, p in pairs(human_players) do
+				local success, id = pcall(_get_player_account_id, p)
+				if success and id ~= account_id then
+					local s_success, s = pcall(_get_player_slot, p)
+					if s_success and s and s <= 4 then
+						occupied_by_humans[s] = true
+					end
+				end
+			end
+			
+			for i = 1, 4 do
+				if not occupied_by_humans[i] then
+					display_slot = i
+					break
+				end
+			end
+		end
+	end
+
+	return get_slot_color(display_slot, is_local, false)
 end
 
 local function _on_player_removed(player)
@@ -1134,7 +1159,7 @@ mod:hook(CLASS.ConstantElementChat, "_participant_displayname", function(func, s
 	end
 
 	local account_id = participant and participant.account_id
-	if not account_id then
+	if not account_id or account_id == "" then
 		return display_name
 	end
 
@@ -1225,6 +1250,16 @@ mod:hook(CLASS.RemotePlayer, "name", function(func, self)
 	return apply_color_to_player_name(name, self)
 end)
 
+mod:hook(CLASS.BotPlayer, "name", function(func, self)
+	local name = func(self)
+
+	if not mod:is_enabled() then
+		return name
+	end
+
+	return apply_color_to_player_name(name, self)
+end)
+
 mod:hook(CLASS.PlayerInfo, "character_name", function(func, self)
 	local name = func(self)
 
@@ -1253,6 +1288,7 @@ mod:hook(CLASS.RemotePlayer, "character_name", function(func, self)
 
 	return apply_color_to_player_name(name, self)
 end)
+
 
 mod:hook(CLASS.PresenceEntryMyself, "character_name", function(func, self)
 	local name = func(self)
@@ -1513,19 +1549,39 @@ local function apply_slot_colors_internal()
 		current_table[k] = nil
 	end
 
-	for i = 1, 5 do
+	for i = 1, 8 do
 		if is_in_non_mission_context() then break end
 
 		local account_id = nil
-		local player = get_player_by_slot(i)
-		if player then
-			local success, result = pcall(_get_player_account_id, player)
-			if success then
-				account_id = result
+		local is_bot_in_slot = false
+		local pm = Managers and Managers.player
+		if pm and mod:get("color_bots") ~= false then
+			local bot_players = pm:bot_players()
+			if bot_players then
+				for _, p in pairs(bot_players) do
+					local success, s = pcall(_get_player_slot, p)
+					if success and s == i then
+						is_bot_in_slot = true
+						break
+					end
+				end
 			end
 		end
 
-		local color = get_color_for_account_id(account_id, i)
+		local color
+		if is_bot_in_slot then
+			color = get_color("bot")
+		else
+			local player = get_player_by_slot(i)
+			if player then
+				local success, result = pcall(_get_player_account_id, player)
+				if success then
+					account_id = result
+				end
+			end
+			color = get_color_for_account_id(account_id, i)
+		end
+
 		if color then
 			current_table[i] = color
 		end
@@ -1547,6 +1603,29 @@ end
 
 local function apply_slot_colors()
 	apply_slot_colors_internal()
+end
+mod.update = function(dt)
+	mod._bot_check_timer = (mod._bot_check_timer or 0) + dt
+	if mod._bot_check_timer > 0.5 then
+		mod._bot_check_timer = 0
+		
+		local pm = Managers and Managers.player
+		if pm then
+			local bot_count = 0
+			local bot_players = pm:bot_players()
+			if bot_players then
+				for _ in pairs(bot_players) do
+					bot_count = bot_count + 1
+				end
+			end
+			if bot_count ~= mod._last_bot_count then
+				mod._last_bot_count = bot_count
+				if type(mod.apply_slot_colors) == "function" then
+					mod.apply_slot_colors()
+				end
+			end
+		end
+	end
 end
 
 mod.apply_slot_colors = apply_slot_colors
@@ -1902,7 +1981,7 @@ mod.on_disabled = function()
 		restore_previous()
 
 		if in_gameplay_state then
-			update_player_panel_colors()
+			apply_slot_colors()
 		end
 	end
 
@@ -1910,6 +1989,29 @@ mod.on_disabled = function()
 	reset_nameplate_colors()
 	reset_character_outlines()
 end
+
+mod:hook_safe("PlayerManager", "add_player", function(self)
+	if in_gameplay_state then
+		mod:pcall(function()
+			apply_slot_colors()
+		end)
+	end
+end)
+
+mod:hook_safe("PlayerManager", "add_bot_player", function(self)
+	if in_gameplay_state then
+		mod:pcall(function()
+			apply_slot_colors()
+		end)
+	end
+end)
+mod:hook_safe("PlayerManager", "remove_player", function(self)
+	if in_gameplay_state then
+		mod:pcall(function()
+			apply_slot_colors()
+		end)
+	end
+end)
 
 mod.on_setting_changed = function(setting_id)
 	local triggers_update = false
@@ -1949,7 +2051,7 @@ mod.on_setting_changed = function(setting_id)
 	end
 
 	if triggers_update then
-		if UISettings and in_gameplay_state then
+		if UISettings then
 			apply_slot_colors()
 		end
 		update_player_panel_colors()

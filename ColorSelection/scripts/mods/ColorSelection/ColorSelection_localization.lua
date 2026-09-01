@@ -61,6 +61,7 @@ local loc = {
     color_bots_tooltip = {
         en = "When enabled, bots will use the color specified below. When disabled, they will use the default game color.",
     },
+    
     color_local_outside_mission = {
         en = "Color Own Name Outside Missions",
     },
@@ -548,3 +549,4 @@ for _, color_name in ipairs(Color.list) do
 end
 
 return loc
+
