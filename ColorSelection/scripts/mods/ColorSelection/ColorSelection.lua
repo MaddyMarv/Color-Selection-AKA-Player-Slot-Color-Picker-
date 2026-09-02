@@ -29,7 +29,7 @@ local function _get_player_profile(p) if not p then return nil end; local s, r =
 local function _get_user_display_name(p) if not p then return nil end; local s, r = pcall(function() return p:user_display_name(nil, true) end); return s and r or nil end
 local function _set_vector3_for_materials(unit, param, color, val) if Unit and Unit.set_vector3_for_materials then Unit.set_vector3_for_materials(unit, param, color, val) end end
 local function _get_is_human_controlled(p) if not p then return false end; local s, r = pcall(function() return p:is_human_controlled() end); return s and r or false end
-local function _get_is_bot(p) if not p then return false end; local s, r = pcall(function() return p:is_bot() end); return s and r or false end
+local function _get_is_bot(p) if not p then return false end; local s, r = pcall(function() return p:is_human_controlled() end); return s and not r or false end
 local function _get_mechanism_name(m) if not m then return nil end; local s, r = pcall(function() return m:mechanism_name() end); return s and r or nil end
 local function _get_mission_name(m) if not m then return nil end; local s, r = pcall(function() return m:mission_name() end); return s and r or nil end
 
@@ -366,11 +366,6 @@ get_color_for_account_id = function(account_id, slot)
 		return nil
 	end
 
-	if not account_id or account_id == "" then
-		if mod:get("color_bots") ~= false then
-			return get_color("bot")
-		end
-	end
 
 	local player = nil
 	if account_id and account_id ~= "" then
@@ -409,13 +404,18 @@ get_color_for_account_id = function(account_id, slot)
 		end
 	end
 
+	local is_bot = false
+	if player then
+		is_bot = _get_is_bot(player)
+	end
+
 	if is_local then
 		if not is_in_non_mission_context() or mod:get("color_local_outside_mission") then
 			if mod:get("color_by_class") and player and mod:get("force_local_slot_1") == false then
 				local class_color = get_class_color(player)
 				if class_color then return class_color end
 			end
-			return get_slot_color(slot, true, false)
+			return get_slot_color(slot, true, is_bot)
 		end
 		return nil
 	end
@@ -429,7 +429,7 @@ get_color_for_account_id = function(account_id, slot)
 		return nil
 	end
 
-	return get_slot_color(slot, is_local, false)
+	return get_slot_color(slot, is_local, is_bot)
 end
 
 local function _on_player_removed(player)
