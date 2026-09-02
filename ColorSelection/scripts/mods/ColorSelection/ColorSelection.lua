@@ -239,8 +239,17 @@ local function get_slot_color(slot, is_local_player, is_bot)
 		slot = tonumber(slot)
 	end
 
-	if type(slot) == "number" and slot >= 1 and slot <= 8 then
-		local lp_slot = get_local_player_slot()
+	if type(slot) == "number" then
+		if slot > 8 then
+			if force_slot_1 then
+				slot = ((slot - 9) % 7) + 2
+			else
+				slot = ((slot - 9) % 8) + 1
+			end
+		end
+		
+		if slot >= 1 and slot <= 8 then
+			local lp_slot = get_local_player_slot()
 		
 		if mod:get("randomize_slot_colors") then
 			if not mod._randomized_slot_map then
@@ -274,6 +283,7 @@ local function get_slot_color(slot, is_local_player, is_bot)
 			return get_color("slot" .. lp_slot)
 		end
 		return get_color("slot" .. slot)
+	end
 	end
 
 	return nil
@@ -419,32 +429,7 @@ get_color_for_account_id = function(account_id, slot)
 		return nil
 	end
 
-	local display_slot = slot
-	if display_slot and display_slot > 4 then
-		local pm = Managers and Managers.player
-		local human_players = pm and pm:human_players()
-		if human_players then
-			local occupied_by_humans = {}
-			for _, p in pairs(human_players) do
-				local success, id = pcall(_get_player_account_id, p)
-				if success and id ~= account_id then
-					local s_success, s = pcall(_get_player_slot, p)
-					if s_success and s and s <= 4 then
-						occupied_by_humans[s] = true
-					end
-				end
-			end
-			
-			for i = 1, 4 do
-				if not occupied_by_humans[i] then
-					display_slot = i
-					break
-				end
-			end
-		end
-	end
-
-	return get_slot_color(display_slot, is_local, false)
+	return get_slot_color(slot, is_local, false)
 end
 
 local function _on_player_removed(player)
@@ -2027,7 +2012,7 @@ mod.on_setting_changed = function(setting_id)
 		cached_saved_colors_loaded = true
 		triggers_update = true
 	end
-	if string.find(setting_id, "slot%d") or string.find(setting_id, "bot_") then
+	if string.find(setting_id, "slot%d") or string.find(setting_id, "bot_") or setting_id == "bot" then
 		triggers_update = true
 	elseif setting_id == "color_bots" or setting_id == "color_by_class"
 			or setting_id == "color_local_outside_mission" or setting_id == "color_custom_outside_mission" then
