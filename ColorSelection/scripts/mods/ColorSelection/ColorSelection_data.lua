@@ -5,10 +5,6 @@ local default_slot_colors = {
     {r = 180, g = 88,  b = 108},
     {r = 84,  g = 172, b = 121},
     {r = 126, g = 153, b = 230},
-    {r = 208, g = 136, b = 48},
-    {r = 198, g = 52,  b = 53},
-    {r = 74,  g = 177, b = 85},
-    {r = 76,  g = 132, b = 196},
     {r = 128, g = 128, b = 128},
 }
 
@@ -67,12 +63,6 @@ local widgets = {
         default_value = true,
       },
       {
-        setting_id = "randomize_slot_colors",
-        type = "checkbox",
-        default_value = false,
-        tooltip = "randomize_slot_colors_tooltip",
-      },
-      {
         setting_id = "color_by_class",
         type = "checkbox",
         default_value = false,
@@ -100,7 +90,6 @@ local widgets = {
         title = "color_bots",
         tooltip = "color_bots_tooltip",
       },
-      
       {
         setting_id = "color_local_outside_mission",
         type = "checkbox",
@@ -133,7 +122,7 @@ local widgets = {
 }
 
 local slot_sub_widgets = {}
-for slot=1,8 do
+for slot=1,4 do
     slot_sub_widgets[#slot_sub_widgets+1] = slot_widgets(slot)
 end
 slot_sub_widgets[#slot_sub_widgets+1] = {
@@ -142,7 +131,6 @@ slot_sub_widgets[#slot_sub_widgets+1] = {
     tab = "Colors",
     default_value = {255, 128, 128, 128},
 }
-
 
 widgets[#widgets+1] = {
     setting_id = "slot_colors_group",
@@ -189,4 +177,3 @@ return {
     widgets = widgets
   },
 }
-

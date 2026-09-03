@@ -10,8 +10,8 @@ local ColorUtilities = require("scripts/utilities/ui/colors")
 
 local grid_spacing = { 10, 10 }
 local preset_grid_width = 400
-local preset_window_size = { preset_grid_width, 810 }
-local preset_grid_size = { preset_grid_width, 810 }
+local preset_window_size = { preset_grid_width, 760 }
+local preset_grid_size = { preset_grid_width, 760 }
 local preset_element_size = { 380, 70 }
 local preset_grid_settings = {
 	scrollbar_width = 7,
@@ -25,8 +25,8 @@ local preset_grid_settings = {
 }
 
 local players_grid_width = 400
-local players_window_size = { players_grid_width, 810 }
-local players_grid_size = { players_grid_width, 810 }
+local players_window_size = { players_grid_width, 760 }
+local players_grid_size = { players_grid_width, 760 }
 local players_element_size = { 350, 30 }
 local players_grid_settings = {
 	scrollbar_width = 7,
@@ -52,7 +52,7 @@ local scenegraph_definition = {
         parent = "background",
         vertical_alignment = "center",
         horizontal_alignment = "center",
-        size = { 600, 810 },
+        size = { 600, 760 },
         position = { 0, 0, 0 }
     },
     preset_grid_pivot = {
@@ -60,7 +60,7 @@ local scenegraph_definition = {
         vertical_alignment = "center",
         horizontal_alignment = "center",
         size = { 0, 0 },
-        position = { -730, -405, 10 }
+        position = { -730, -380, 10 }
     },
     player_info_text = {
         parent = "window",
@@ -111,47 +111,12 @@ local scenegraph_definition = {
         size = { 100, 40 },
         position = { 220, 0, 0 }
     },
-    slot_buttons_container_2 = {
-        parent = "window",
-        vertical_alignment = "top",
-        horizontal_alignment = "center",
-        size = { 550, 40 },
-        position = { 0, 140, 0 }
-    },
-    slot5_button = {
-        parent = "slot_buttons_container_2",
-        vertical_alignment = "center",
-        horizontal_alignment = "center",
-        size = { 100, 40 },
-        position = { -165, 0, 0 }
-    },
-    slot6_button = {
-        parent = "slot_buttons_container_2",
-        vertical_alignment = "center",
-        horizontal_alignment = "center",
-        size = { 100, 40 },
-        position = { -55, 0, 0 }
-    },
-    slot7_button = {
-        parent = "slot_buttons_container_2",
-        vertical_alignment = "center",
-        horizontal_alignment = "center",
-        size = { 100, 40 },
-        position = { 55, 0, 0 }
-    },
-    slot8_button = {
-        parent = "slot_buttons_container_2",
-        vertical_alignment = "center",
-        horizontal_alignment = "center",
-        size = { 100, 40 },
-        position = { 165, 0, 0 }
-    },
     class_buttons_container = {
         parent = "window",
         vertical_alignment = "top",
         horizontal_alignment = "center",
         size = { 550, 40 },
-        position = { 0, 190, 0 }
+        position = { 0, 140, 0 }
     },
     veteran_button = {
         parent = "class_buttons_container",
@@ -207,63 +172,63 @@ local scenegraph_definition = {
         vertical_alignment = "top",
         horizontal_alignment = "center",
         size = { 550, 40 },
-        position = { 0, 240, 10 }
+        position = { 0, 190, 10 }
     },
     color_preview = {
         parent = "window",
         vertical_alignment = "top",
         horizontal_alignment = "center",
         size = { 150, 150 },
-        position = { 0, 300, 0 }
+        position = { 0, 250, 0 }
     },
     red_slider = {
         parent = "window",
         vertical_alignment = "top",
         horizontal_alignment = "left",
         size = { 450, 30 },
-        position = { 30, 480, 5 }
+        position = { 30, 430, 5 }
     },
     red_input = {
         parent = "window",
         vertical_alignment = "top",
         horizontal_alignment = "right",
         size = { 80, 30 },
-        position = { -30, 480, 10 }
+        position = { -30, 430, 10 }
     },
     green_slider = {
         parent = "window",
         vertical_alignment = "top",
         horizontal_alignment = "left",
         size = { 450, 30 },
-        position = { 30, 530, 5 }
+        position = { 30, 480, 5 }
     },
     green_input = {
         parent = "window",
         vertical_alignment = "top",
         horizontal_alignment = "right",
         size = { 80, 30 },
-        position = { -30, 530, 10 }
+        position = { -30, 480, 10 }
     },
     blue_slider = {
         parent = "window",
         vertical_alignment = "top",
         horizontal_alignment = "left",
         size = { 450, 30 },
-        position = { 30, 580, 5 }
+        position = { 30, 530, 5 }
     },
     blue_input = {
         parent = "window",
         vertical_alignment = "top",
         horizontal_alignment = "right",
         size = { 80, 30 },
-        position = { -30, 580, 10 }
+        position = { -30, 530, 10 }
     },
     hex_input = {
         parent = "window",
         vertical_alignment = "top",
         horizontal_alignment = "center",
         size = { 200, 40 },
-        position = { 0, 640, 10 }
+        position = { 0, 590, 10 }
     },
     apply_button = {
         parent = "window",
@@ -311,7 +276,7 @@ local scenegraph_definition = {
         parent = "window",
         vertical_alignment = "center",
         horizontal_alignment = "center",
-        size = { 400, 810 },
+        size = { 400, 760 },
         position = { 510, 0, 10 }
     },
     players_grid_pivot = {
@@ -1130,174 +1095,6 @@ local widget_definitions = {
             }
         }
     }, "slot4_button"),
-
-    slot5_button = UIWidget.create_definition({
-        {
-            pass_type = "hotspot",
-            content_id = "hotspot",
-            content = {
-                on_pressed_sound = UISoundEvents.default_click
-            }
-        },
-        {
-            pass_type = "rect",
-            style = {
-                vertical_alignment = "center",
-                horizontal_alignment = "center",
-                color = Color.terminal_background(255, true),
-                offset = { 0, 0, 0 }
-            }
-        },
-        {
-            pass_type = "rect",
-            style_id = "color_swatch",
-            style = {
-                vertical_alignment = "top",
-                horizontal_alignment = "left",
-                color = { 255, 255, 255, 255 },
-                size = { 100, 8 },
-                offset = { 0, 0, 1 }
-            }
-        },
-        {
-            pass_type = "text",
-            value = mod:localize("button_slot5"),
-            style = {
-                text_vertical_alignment = "center",
-                text_horizontal_alignment = "center",
-                font_type = "machine_medium",
-                font_size = 16,
-                text_color = Color.terminal_text_body(255, true),
-                offset = { 0, 0, 2 }
-            }
-        }
-    }, "slot5_button"),
-
-    slot6_button = UIWidget.create_definition({
-        {
-            pass_type = "hotspot",
-            content_id = "hotspot",
-            content = {
-                on_pressed_sound = UISoundEvents.default_click
-            }
-        },
-        {
-            pass_type = "rect",
-            style = {
-                vertical_alignment = "center",
-                horizontal_alignment = "center",
-                color = Color.terminal_background(255, true),
-                offset = { 0, 0, 0 }
-            }
-        },
-        {
-            pass_type = "rect",
-            style_id = "color_swatch",
-            style = {
-                vertical_alignment = "top",
-                horizontal_alignment = "left",
-                color = { 255, 255, 255, 255 },
-                size = { 100, 8 },
-                offset = { 0, 0, 1 }
-            }
-        },
-        {
-            pass_type = "text",
-            value = mod:localize("button_slot6"),
-            style = {
-                text_vertical_alignment = "center",
-                text_horizontal_alignment = "center",
-                font_type = "machine_medium",
-                font_size = 16,
-                text_color = Color.terminal_text_body(255, true),
-                offset = { 0, 0, 2 }
-            }
-        }
-    }, "slot6_button"),
-
-    slot7_button = UIWidget.create_definition({
-        {
-            pass_type = "hotspot",
-            content_id = "hotspot",
-            content = {
-                on_pressed_sound = UISoundEvents.default_click
-            }
-        },
-        {
-            pass_type = "rect",
-            style = {
-                vertical_alignment = "center",
-                horizontal_alignment = "center",
-                color = Color.terminal_background(255, true),
-                offset = { 0, 0, 0 }
-            }
-        },
-        {
-            pass_type = "rect",
-            style_id = "color_swatch",
-            style = {
-                vertical_alignment = "top",
-                horizontal_alignment = "left",
-                color = { 255, 255, 255, 255 },
-                size = { 100, 8 },
-                offset = { 0, 0, 1 }
-            }
-        },
-        {
-            pass_type = "text",
-            value = mod:localize("button_slot7"),
-            style = {
-                text_vertical_alignment = "center",
-                text_horizontal_alignment = "center",
-                font_type = "machine_medium",
-                font_size = 16,
-                text_color = Color.terminal_text_body(255, true),
-                offset = { 0, 0, 2 }
-            }
-        }
-    }, "slot7_button"),
-
-    slot8_button = UIWidget.create_definition({
-        {
-            pass_type = "hotspot",
-            content_id = "hotspot",
-            content = {
-                on_pressed_sound = UISoundEvents.default_click
-            }
-        },
-        {
-            pass_type = "rect",
-            style = {
-                vertical_alignment = "center",
-                horizontal_alignment = "center",
-                color = Color.terminal_background(255, true),
-                offset = { 0, 0, 0 }
-            }
-        },
-        {
-            pass_type = "rect",
-            style_id = "color_swatch",
-            style = {
-                vertical_alignment = "top",
-                horizontal_alignment = "left",
-                color = { 255, 255, 255, 255 },
-                size = { 100, 8 },
-                offset = { 0, 0, 1 }
-            }
-        },
-        {
-            pass_type = "text",
-            value = mod:localize("button_slot8"),
-            style = {
-                text_vertical_alignment = "center",
-                text_horizontal_alignment = "center",
-                font_type = "machine_medium",
-                font_size = 16,
-                text_color = Color.terminal_text_body(255, true),
-                offset = { 0, 0, 2 }
-            }
-        }
-    }, "slot8_button"),
 
     bot_button = UIWidget.create_definition({
         {

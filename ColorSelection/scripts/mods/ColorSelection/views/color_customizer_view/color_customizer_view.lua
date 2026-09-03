@@ -25,6 +25,8 @@ local MOD_CONSTANTS = mod.CONSTANTS or CONSTANTS
 
 local function _get_player_slot(p) return p:slot() end
 local function _get_player_account_id(p) return p:account_id() end
+local function _nameplate_extension_scan(e) e:_nameplate_extension_scan() end
+local function _companion_nameplate_extension_scan(e) e:_companion_nameplate_extension_scan() end
 
 local ColorCustomizerView = class("ColorCustomizerView", "BaseView")
 
@@ -206,26 +208,6 @@ function ColorCustomizerView:_setup_widgets()
     local slot4_button = widgets_by_name.slot4_button
     if slot4_button and slot4_button.content and slot4_button.content.hotspot then
         slot4_button.content.hotspot.pressed_callback = callback(self, "_on_slot_button_pressed", 4)
-    end
-
-    local slot5_button = widgets_by_name.slot5_button
-    if slot5_button and slot5_button.content and slot5_button.content.hotspot then
-        slot5_button.content.hotspot.pressed_callback = callback(self, "_on_slot_button_pressed", 5)
-    end
-
-    local slot6_button = widgets_by_name.slot6_button
-    if slot6_button and slot6_button.content and slot6_button.content.hotspot then
-        slot6_button.content.hotspot.pressed_callback = callback(self, "_on_slot_button_pressed", 6)
-    end
-
-    local slot7_button = widgets_by_name.slot7_button
-    if slot7_button and slot7_button.content and slot7_button.content.hotspot then
-        slot7_button.content.hotspot.pressed_callback = callback(self, "_on_slot_button_pressed", 7)
-    end
-
-    local slot8_button = widgets_by_name.slot8_button
-    if slot8_button and slot8_button.content and slot8_button.content.hotspot then
-        slot8_button.content.hotspot.pressed_callback = callback(self, "_on_slot_button_pressed", 8)
     end
 
     local bot_button = widgets_by_name.bot_button
@@ -912,7 +894,7 @@ function ColorCustomizerView:_update_slot_button_colors()
     local widgets_by_name = self._widgets_by_name
 
 
-    for slot = 1, 8 do
+    for slot = 1, 4 do
         local button_name = "slot" .. slot .. "_button"
         local button = widgets_by_name[button_name]
 
@@ -1178,11 +1160,7 @@ function ColorCustomizerView:_load_player_info()
     end
 
 
-    if type(player_slot) == "string" then
-        player_slot = tonumber(player_slot)
-    end
-
-    if type(player_slot) == "number" and player_slot >= 1 then
+    if player_slot and player_slot >= 1 then
 
 
         local slot_prefix = "slot" .. tostring(player_slot)
@@ -1235,9 +1213,44 @@ function ColorCustomizerView:_on_apply_pressed()
 
         if mod.apply_slot_colors and type(mod.apply_slot_colors) == "function" then
             mod.apply_slot_colors()
-        elseif mod.update_player_panel_colors and type(mod.update_player_panel_colors) == "function" then
+        end
+
+
+        if mod.update_player_panel_colors and type(mod.update_player_panel_colors) == "function" then
             mod.update_player_panel_colors()
         end
+
+
+        local ui_manager = Managers and Managers.ui
+        if ui_manager then
+            local hud = ui_manager:get_hud()
+            if hud then
+                local nameplates_element = hud:element("HudElementNameplates")
+                if nameplates_element then
+
+                    if nameplates_element._nameplate_units then
+                        for unit, unit_data in pairs(nameplates_element._nameplate_units) do
+                            unit_data.synced = false
+                        end
+                    end
+
+                    if nameplates_element._companion_nameplates then
+                        for unit, companion_data in pairs(nameplates_element._companion_nameplates) do
+                            companion_data.synced = false
+                        end
+                    end
+
+                    nameplates_element._scan_delay_duration = 0
+                    if nameplates_element._nameplate_extension_scan then
+                        pcall(_nameplate_extension_scan, nameplates_element)
+                    end
+                    if nameplates_element._companion_nameplate_extension_scan then
+                        pcall(_companion_nameplate_extension_scan, nameplates_element)
+                    end
+                end
+            end
+        end
+
 
         self:_update_slot_button_colors()
 
@@ -1307,7 +1320,44 @@ function ColorCustomizerView:_on_apply_pressed()
     if mod.apply_slot_colors and type(mod.apply_slot_colors) == "function" then
         mod.apply_slot_colors()
     else
+
         mod.on_setting_changed("player_custom_color")
+    end
+
+
+    if mod.update_player_panel_colors and type(mod.update_player_panel_colors) == "function" then
+        mod.update_player_panel_colors()
+    end
+
+
+    local ui_manager = Managers and Managers.ui
+    if ui_manager then
+        local hud = ui_manager:get_hud()
+        if hud then
+            local nameplates_element = hud:element("HudElementNameplates")
+            if nameplates_element then
+
+                if nameplates_element._nameplate_units then
+                    for unit, unit_data in pairs(nameplates_element._nameplate_units) do
+                        unit_data.synced = false
+                    end
+                end
+
+                if nameplates_element._companion_nameplates then
+                    for unit, companion_data in pairs(nameplates_element._companion_nameplates) do
+                        companion_data.synced = false
+                    end
+                end
+
+                nameplates_element._scan_delay_duration = 0
+                if nameplates_element._nameplate_extension_scan then
+                    pcall(_nameplate_extension_scan, nameplates_element)
+                end
+                if nameplates_element._companion_nameplate_extension_scan then
+                    pcall(_companion_nameplate_extension_scan, nameplates_element)
+                end
+            end
+        end
     end
 
 
@@ -1433,14 +1483,6 @@ function ColorCustomizerView:_on_reset_pressed()
                 mod:set("slot3", {255, 84, 172, 121})
             elseif slot == 4 then
                 mod:set("slot4", {255, 126, 153, 230})
-            elseif slot == 5 then
-                mod:set("slot5", {255, 208, 136, 48})
-            elseif slot == 6 then
-                mod:set("slot6", {255, 198, 52, 53})
-            elseif slot == 7 then
-                mod:set("slot7", {255, 74, 177, 85})
-            elseif slot == 8 then
-                mod:set("slot8", {255, 76, 132, 196})
             end
         end
 
@@ -1526,10 +1568,6 @@ function ColorCustomizerView:_on_reset_all_slots_pressed()
     mod:set("slot2", {255, 180, 88, 108})
     mod:set("slot3", {255, 84, 172, 121})
     mod:set("slot4", {255, 126, 153, 230})
-    mod:set("slot5", {255, 208, 136, 48})
-    mod:set("slot6", {255, 198, 52, 53})
-    mod:set("slot7", {255, 74, 177, 85})
-    mod:set("slot8", {255, 76, 132, 196})
     mod:set("bot", {255, 128, 128, 128})
 
 
