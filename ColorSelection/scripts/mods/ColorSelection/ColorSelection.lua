@@ -553,7 +553,7 @@ local function apply_widget_color(panel)
 	end
 
 	if not color then
-		if widget.content and widget.content.text then
+		if widget.content and type(widget.content.text) == "string" then
 			local stripped = widget.content.text:gsub("^{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}$", "")
 			if widget.content.text ~= stripped then
 				widget.content.text = stripped
@@ -564,7 +564,7 @@ local function apply_widget_color(panel)
 		return
 	end
 
-	if widget.content and widget.content.text then
+	if widget.content and type(widget.content.text) == "string" then
 		local current_text = widget.content.text
 		local new_text = apply_color_to_name_only(current_text, color)
 		widget.content.text = new_text
@@ -649,7 +649,7 @@ mod:hook_safe("HudElementTeamPlayerPanelHub", "update", function(self)
 			local widget = self._widgets_by_name and self._widgets_by_name.player_name
 
 			if not color then
-				if widget and widget.content and widget.content.text then
+				if widget and widget.content and type(widget.content.text) == "string" then
 					local stripped = widget.content.text:gsub("^{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}$", "")
 					if widget.content.text ~= stripped then
 						widget.content.text = stripped
@@ -660,7 +660,7 @@ mod:hook_safe("HudElementTeamPlayerPanelHub", "update", function(self)
 			end
 
 
-			if widget and widget.content and widget.content.text and not self.tl_modified and not self.wru_modified then
+			if widget and widget.content and type(widget.content.text) == "string" and not self.tl_modified and not self.wru_modified then
 				local current_text = widget.content.text
 				local new_text = apply_color_to_name_only(current_text, color)
 				widget.content.text = new_text
@@ -833,7 +833,7 @@ local function apply_nameplate_color(marker)
         end
     end
 
-    if content.header_text then
+    if content.header_text and type(content.header_text) == "string" then
         local header = content.header_text
 
         if is_companion then
@@ -1629,7 +1629,7 @@ local function reset_team_panel_colors()
             end
 
             local widget = p._widgets_by_name.player_name
-            if widget and widget.content and widget.content.text then
+            if widget and widget.content and type(widget.content.text) == "string" then
                 widget.content.text = _strip_cs_color_tags(widget.content.text)
                 widget.dirty = true
             end
@@ -1654,11 +1654,11 @@ local function reset_nameplate_colors()
         local marker_type = marker.type
         if marker_type and (marker_type:match("nameplate") or marker_type:match("companion")) then
             if marker.widget and marker.widget.content then
-                if marker.widget.content.header_text then
+                if marker.widget.content.header_text and type(marker.widget.content.header_text) == "string" then
                     marker.widget.content.header_text = _strip_cs_color_tags(marker.widget.content.header_text)
                     marker._cs_last_header = nil
                 end
-                if marker_type:match("companion") and marker.widget.content.icon_text then
+                if marker_type:match("companion") and marker.widget.content.icon_text and type(marker.widget.content.icon_text) == "string" then
                     marker.widget.content.icon_text = _strip_cs_color_tags(marker.widget.content.icon_text)
                 end
             end
