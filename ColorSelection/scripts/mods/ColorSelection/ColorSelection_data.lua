@@ -143,7 +143,7 @@ local class_sub_widgets = {}
 local classes = {"veteran", "zealot", "psyker", "ogryn", "broker", "adamant", "cryptic"}
 for _, class_name in ipairs(classes) do
     local cw = class_widgets(class_name)
-    cw.tab = "Colors" -- Force it to stay on the same tab
+    cw.tab = "Colors"
     class_sub_widgets[#class_sub_widgets+1] = cw
 end
 
