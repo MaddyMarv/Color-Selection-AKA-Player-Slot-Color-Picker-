@@ -1,0 +1,31 @@
+Standalone mod that lets you pick exactly what colors you want to see for player slots instead of the random colors the game assigns. You can set custom colors for yourself and slots 2, 3, and 4.
+
+You can also select to colour bots a specific colour to identify them easier and color teammates based on class!
+
+REQUIRES SLOTFIX TO WORK PROPERLY. It works great with other mods and makes it easier to keep track of who is who.
+
+[b]Options:[/b]
+
+[b]General[/b]
+- Open Color Customizer Menu (Hotkey)
+- Always Use Slot 1 Color for Self
+- Color by Class
+- Color Player Outlines
+- Color Cyber-Mastiff Outlines
+- Color Bots
+- Color Own Name Outside Missions
+- Color Custom Players Outside Missions
+- Local Chat Name Style [Vanilla (Uncolored 'You'), Colored 'You', Colored Character Name, Colored Account Name]
+
+[b]Colors[/b]
+- Custom Player Slot Colors (Slot 1, Slot 2, Slot 3, Slot 4, Bots)
+- Custom Class Colors (Veteran, Zealot, Psyker, Ogryn, Broker, Adamant, Cryptic)
+
+[b]Debug[/b]
+- Debug Mode
+
+[b]Commands:[/b]
+- /cs_menu - Open color customizer menu
+- /cs_sync - Sync and apply color settings
+
+[b]Links:[/b] [url=https://github.com/MaddyMarv/Color-Selection-AKA-Player-Slot-Color-Picker-]Source Code[/url] | [url=https://www.nexusmods.com/profile/indicabunny]Nexus Mods Profile[/url] | [url=https://ko-fi.com/indicabunny]Support Me on Ko-fi[/url]
