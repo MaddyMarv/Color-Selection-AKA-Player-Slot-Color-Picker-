@@ -1964,7 +1964,7 @@ mod.on_setting_changed = function(setting_id)
 		cached_saved_colors_loaded = true
 		triggers_update = true
 	end
-	if string.find(setting_id, "slot%d") or string.find(setting_id, "bot_") then
+	if string.find(setting_id, "slot%d") or string.find(setting_id, "bot_") or setting_id == "bot" then
 		triggers_update = true
 	elseif setting_id == "color_bots" or setting_id == "color_by_class"
 			or setting_id == "color_local_outside_mission" or setting_id == "color_custom_outside_mission" then
