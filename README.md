@@ -1,13 +1,9 @@
 ### [Color Selection (Player Slot Color Picker)](https://www.nexusmods.com/warhammer40kdarktide/mods/631)
 <img width="688" height="378" alt="image" src="https://github.com/user-attachments/assets/3c4b5596-b0e3-43b8-bed4-3b7bb8867aac" />
 
-Standalone mod that lets you pick what colors you want to see for player slots instead of the random colors the game assigns. You can set custom colors for yourself and slots 2, 3, and 4. 
+Set custom HUD colors for player slots, bots, or character classes.
 
-You can also select to colour bots a specific colour to identify them easier and color teammates based on class.
-
-REQUIRES SLOTFIX TO WORK PROPERLY
-
-It works great with other mods and makes it easier to keep track of who is who.
+Requires SLOTFIX to work properly.
 
 **Options:**
 
