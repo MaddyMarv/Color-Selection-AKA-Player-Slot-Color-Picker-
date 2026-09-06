@@ -9,6 +9,8 @@ You can also select to colour bots a specific colour to identify them easier and
 REQUIRES SLOTFIX TO WORK PROPERLY. It works great with other mods and makes it easier to keep track of who is who.
 
 **Options:**
+
+**General**
 - Open Color Customizer Menu (Hotkey)
 - Always Use Slot 1 Color for Self
 - Color by Class
