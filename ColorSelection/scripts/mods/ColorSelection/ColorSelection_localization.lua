@@ -3,7 +3,7 @@ local loc = {
         en = "Color Selection",
     },
     mod_description = {
-        en = "Customize player colors in your game. Set default colors for each slot or create custom colors for specific players. Compatibility: For best results with TrueLevel and WhoAreYou mods, ensure ColorSelection loads AFTER them in your mod load order.",
+        en = "Set custom HUD colors for player slots, bots, or character classes.",
     },
 
     general_settings = {
