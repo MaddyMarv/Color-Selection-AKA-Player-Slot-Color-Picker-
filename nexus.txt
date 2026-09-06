@@ -28,4 +28,5 @@ REQUIRES SLOTFIX TO WORK PROPERLY. It works great with other mods and makes it e
 - /cs_menu - Open color customizer menu
 - /cs_sync - Sync and apply color settings
 
-[b]Links:[/b] [url=https://github.com/MaddyMarv/Color-Selection-AKA-Player-Slot-Color-Picker-]Source Code[/url] | [url=https://www.nexusmods.com/profile/indicabunny]Nexus Mods Profile[/url] | [url=https://ko-fi.com/indicabunny]Support Me on Ko-fi[/url]
+[b]Links:[/b]
+[url=https://github.com/MaddyMarv/Color-Selection-AKA-Player-Slot-Color-Picker-]Source Code[/url] | [url=https://www.nexusmods.com/profile/indicabunny]Nexus Mods Profile[/url] | [url=https://ko-fi.com/indicabunny]Support Me on Ko-fi[/url]
