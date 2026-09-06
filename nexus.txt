@@ -1,7 +1,6 @@
-
 Standalone mod that lets you pick what colors you want to see for player slots instead of the random colors the game assigns. You can set custom colors for yourself and slots 2, 3, and 4. 
 
-You can also select to colour bots a specific colour to identify them easier and color teammates based on class!
+You can also select to colour bots a specific colour to identify them easier and color teammates based on class.
 
 REQUIRES SLOTFIX TO WORK PROPERLY
 
