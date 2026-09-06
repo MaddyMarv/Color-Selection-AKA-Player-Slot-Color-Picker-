@@ -21,7 +21,7 @@ REQUIRES SLOTFIX TO WORK PROPERLY. It works great with other mods and makes it e
 - Color Custom Players Outside Missions
 - Local Chat Name Style [Vanilla (Uncolored 'You'), Colored 'You', Colored Character Name, Colored Account Name]
 
-**Player Slot & Class Colors**
+**Colors**
 - Custom Player Slot Colors (Slot 1, Slot 2, Slot 3, Slot 4, Bots)
 - Custom Class Colors (Veteran, Zealot, Psyker, Ogryn, Broker, Adamant, Cryptic)
 
