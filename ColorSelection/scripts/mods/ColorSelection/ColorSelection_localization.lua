@@ -55,11 +55,23 @@ local loc = {
     color_bots_tooltip = {
         en = "When enabled, bots will use the color specified below. When disabled, they will use the default game color.",
     },
+    color_local_inside_mission = {
+        en = "Color Own Name Inside Missions",
+    },
+    color_local_inside_mission_tooltip = {
+        en = "When enabled, your own name will be colored during missions. When disabled, your name remains vanilla uncolored while icons, UI elements, and outlines are still colored.",
+    },
+    color_names = {
+        en = "Color Other Names Inside Missions",
+    },
+    color_names_tooltip = {
+        en = "When enabled, teammate and other player names are colored during missions. When disabled, their names remain vanilla uncolored while icons, UI elements, and outlines are still colored.",
+    },
     color_local_outside_mission = {
         en = "Color Own Name Outside Missions",
     },
     color_local_outside_mission_tooltip = {
-        en = "When enabled, your own name and HUD elements show in your custom color even in the hub and Mourningstar. When disabled, your color only appears during actual missions.",
+        en = "When enabled, your own name and HUD elements show in your custom color in the hub and Mourningstar. When disabled, your own name remains vanilla uncolored outside missions.",
     },
     color_custom_outside_mission = {
         en = "Color Custom Players Outside Missions",

@@ -282,6 +282,22 @@ local function is_in_non_mission_context()
 	return false
 end
 
+local function should_color_names(is_local_player)
+	if is_in_non_mission_context() then
+		if is_local_player then
+			return mod:get("color_local_outside_mission") == true
+		else
+			return mod:get("color_custom_outside_mission") == true
+		end
+	else
+		if is_local_player then
+			return mod:get("color_local_inside_mission") ~= false
+		else
+			return mod:get("color_names") ~= false
+		end
+	end
+end
+
 local function get_class_color(player)
 	if not player then return nil end
 	local profile = pcall_safe(_get_player_profile, player)
@@ -552,9 +568,18 @@ local function apply_widget_color(panel)
 		return
 	end
 
-	if not color then
+	local is_local = false
+	if account_id and mod._local_player_account_id then
+		is_local = (account_id == mod._local_player_account_id)
+	elseif player and Managers.player then
+		is_local = (player == Managers.player:local_player_safe(1))
+	elseif slot == 1 and mod:get("force_local_slot_1") ~= false then
+		is_local = true
+	end
+
+	if not color or not should_color_names(is_local) then
 		if widget.content and type(widget.content.text) == "string" then
-			local stripped = widget.content.text:gsub("^{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}$", "")
+			local stripped = widget.content.text:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
 			if widget.content.text ~= stripped then
 				widget.content.text = stripped
 				widget.dirty = true
@@ -648,9 +673,16 @@ mod:hook_safe("HudElementTeamPlayerPanelHub", "update", function(self)
 
 			local widget = self._widgets_by_name and self._widgets_by_name.player_name
 
-			if not color then
+			local is_local = false
+			if account_id and mod._local_player_account_id then
+				is_local = (account_id == mod._local_player_account_id)
+			elseif player and Managers.player then
+				is_local = (player == Managers.player:local_player_safe(1))
+			end
+
+			if not color or not should_color_names(is_local) then
 				if widget and widget.content and type(widget.content.text) == "string" then
-					local stripped = widget.content.text:gsub("^{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}$", "")
+					local stripped = widget.content.text:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
 					if widget.content.text ~= stripped then
 						widget.content.text = stripped
 						widget.dirty = true
@@ -806,7 +838,7 @@ local function apply_nameplate_color(marker)
 
     local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
 
-    if marker._cs_applied_color == color_tag and marker._cs_colored_header == (content.header_text or "") then
+    if marker._cs_applied_color == color_tag and marker._cs_colored_header == (content.header_text or "") and marker._cs_color_names == should_color_names(is_local_player) then
         local skip = true
         if widget and widget.style then
             local icon_style = widget.style.icon or widget.style.class_icon
@@ -834,61 +866,71 @@ local function apply_nameplate_color(marker)
     end
 
     if content.header_text and type(content.header_text) == "string" then
-        local header = content.header_text
-
-        if is_companion then
-            local companion_glyph = ""
-            local stripped_header = header:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
-            local companion_name = stripped_header:match(companion_glyph .. "%s*(.-)$") or stripped_header:match("%s*(.-)$") or stripped_header
-            
-            local new_header = color_tag .. companion_glyph .. "{#reset()} " .. companion_name
-            if content.header_text ~= new_header then
-                content.header_text = new_header
+        if not should_color_names(is_local_player) then
+            local stripped_header = content.header_text:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+            if content.header_text ~= stripped_header then
+                content.header_text = stripped_header
                 marker._cs_last_header = nil
-                marker._cs_colored_header = new_header
+                marker._cs_colored_header = stripped_header
                 changed = true
             end
         else
-            local player_name = pcall_safe(_get_player_name, player)
-            if not player_name or player_name == "" then
-                local name_part = header:match("^([^\n]*)")
-                player_name = name_part and name_part:match("%w+") or header:match("%w+") or header
-            end
+            local header = content.header_text
 
-            player_name = player_name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
-
-            local name_part, title_part = header:match("^([^\n]*)\n?(.*)$")
-            if not name_part then
-                name_part = header
-                title_part = ""
-            end
-
-            local clean_name_part = name_part:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
-            local name_start, name_end = nil, nil
-            if player_name ~= "" then
-                name_start, name_end = clean_name_part:find(player_name, 1, true)
-            end
-
-            local new_name_part = nil
-            if name_start then
-                local before_name = clean_name_part:sub(1, name_start - 1)
-                local after_name = clean_name_part:sub(name_end + 1)
-                new_name_part = color_tag .. before_name .. player_name .. "{#reset()}" .. after_name
-            elseif clean_name_part ~= "" then
-                new_name_part = color_tag .. clean_name_part .. "{#reset()}"
-            end
-
-            if new_name_part then
-                local new_header = new_name_part
-                if title_part and title_part ~= "" then
-                    new_header = new_header .. "\n" .. title_part
-                end
-
+            if is_companion then
+                local companion_glyph = ""
+                local stripped_header = header:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+                local companion_name = stripped_header:match(companion_glyph .. "%s*(.-)$") or stripped_header:match("%s*(.-)$") or stripped_header
+                
+                local new_header = color_tag .. companion_glyph .. "{#reset()} " .. companion_name
                 if content.header_text ~= new_header then
                     content.header_text = new_header
                     marker._cs_last_header = nil
                     marker._cs_colored_header = new_header
                     changed = true
+                end
+            else
+                local player_name = pcall_safe(_get_player_name, player)
+                if not player_name or player_name == "" then
+                    local name_part = header:match("^([^\n]*)")
+                    player_name = name_part and name_part:match("%w+") or header:match("%w+") or header
+                end
+
+                player_name = player_name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+
+                local name_part, title_part = header:match("^([^\n]*)\n?(.*)$")
+                if not name_part then
+                    name_part = header
+                    title_part = ""
+                end
+
+                local clean_name_part = name_part:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+                local name_start, name_end = nil, nil
+                if player_name ~= "" then
+                    name_start, name_end = clean_name_part:find(player_name, 1, true)
+                end
+
+                local new_name_part = nil
+                if name_start then
+                    local before_name = clean_name_part:sub(1, name_start - 1)
+                    local after_name = clean_name_part:sub(name_end + 1)
+                    new_name_part = color_tag .. before_name .. player_name .. "{#reset()}" .. after_name
+                elseif clean_name_part ~= "" then
+                    new_name_part = color_tag .. clean_name_part .. "{#reset()}"
+                end
+
+                if new_name_part then
+                    local new_header = new_name_part
+                    if title_part and title_part ~= "" then
+                        new_header = new_header .. "\n" .. title_part
+                    end
+
+                    if content.header_text ~= new_header then
+                        content.header_text = new_header
+                        marker._cs_last_header = nil
+                        marker._cs_colored_header = new_header
+                        changed = true
+                    end
                 end
             end
         end
@@ -907,6 +949,7 @@ local function apply_nameplate_color(marker)
 
     if changed then
         marker._cs_applied_color = color_tag
+        marker._cs_color_names = should_color_names(is_local_player)
         marker._cs_is_reset = false
 
         if widget then
@@ -982,7 +1025,7 @@ for _, template_path in ipairs(companion_templates) do
 					content.icon_text = color_string .. companion_glyph .. "{#reset()}"
 				end
 
-				if content.header_text and content.header_text ~= "" then
+				if should_color_names(false) and content.header_text and content.header_text ~= "" then
 					local header = content.header_text
 					local companion_name = header:match(companion_glyph .. "%s*(.-)$") or header:match("%s*(.-)$")
 					if companion_name then
@@ -1088,14 +1131,6 @@ end)
 mod:hook(CLASS.ConstantElementChat, "_participant_displayname", function(func, self, participant)
 	local display_name = func(self, participant)
 
-	if not display_name then
-		return nil
-	end
-
-	if not mod:is_enabled() then
-		return func(self, participant)
-	end
-
 	local is_local = false
 	if participant then
 		if participant.is_current_user then
@@ -1103,6 +1138,10 @@ mod:hook(CLASS.ConstantElementChat, "_participant_displayname", function(func, s
 		elseif participant.account_id and mod._local_player_account_id and participant.account_id == mod._local_player_account_id then
 			is_local = true
 		end
+	end
+
+	if not mod:is_enabled() or not should_color_names(is_local) then
+		return func(self, participant)
 	end
 
 	if is_local then
@@ -1194,11 +1233,22 @@ end)
 
 
 local function apply_color_to_player_name(name, player)
-	if not name or name == "" or not player then
+	local is_local = false
+	if player and Managers.player then
+		is_local = (player == Managers.player:local_player_safe(1))
+	end
+	local account_id = pcall_safe(_get_player_account_id, player)
+	if account_id and mod._local_player_account_id and account_id == mod._local_player_account_id then
+		is_local = true
+	end
+
+	if not should_color_names(is_local) or not name or name == "" or not player then
+		if name and type(name) == "string" and name:find("{#color") then
+			return (name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", ""))
+		end
 		return name
 	end
 
-	local account_id = pcall_safe(_get_player_account_id, player)
 	if not account_id or account_id == "" then
 		return name
 	end
@@ -1237,16 +1287,22 @@ end)
 mod:hook(CLASS.PlayerInfo, "character_name", function(func, self)
 	local name = func(self)
 
-	if not mod:is_enabled() then
+	local account_id = (self.account_id and self:account_id()) or self._account_id
+	local is_local = (self.is_own_player and self:is_own_player())
+		or (account_id and mod._local_player_account_id and (account_id == mod._local_player_account_id))
+	if not mod:is_enabled() or not should_color_names(is_local) then
+		if name and type(name) == "string" and name:find("{#color") then
+			return (name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", ""))
+		end
 		return name
 	end
 
-	local account_id = self._account_id
 	if account_id then
 		local color = get_color_for_account_id(account_id)
 		if color then
 			local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
-			return color_tag .. name .. "{#reset()}"
+			local clean_name = name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+			return color_tag .. clean_name .. "{#reset()}"
 		end
 	end
 
@@ -1266,28 +1322,37 @@ end)
 mod:hook(CLASS.PresenceEntryMyself, "character_name", function(func, self)
 	local name = func(self)
 
-	if not mod:is_enabled() then
+	if not mod:is_enabled() or not should_color_names(true) then
+		if name and type(name) == "string" and name:find("{#color") then
+			return (name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", ""))
+		end
 		return name
 	end
 
 	local color = get_color("slot1")
 	local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
-	return color_tag .. name .. "{#reset()}"
+	local clean_name = name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+	return color_tag .. clean_name .. "{#reset()}"
 end)
 
 mod:hook(CLASS.PresenceEntryImmaterium, "character_name", function(func, self)
 	local name = func(self)
 
-	if not mod:is_enabled() then
+	local account_id = (self.account_id and self:account_id()) or (self._immaterium_entry and self._immaterium_entry.account_id)
+	local is_local = account_id and mod._local_player_account_id and (account_id == mod._local_player_account_id)
+	if not mod:is_enabled() or not should_color_names(is_local) then
+		if name and type(name) == "string" and name:find("{#color") then
+			return (name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", ""))
+		end
 		return name
 	end
 
-	local account_id = self._immaterium_entry and self._immaterium_entry.account_id
 	if account_id then
 		local color = get_color_for_account_id(account_id)
 		if color then
 			local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
-			return color_tag .. name .. "{#reset()}"
+			local clean_name = name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+			return color_tag .. clean_name .. "{#reset()}"
 		end
 	end
 
@@ -1298,16 +1363,31 @@ mod:hook_require("scripts/utilities/profile_utils", function(instance)
 	mod:hook(instance, "character_name", function(func, profile)
 		local name = func(profile)
 
-		if not mod:is_enabled() then
+		local account_id = profile and profile.account_id
+		local is_local = false
+		if account_id and mod._local_player_account_id and (account_id == mod._local_player_account_id) then
+			is_local = true
+		elseif profile and profile.character_id and Managers.player then
+			local lp = Managers.player:local_player_safe(1)
+			local lp_prof = lp and lp:profile()
+			if lp_prof and lp_prof.character_id == profile.character_id then
+				is_local = true
+			end
+		end
+
+		if not mod:is_enabled() or not should_color_names(is_local) then
+			if name and type(name) == "string" and name:find("{#color") then
+				return (name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", ""))
+			end
 			return name
 		end
 
-		local account_id = profile and profile.account_id
 		if account_id then
 			local color = get_color_for_account_id(account_id)
 			if color then
 				local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
-				return color_tag .. name .. "{#reset()}"
+				local clean_name = name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+				return color_tag .. clean_name .. "{#reset()}"
 			end
 		end
 
@@ -1590,6 +1670,46 @@ mod.CONSTANTS = CONSTANTS
 mod.get_player_by_account_id = get_player_by_account_id
 mod.get_player_by_slot = get_player_by_slot
 mod.get_color_for_account_id = get_color_for_account_id
+mod.should_color_names = should_color_names
+
+local function setup_state_your_name_integration()
+	local syn = get_mod("state_your_name")
+	if syn and syn.identity and not syn.identity.__cs_hooked then
+		syn.identity.__cs_hooked = true
+		local orig_color_selection_color = syn.identity._color_selection_color
+		syn.identity._color_selection_color = function(self, record)
+			local is_local = false
+			if record then
+				if record.account_id and mod._local_player_account_id then
+					is_local = (record.account_id == mod._local_player_account_id)
+				end
+				if not is_local and record.player_info and record.player_info.is_own_player then
+					is_local = record.player_info:is_own_player()
+				end
+				if not is_local and Managers.player then
+					local lp = Managers.player:local_player_safe(1)
+					if lp then
+						if record.player == lp then
+							is_local = true
+						elseif record.account_id and _get_player_account_id(lp) == record.account_id then
+							is_local = true
+						end
+					end
+				end
+				if not is_local and record.slot == 1 and mod:get("force_local_slot_1") ~= false then
+					is_local = true
+				end
+			end
+
+			if not should_color_names(is_local) then
+				return nil
+			end
+
+			return orig_color_selection_color(self, record)
+		end
+	end
+end
+setup_state_your_name_integration()
 
 local function _strip_cs_color_tags(text)
     if not text or type(text) ~= "string" then
@@ -1861,6 +1981,7 @@ mod.on_all_mods_loaded = function()
 	})
 
 	update_local_player_id()
+	setup_state_your_name_integration()
 	if mod.command then
 		mod:command("cs_menu", "open color customizer menu", function() mod.open_color_customizer() end)
 		mod:command("cs_sync", "sync/apply color settings", function()
@@ -1956,6 +2077,15 @@ mod.on_disabled = function()
 	reset_character_outlines()
 end
 
+mod.on_unload = function(exit_game)
+	if previous_slot_colors and UISettings and UISettings.player_slot_colors then
+		restore_previous()
+	end
+	reset_team_panel_colors()
+	reset_nameplate_colors()
+	reset_character_outlines()
+end
+
 mod.on_setting_changed = function(setting_id)
 	local triggers_update = false
 
@@ -1967,7 +2097,8 @@ mod.on_setting_changed = function(setting_id)
 	if string.find(setting_id, "slot%d") or string.find(setting_id, "bot_") or setting_id == "bot" then
 		triggers_update = true
 	elseif setting_id == "color_bots" or setting_id == "color_by_class"
-			or setting_id == "color_local_outside_mission" or setting_id == "color_custom_outside_mission" then
+			or setting_id == "color_local_outside_mission" or setting_id == "color_custom_outside_mission"
+			or setting_id == "color_names" or setting_id == "color_local_inside_mission" then
 		triggers_update = true
 	elseif setting_id == "force_local_slot_1" then
 		if mod:get("force_local_slot_1") == false then
@@ -1985,6 +2116,10 @@ mod.on_setting_changed = function(setting_id)
 	end
 
 	if triggers_update then
+		local syn = get_mod("state_your_name")
+		if syn then
+			syn._identity_revision = (syn._identity_revision or 0) + 1
+		end
 		if UISettings and in_gameplay_state then
 			apply_slot_colors()
 		else
