@@ -14,6 +14,8 @@ Requires SLOTFIX to work properly.
 - Color Player Outlines
 - Color Cyber-Mastiff Outlines
 - Color Bots
+- Color Own Name Inside Missions
+- Color Other Names Inside Missions
 - Color Own Name Outside Missions
 - Color Custom Players Outside Missions
 - Local Chat Name Style [Vanilla (Uncolored 'You'), Colored 'You', Colored Character Name, Colored Account Name]
