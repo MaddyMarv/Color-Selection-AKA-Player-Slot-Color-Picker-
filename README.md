@@ -5,7 +5,8 @@ Set custom HUD colors for player slots, bots, or character classes.
 
 Requires SLOTFIX to work properly.
 
-**Options:**
+<details>
+<summary><b>Mod Settings / Commands</b></summary>
 
 **General**
 - Open Color Customizer Menu (Hotkey)
@@ -30,5 +31,6 @@ Requires SLOTFIX to work properly.
 **Commands:**
 - `/cs_menu` - Open color customizer menu
 - `/cs_sync` - Sync and apply color settings
+</details>
 
 🔗 **Links:** [Source Code](https://github.com/MaddyMarv/Color-Selection-AKA-Player-Slot-Color-Picker-) | [Nexus Mods Profile](https://www.nexusmods.com/profile/indicabunny) | [Support Me on Ko-fi](https://ko-fi.com/indicabunny)
