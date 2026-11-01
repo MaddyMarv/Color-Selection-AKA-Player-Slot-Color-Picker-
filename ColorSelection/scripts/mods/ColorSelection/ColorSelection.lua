@@ -871,7 +871,7 @@ local function apply_nameplate_color(marker)
             end
             marker._cs_is_reset = true
             marker._cs_colored_header = nil
-            marker._cs_applied_color = nil
+            marker._cs_r = nil
         end
         return
     end
@@ -920,7 +920,7 @@ local function apply_nameplate_color(marker)
             end
             marker._cs_is_reset = true
             marker._cs_colored_header = nil
-            marker._cs_applied_color = nil
+            marker._cs_r = nil
         end
         return
     end
@@ -931,9 +931,9 @@ local function apply_nameplate_color(marker)
         return
     end
 
-    local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
+    local color_names = should_color_names(is_local_player)
 
-    if marker._cs_applied_color == color_tag and marker._cs_colored_header == (content.header_text or "") and marker._cs_color_names == should_color_names(is_local_player) then
+    if marker._cs_r == color[2] and marker._cs_g == color[3] and marker._cs_b == color[4] and marker._cs_colored_header == (content.header_text or "") and marker._cs_icon_text == content.icon_text and marker._cs_color_names == color_names then
         local skip = true
         if widget and widget.style then
             local icon_style = widget.style.icon or widget.style.class_icon
@@ -947,6 +947,7 @@ local function apply_nameplate_color(marker)
         if skip then return end
     end
 
+    local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
     local changed = false
 
     if widget and widget.style then
@@ -961,7 +962,7 @@ local function apply_nameplate_color(marker)
     end
 
     if content.header_text and type(content.header_text) == "string" then
-        if not should_color_names(is_local_player) then
+        if not color_names then
             local stripped_header = content.header_text:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
             if content.header_text ~= stripped_header then
                 content.header_text = stripped_header
@@ -1042,9 +1043,12 @@ local function apply_nameplate_color(marker)
         end
     end
 
+    marker._cs_r, marker._cs_g, marker._cs_b = color[2], color[3], color[4]
+    marker._cs_colored_header = content.header_text or ""
+    marker._cs_icon_text = content.icon_text
+    marker._cs_color_names = color_names
+
     if changed then
-        marker._cs_applied_color = color_tag
-        marker._cs_color_names = should_color_names(is_local_player)
         marker._cs_is_reset = false
 
         if widget then
@@ -1193,6 +1197,17 @@ local function check_roster_changes(t)
 	end
 end
 
+local nameplate_marker_types = {}
+
+local function is_nameplate_marker_type(marker_type)
+	local known = nameplate_marker_types[marker_type]
+	if known == nil then
+		known = type(marker_type) == "string" and (string.find(marker_type, "nameplate", 1, true) or string.find(marker_type, "companion", 1, true)) and true or false
+		nameplate_marker_types[marker_type] = known
+	end
+	return known
+end
+
 mod:hook_safe("HudElementNameplates", "update", function(self, dt, t, ui_renderer)
 	if not mod:is_enabled() then return end
 
@@ -1212,7 +1227,7 @@ mod:hook_safe("HudElementNameplates", "update", function(self, dt, t, ui_rendere
 	if not world_markers or not world_markers._markers_by_type then return end
 
 	for marker_type, bucket in pairs(world_markers._markers_by_type) do
-		if type(marker_type) == "string" and (string.find(marker_type, "nameplate", 1, true) or string.find(marker_type, "companion", 1, true)) then
+		if is_nameplate_marker_type(marker_type) then
 			for _, marker in pairs(bucket) do
 				apply_nameplate_color(marker)
 			end
@@ -1324,6 +1339,29 @@ end)
 
 
 
+local colored_names = {}
+
+local function colorize_name(name, color)
+	if type(name) ~= "string" then
+		return name
+	end
+
+	local r, g, b = color[2], color[3], color[4]
+	local entry = colored_names[name]
+	if entry and entry[1] == r and entry[2] == g and entry[3] == b then
+		return entry[4]
+	end
+
+	local clean_name = name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+	local text = string.format("{#color(%d,%d,%d)}", r, g, b) .. clean_name .. "{#reset()}"
+	if entry then
+		entry[1], entry[2], entry[3], entry[4] = r, g, b, text
+	else
+		colored_names[name] = { r, g, b, text }
+	end
+	return text
+end
+
 local function apply_color_to_player_name(name, player)
 	local is_local = false
 	if player and Managers.player then
@@ -1348,9 +1386,7 @@ local function apply_color_to_player_name(name, player)
 	local color = get_color_for_account_id(account_id)
 
 	if color then
-		local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
-		local clean_name = name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
-		return color_tag .. clean_name .. "{#reset()}"
+		return colorize_name(name, color)
 	end
 
 	return name
@@ -1392,9 +1428,7 @@ mod:hook(CLASS.PlayerInfo, "character_name", function(func, self)
 	if account_id then
 		local color = get_color_for_account_id(account_id)
 		if color then
-			local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
-			local clean_name = name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
-			return color_tag .. clean_name .. "{#reset()}"
+			return colorize_name(name, color)
 		end
 	end
 
@@ -1422,9 +1456,7 @@ mod:hook(CLASS.PresenceEntryMyself, "character_name", function(func, self)
 	end
 
 	local color = get_color("slot1")
-	local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
-	local clean_name = name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
-	return color_tag .. clean_name .. "{#reset()}"
+	return colorize_name(name, color)
 end)
 
 mod:hook(CLASS.PresenceEntryImmaterium, "character_name", function(func, self)
@@ -1442,9 +1474,7 @@ mod:hook(CLASS.PresenceEntryImmaterium, "character_name", function(func, self)
 	if account_id then
 		local color = get_color_for_account_id(account_id)
 		if color then
-			local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
-			local clean_name = name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
-			return color_tag .. clean_name .. "{#reset()}"
+			return colorize_name(name, color)
 		end
 	end
 
@@ -1477,9 +1507,7 @@ mod:hook_require("scripts/utilities/profile_utils", function(instance)
 		if account_id then
 			local color = get_color_for_account_id(account_id)
 			if color then
-				local color_tag = string.format("{#color(%d,%d,%d)}", color[2], color[3], color[4])
-				local clean_name = name:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
-				return color_tag .. clean_name .. "{#reset()}"
+				return colorize_name(name, color)
 			end
 		end
 
@@ -1545,7 +1573,7 @@ mod:hook_require("scripts/ui/hud/elements/player_panel_base/hud_element_player_p
 mod._colors_revision = 0
 
 local slot_table
-local original_slot_colors
+local slot_colors_replaced = false
 
 local slot_color_metatable = {
 	__index = function(_, k)
@@ -1565,15 +1593,16 @@ local slot_color_metatable = {
 }
 
 local function restore_previous()
-	if not original_slot_colors then
+	if not slot_colors_replaced then
 		return
 	end
 	setmetatable(slot_table, nil)
 	table.clear(slot_table)
-	for k, v in pairs(original_slot_colors) do
-		slot_table[k] = v
-	end
-	original_slot_colors = nil
+	slot_table[1] = Color.player_slot_1(255, true)
+	slot_table[2] = Color.player_slot_2(255, true)
+	slot_table[3] = Color.player_slot_3(255, true)
+	slot_table[4] = Color.player_slot_4(255, true)
+	slot_colors_replaced = false
 	mod._colors_revision = mod._colors_revision + 1
 end
 
@@ -1595,7 +1624,7 @@ local function update_world_markers()
 			marker.tl_modified = false
 			marker._cs_last_header = nil
 			marker._cs_colored_header = nil
-			marker._cs_applied_color = nil
+			marker._cs_r = nil
 			apply_nameplate_color(marker)
 		end
 	end
@@ -1677,6 +1706,9 @@ local is_applying_colors = false
 
 apply_slot_colors = function(force)
 	refresh_settings()
+	if not mod:is_enabled() then
+		return
+	end
 	local now = os.clock()
 	if is_applying_colors then
 		_pending_apply = true
@@ -1708,13 +1740,10 @@ apply_slot_colors_internal = function()
 
 	_player_cache.last_update = 0
 
-	if not original_slot_colors then
+	if not slot_colors_replaced then
 		slot_table = UISettings.player_slot_colors or {}
 		UISettings.player_slot_colors = slot_table
-		original_slot_colors = {}
-		for k, v in pairs(slot_table) do
-			original_slot_colors[k] = v
-		end
+		slot_colors_replaced = true
 	end
 
 	local current_table = slot_table
@@ -2095,6 +2124,14 @@ mod.on_all_mods_loaded = function()
 
 	update_local_player_id()
 	setup_state_your_name_integration()
+
+	if Managers.state and Managers.state.game_mode then
+		in_gameplay_state = true
+		if mod:is_enabled() then
+			apply_slot_colors(true)
+		end
+	end
+
 	if mod.command then
 		mod:command("cs_menu", "open color customizer menu", function() mod.open_color_customizer() end)
 		mod:command("cs_sync", "sync/apply color settings", function()
@@ -2147,6 +2184,9 @@ end
 
 function mod.update(dt)
 	reset_frame_cache()
+	if not mod:is_enabled() then
+		return
+	end
 	check_roster_changes()
 	if flush_pending_apply then
 		flush_pending_apply()
@@ -2155,6 +2195,7 @@ end
 
 mod.on_game_state_changed = function(status, state_name)
 	update_local_player_id()
+	table.clear(colored_names)
 
 	if status == "enter" and state_name == "StateGameplay" then
 		in_gameplay_state = true
@@ -2178,7 +2219,7 @@ mod.on_enabled = function()
 end
 
 mod.on_disabled = function()
-	if original_slot_colors then
+	if slot_colors_replaced then
 		restore_previous()
 
 		if in_gameplay_state then
