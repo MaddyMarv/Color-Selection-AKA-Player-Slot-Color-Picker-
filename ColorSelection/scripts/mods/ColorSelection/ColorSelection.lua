@@ -20,16 +20,26 @@ local function _is_player_valid(p)
 	return p ~= nil and not rawget(p, "__deleted")
 end
 
-local function _get_player_slot(p) if not _is_player_valid(p) then return nil end; local s, r = pcall(function() return p:slot() end); return s and r or nil end
-local function _get_player_account_id(p) if not _is_player_valid(p) then return nil end; local s, r = pcall(function() return p:account_id() end); return s and r or nil end
-local function _get_player_name(p) if not _is_player_valid(p) then return nil end; local s, r = pcall(function() return p:name() end); return s and r or nil end
-local function _get_player_profile(p) if not _is_player_valid(p) then return nil end; local s, r = pcall(function() return p:profile() end); return s and r or nil end
-local function _get_user_display_name(p) if not _is_player_valid(p) then return nil end; local s, r = pcall(function() return p:user_display_name(nil, true) end); return s and r or nil end
+local function _call_slot(p) return p:slot() end
+local function _call_account_id(p) return p:account_id() end
+local function _call_name(p) return p:name() end
+local function _call_profile(p) return p:profile() end
+local function _call_user_display_name(p) return p:user_display_name(nil, true) end
+local function _call_is_human_controlled(p) return p:is_human_controlled() end
+local function _call_is_bot(p) return (p.type and p:type() == "BotPlayer") or not p:is_human_controlled() end
+
+local function _get_player_slot(p) if not _is_player_valid(p) then return nil end; local s, r = pcall(_call_slot, p); return s and r or nil end
+local function _get_player_account_id(p) if not _is_player_valid(p) then return nil end; local s, r = pcall(_call_account_id, p); return s and r or nil end
+local function _get_player_name(p) if not _is_player_valid(p) then return nil end; local s, r = pcall(_call_name, p); return s and r or nil end
+local function _get_player_profile(p) if not _is_player_valid(p) then return nil end; local s, r = pcall(_call_profile, p); return s and r or nil end
+local function _get_user_display_name(p) if not _is_player_valid(p) then return nil end; local s, r = pcall(_call_user_display_name, p); return s and r or nil end
 local function _set_vector3_for_materials(unit, param, color, val) if Unit and Unit.set_vector3_for_materials then Unit.set_vector3_for_materials(unit, param, color, val) end end
-local function _get_is_human_controlled(p) if not _is_player_valid(p) then return false end; local s, r = pcall(function() return p:is_human_controlled() end); return s and r or false end
-local function _get_is_bot(p) if not _is_player_valid(p) then return false end; local s, r = pcall(function() return (p.type and p:type() == "BotPlayer") or not p:is_human_controlled() end); return s and r or false end
-local function _get_mechanism_name(m) if not m then return nil end; local s, r = pcall(function() return m:mechanism_name() end); return s and r or nil end
-local function _get_mission_name(m) if not m then return nil end; local s, r = pcall(function() return m:mission_name() end); return s and r or nil end
+local function _get_is_human_controlled(p) if not _is_player_valid(p) then return false end; local s, r = pcall(_call_is_human_controlled, p); return s and r or false end
+local function _get_is_bot(p) if not _is_player_valid(p) then return false end; local s, r = pcall(_call_is_bot, p); return s and r or false end
+local function _call_mechanism_name(m) return m:mechanism_name() end
+local function _call_mission_name(m) return m:mission_name() end
+local function _get_mechanism_name(m) if not m then return nil end; local s, r = pcall(_call_mechanism_name, m); return s and r or nil end
+local function _get_mission_name(m) if not m then return nil end; local s, r = pcall(_call_mission_name, m); return s and r or nil end
 
 function ColorUtils.normalize_to_rgb(color)
 	if not color or type(color) ~= "table" then
@@ -126,6 +136,37 @@ local function _get_cached_saved_colors()
     return cached_saved_colors
 end
 
+local FLAG_SETTINGS = {
+	"force_local_slot_1", "color_bots", "color_by_class", "color_names",
+	"color_local_inside_mission", "color_local_outside_mission", "color_custom_outside_mission",
+	"color_outlines", "color_dog_outlines", "chat_local_name_style",
+}
+local settings = {}
+local color_cache = {}
+
+local frame_colors = {}
+local frame_bot_colors = {}
+local frame_context = nil
+
+local function reset_frame_cache()
+	table.clear(frame_colors)
+	table.clear(frame_bot_colors)
+	frame_context = nil
+end
+
+local function refresh_settings()
+	for i = 1, #FLAG_SETTINGS do
+		local id = FLAG_SETTINGS[i]
+		settings[id] = mod:get(id)
+	end
+	table.clear(color_cache)
+	reset_frame_cache()
+end
+
+refresh_settings()
+
+local ICON_STYLE_KEYS = { "texture", "icon", "class_icon", "text" }
+
 local get_color_for_account_id
 
 local color_customizer_view_name = "color_customizer"
@@ -185,21 +226,30 @@ local function color_for_slot(slot)
 end
 
 local function get_color(prefix)
+	local cached = color_cache[prefix]
+	if cached then
+		return cached
+	end
+
+	local color
 	local color_array = mod:get(prefix)
 	if color_array and type(color_array) == "table" and #color_array >= 3 then
-		return {
+		color = {
 			color_array[1] or 255,
 			color_array[2] or mod.get_default_color_value(prefix, "r"),
 			color_array[3] or mod.get_default_color_value(prefix, "g"),
 			color_array[4] or mod.get_default_color_value(prefix, "b"),
 		}
+	else
+		color = {
+			255,
+			mod.get_default_color_value(prefix, "r"),
+			mod.get_default_color_value(prefix, "g"),
+			mod.get_default_color_value(prefix, "b"),
+		}
 	end
-	return {
-		255,
-		mod.get_default_color_value(prefix, "r"),
-		mod.get_default_color_value(prefix, "g"),
-		mod.get_default_color_value(prefix, "b"),
-	}
+	color_cache[prefix] = color
+	return color
 end
 
 local function get_local_player_slot()
@@ -217,14 +267,14 @@ local function get_local_player_slot()
 end
 
 local function get_slot_color(slot, is_local_player, is_bot)
-    local force_slot_1 = mod:get("force_local_slot_1") ~= false
+    local force_slot_1 = settings.force_local_slot_1 ~= false
 
 	if is_local_player and force_slot_1 then
 		return get_color("slot1")
 	end
 
 	if is_bot then
-		if mod:get("color_bots") ~= false then
+		if settings.color_bots ~= false then
 			return get_color("bot")
 		end
 	end
@@ -241,7 +291,7 @@ local function get_slot_color(slot, is_local_player, is_bot)
 	return nil
 end
 
-local function is_in_non_mission_context()
+local function compute_non_mission_context()
 	local mechanism_name = nil
 	if Managers.mechanism then
 		local success, result = pcall(_get_mechanism_name, Managers.mechanism)
@@ -282,18 +332,25 @@ local function is_in_non_mission_context()
 	return false
 end
 
+local function is_in_non_mission_context()
+	if frame_context == nil then
+		frame_context = compute_non_mission_context()
+	end
+	return frame_context
+end
+
 local function should_color_names(is_local_player)
 	if is_in_non_mission_context() then
 		if is_local_player then
-			return mod:get("color_local_outside_mission") == true
+			return settings.color_local_outside_mission == true
 		else
-			return mod:get("color_custom_outside_mission") == true
+			return settings.color_custom_outside_mission == true
 		end
 	else
 		if is_local_player then
-			return mod:get("color_local_inside_mission") ~= false
+			return settings.color_local_inside_mission ~= false
 		else
-			return mod:get("color_names") ~= false
+			return settings.color_names ~= false
 		end
 	end
 end
@@ -316,7 +373,7 @@ local apply_slot_colors
 local flush_pending_apply
 local in_gameplay_state = false
 
-get_color_for_account_id = function(account_id, slot)
+local function compute_color_for_account_id(account_id, slot)
 	if not mod._local_player_account_id then
 		update_local_player_id()
 	end
@@ -325,7 +382,7 @@ get_color_for_account_id = function(account_id, slot)
 	if saved_colors and type(saved_colors) == "table" and saved_colors[account_id] then
 		local c = saved_colors[account_id]
 		if c and type(c) == "table" then
-			if not is_in_non_mission_context() or mod:get("color_custom_outside_mission") then
+			if not is_in_non_mission_context() or settings.color_custom_outside_mission then
 				return {255, c.r or 255, c.g or 255, c.b or 255}
 			end
 		end
@@ -338,7 +395,7 @@ get_color_for_account_id = function(account_id, slot)
 	end
 
 	if not account_id or account_id == "" then
-		if mod:get("color_bots") ~= false then
+		if settings.color_bots ~= false then
 			return get_color("bot")
 		end
 	end
@@ -372,7 +429,7 @@ get_color_for_account_id = function(account_id, slot)
 		end
 
 		if not player_slot then
-			if is_local and mod:get("force_local_slot_1") ~= false then
+			if is_local and settings.force_local_slot_1 ~= false then
 				slot = 1
 			end
 		else
@@ -381,8 +438,8 @@ get_color_for_account_id = function(account_id, slot)
 	end
 
 	if is_local then
-		if not is_in_non_mission_context() or mod:get("color_local_outside_mission") then
-			if mod:get("color_by_class") and player and mod:get("force_local_slot_1") == false then
+		if not is_in_non_mission_context() or settings.color_local_outside_mission then
+			if settings.color_by_class and player and settings.force_local_slot_1 == false then
 				local class_color = get_class_color(player)
 				if class_color then return class_color end
 			end
@@ -391,7 +448,7 @@ get_color_for_account_id = function(account_id, slot)
 		return nil
 	end
 
-	if mod:get("color_by_class") and player then
+	if settings.color_by_class and player then
 		local class_color = get_class_color(player)
 		if class_color then return class_color end
 	end
@@ -402,6 +459,30 @@ get_color_for_account_id = function(account_id, slot)
 
 	return get_slot_color(slot, is_local, false)
 end
+
+get_color_for_account_id = function(account_id, slot)
+	local cache, key
+	if account_id and account_id ~= "" then
+		cache, key = frame_colors, account_id
+	elseif slot then
+		cache, key = frame_bot_colors, slot
+	else
+		return compute_color_for_account_id(account_id, slot)
+	end
+
+	local color = cache[key]
+	if color == nil then
+		color = compute_color_for_account_id(account_id, slot) or false
+		cache[key] = color
+	end
+	return color or nil
+end
+
+local _player_cache = {
+	by_slot = {},
+	by_account_id = {},
+	last_update = 0
+}
 
 local function _on_player_removed(player)
 	if _player_cache then
@@ -414,12 +495,6 @@ local function _on_player_removed(player)
 		mod._player_custom_colors[account_id] = nil
 	end
 end
-
-local _player_cache = {
-	by_slot = {},
-	by_account_id = {},
-	last_update = 0
-}
 
 local function update_player_cache()
 	local pm = Managers and Managers.player
@@ -550,12 +625,11 @@ local function apply_widget_color(panel)
 
 	local class_icon = panel._widgets_by_name.class_icon or panel._widgets_by_name.character_portrait
 	if class_icon and class_icon.style and color then
-		local style_keys = {"texture", "icon", "class_icon", "text"}
-		for i = 1, #style_keys do
-			local style_pass = class_icon.style[style_keys[i]]
+		for i = 1, #ICON_STYLE_KEYS do
+			local style_pass = class_icon.style[ICON_STYLE_KEYS[i]]
 			if style_pass then
 				local c = style_pass.color or style_pass.text_color
-				if c and type(c) == "table" then
+				if c and type(c) == "table" and (c[1] ~= 255 or c[2] ~= color[2] or c[3] ~= color[3] or c[4] ~= color[4]) then
 					c[1], c[2], c[3], c[4] = 255, color[2], color[3], color[4]
 					class_icon.dirty = true
 				end
@@ -573,26 +647,38 @@ local function apply_widget_color(panel)
 		is_local = (account_id == mod._local_player_account_id)
 	elseif player and Managers.player then
 		is_local = (player == Managers.player:local_player_safe(1))
-	elseif slot == 1 and mod:get("force_local_slot_1") ~= false then
+	elseif slot == 1 and settings.force_local_slot_1 ~= false then
 		is_local = true
 	end
 
+	local content = widget.content
+	local text = content and content.text
+	if type(text) ~= "string" then
+		return
+	end
+
 	if not color or not should_color_names(is_local) then
-		if widget.content and type(widget.content.text) == "string" then
-			local stripped = widget.content.text:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
-			if widget.content.text ~= stripped then
-				widget.content.text = stripped
+		panel._cs_name_text = nil
+		if string.find(text, "{#", 1, true) then
+			local stripped = text:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+			if text ~= stripped then
+				content.text = stripped
 				widget.dirty = true
-				widget.content.dirty = true
+				content.dirty = true
 			end
 		end
 		return
 	end
 
-	if widget.content and type(widget.content.text) == "string" then
-		local current_text = widget.content.text
-		local new_text = apply_color_to_name_only(current_text, color)
-		widget.content.text = new_text
+	if text == panel._cs_name_text and panel._cs_r == color[2] and panel._cs_g == color[3] and panel._cs_b == color[4] then
+		return
+	end
+
+	local new_text = apply_color_to_name_only(text, color)
+	panel._cs_name_text = new_text
+	panel._cs_r, panel._cs_g, panel._cs_b = color[2], color[3], color[4]
+	if new_text ~= text then
+		content.text = new_text
 		widget.dirty = true
 	end
 end
@@ -658,12 +744,11 @@ mod:hook_safe("HudElementTeamPlayerPanelHub", "update", function(self)
 
 			local class_icon = self._widgets_by_name and (self._widgets_by_name.class_icon or self._widgets_by_name.character_portrait)
 			if class_icon and class_icon.style and color then
-				local style_keys = {"texture", "icon", "class_icon", "text"}
-				for i = 1, #style_keys do
-					local style_pass = class_icon.style[style_keys[i]]
+				for i = 1, #ICON_STYLE_KEYS do
+					local style_pass = class_icon.style[ICON_STYLE_KEYS[i]]
 					if style_pass then
 						local c = style_pass.color or style_pass.text_color
-						if c and type(c) == "table" then
+						if c and type(c) == "table" and (c[1] ~= 255 or c[2] ~= color[2] or c[3] ~= color[3] or c[4] ~= color[4]) then
 							c[1], c[2], c[3], c[4] = 255, color[2], color[3], color[4]
 							class_icon.dirty = true
 						end
@@ -680,23 +765,33 @@ mod:hook_safe("HudElementTeamPlayerPanelHub", "update", function(self)
 				is_local = (player == Managers.player:local_player_safe(1))
 			end
 
+			local content = widget and widget.content
+			local text = content and content.text
+			if type(text) ~= "string" then
+				return
+			end
+
 			if not color or not should_color_names(is_local) then
-				if widget and widget.content and type(widget.content.text) == "string" then
-					local stripped = widget.content.text:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
-					if widget.content.text ~= stripped then
-						widget.content.text = stripped
+				self._cs_name_text = nil
+				if string.find(text, "{#", 1, true) then
+					local stripped = text:gsub("{#color%([^%)]*%)}", ""):gsub("{#reset%(%)}", "")
+					if text ~= stripped then
+						content.text = stripped
 						widget.dirty = true
 					end
 				end
 				return
 			end
 
-
-			if widget and widget.content and type(widget.content.text) == "string" and not self.tl_modified and not self.wru_modified then
-				local current_text = widget.content.text
-				local new_text = apply_color_to_name_only(current_text, color)
-				widget.content.text = new_text
-				widget.dirty = true
+			if not self.tl_modified and not self.wru_modified
+				and not (text == self._cs_name_text and self._cs_r == color[2] and self._cs_g == color[3] and self._cs_b == color[4]) then
+				local new_text = apply_color_to_name_only(text, color)
+				self._cs_name_text = new_text
+				self._cs_r, self._cs_g, self._cs_b = color[2], color[3], color[4]
+				if new_text ~= text then
+					content.text = new_text
+					widget.dirty = true
+				end
 			end
 		end
 	end
@@ -961,12 +1056,7 @@ local function apply_nameplate_color(marker)
     end
 end
 
-mod:hook_require("scripts/ui/hud/elements/team_panel_handler/hud_element_team_panel_handler", function(H)
-	if not H.__cs_hooked then
-		H.__cs_hooked = true
-		mod:hook_safe(H, "update", function(self) colourise_team_panels(self) end)
-	end
-end)
+mod:hook_safe("HudElementTeamPanelHandler", "update", function(self) colourise_team_panels(self) end)
 
 local nameplate_template_path = "scripts/ui/hud/elements/world_markers/templates/world_marker_template_nameplate"
 mod:hook_require(nameplate_template_path, function(template)
@@ -974,7 +1064,8 @@ mod:hook_require(nameplate_template_path, function(template)
 
 
 	if template.on_enter then
-		local original_on_enter = template.on_enter
+		template.__cs_original_on_enter = template.__cs_original_on_enter or template.on_enter
+		local original_on_enter = template.__cs_original_on_enter
 		template.on_enter = function(widget, marker)
 			original_on_enter(widget, marker)
 
@@ -998,7 +1089,8 @@ for _, template_path in ipairs(companion_templates) do
 	mod:hook_require(template_path, function(template)
 		if not template or not template.on_enter then return end
 
-		local original_on_enter = template.on_enter
+		template.__cs_original_on_enter = template.__cs_original_on_enter or template.on_enter
+		local original_on_enter = template.__cs_original_on_enter
 		template.on_enter = function(widget, marker)
 			original_on_enter(widget, marker)
 
@@ -1152,7 +1244,7 @@ mod:hook(CLASS.ConstantElementChat, "_participant_displayname", function(func, s
 		local color = get_color_for_account_id(account_id, slot)
 
 		local display_name
-		local style = mod:get("chat_local_name_style") or "colored_you"
+		local style = settings.chat_local_name_style or "colored_you"
 		if style == "character" then
 			display_name = func(self, participant)
 		elseif style == "account" then
@@ -1215,7 +1307,7 @@ mod:hook(CLASS.ConstantElementChat, "cb_chat_manager_message_recieved", function
 
 	local participant_current = participant and participant.is_current_user
 	local message_current = message and message.is_current_user
-	local style = mod:get("chat_local_name_style") or "colored_you"
+	local style = settings.chat_local_name_style or "colored_you"
 
 	if (participant_current or message_current) and style ~= "vanilla" then
 		local cloned_participant = participant and table.clone(participant) or nil
@@ -1396,8 +1488,7 @@ mod:hook_require("scripts/utilities/profile_utils", function(instance)
 end)
 
 local function install_player_panel_hooks(base)
-	if not base or base.__cs_hooks then return end
-	base.__cs_hooks = true
+	if not base then return end
 
 	mod:hook_safe(base, "update", function(self, dt, t, ui_renderer)
 
@@ -1452,26 +1543,39 @@ end
 mod:hook_require("scripts/ui/hud/elements/player_panel_base/hud_element_player_panel_base", function(B) install_player_panel_hooks(B) end)
 
 mod._colors_revision = 0
-local previous_slot_colors
 
-local function deep_clone(tbl)
-	if not tbl then return nil end
-	local copy = {}
-	for k, v in pairs(tbl) do
-		copy[k] = type(v) == "table" and deep_clone(v) or v
-	end
-	return copy
-end
+local slot_table
+local original_slot_colors
+
+local slot_color_metatable = {
+	__index = function(_, k)
+		if type(k) ~= "number" or k < 1 then return nil end
+		if is_in_non_mission_context() then return nil end
+
+		local account_id = nil
+		local player = get_player_by_slot(k)
+		if player then
+			local success, result = pcall(_get_player_account_id, player)
+			if success then
+				account_id = result
+			end
+		end
+		return get_color_for_account_id(account_id, k)
+	end,
+}
 
 local function restore_previous()
-	if previous_slot_colors then
-		UISettings.player_slot_colors = previous_slot_colors
-		previous_slot_colors = nil
-		mod._colors_revision = mod._colors_revision + 1
+	if not original_slot_colors then
+		return
 	end
+	setmetatable(slot_table, nil)
+	table.clear(slot_table)
+	for k, v in pairs(original_slot_colors) do
+		slot_table[k] = v
+	end
+	original_slot_colors = nil
+	mod._colors_revision = mod._colors_revision + 1
 end
-
-mod.on_unload = restore_previous
 
 local function update_world_markers()
 	local ui_manager = Managers and Managers.ui
@@ -1572,6 +1676,7 @@ local _pending_apply = false
 local is_applying_colors = false
 
 apply_slot_colors = function(force)
+	refresh_settings()
 	local now = os.clock()
 	if is_applying_colors then
 		_pending_apply = true
@@ -1603,35 +1708,17 @@ apply_slot_colors_internal = function()
 
 	_player_cache.last_update = 0
 
-	if not UISettings.player_slot_colors then
-		UISettings.player_slot_colors = {}
+	if not original_slot_colors then
+		slot_table = UISettings.player_slot_colors or {}
+		UISettings.player_slot_colors = slot_table
+		original_slot_colors = {}
+		for k, v in pairs(slot_table) do
+			original_slot_colors[k] = v
+		end
 	end
 
-	if not previous_slot_colors then
-		previous_slot_colors = deep_clone(UISettings.player_slot_colors)
-	end
-
-	local color_metatable = {
-		__index = function(_, k)
-			if type(k) ~= "number" or k < 1 then return nil end
-			if is_in_non_mission_context() then return nil end
-
-			local account_id = nil
-			local player = get_player_by_slot(k)
-			if player then
-				local success, result = pcall(_get_player_account_id, player)
-				if success then
-					account_id = result
-				end
-			end
-			return get_color_for_account_id(account_id, k)
-		end,
-	}
-
-	local current_table = UISettings.player_slot_colors or {}
-	for k in pairs(current_table) do
-		current_table[k] = nil
-	end
+	local current_table = slot_table
+	table.clear(current_table)
 
 	for i = 1, 5 do
 		if is_in_non_mission_context() then break end
@@ -1651,7 +1738,7 @@ apply_slot_colors_internal = function()
 		end
 	end
 
-	UISettings.player_slot_colors = setmetatable(current_table, color_metatable)
+	setmetatable(current_table, slot_color_metatable)
 
 	mod._colors_revision = mod._colors_revision + 1
 	UISettings._colors_revision = (UISettings._colors_revision or 0) + 1
@@ -1696,7 +1783,7 @@ local function setup_state_your_name_integration()
 						end
 					end
 				end
-				if not is_local and record.slot == 1 and mod:get("force_local_slot_1") ~= false then
+				if not is_local and record.slot == 1 and settings.force_local_slot_1 ~= false then
 					is_local = true
 				end
 			end
@@ -1716,7 +1803,7 @@ local function _strip_cs_color_tags(text)
         return text
     end
 
-    local cleaned = text:gsub("^{#color%(%d+,%d+,%d+,%d+%)}", ""):gsub("{#reset%(%)}$", "")
+    local cleaned = text:gsub("{#color%(%d+,%d+,%d+%)}", ""):gsub("{#reset%(%)}", "")
     return cleaned
 end
 
@@ -1787,36 +1874,95 @@ local function reset_nameplate_colors()
     end
 end
 
+local function _is_dog_breed(breed)
+	local name = breed.name
+	return breed.breed_type == "companion" or (name and (string.find(name, "dog", 1, true) or string.find(name, "mastiff", 1, true))) and true or false
+end
+
+local function _classify_non_player(unit, extension)
+	local ext = ScriptUnit.has_extension(unit, "unit_data_system")
+	local breed = ext and ext.breed and ext:breed()
+	if not breed then
+		return nil
+	end
+	if _is_dog_breed(breed) then
+		extension._cs_kind = "dog"
+	elseif breed.breed_type ~= "player" then
+		extension._cs_kind = "other"
+	end
+	return extension._cs_kind
+end
+
+local function _find_dog_owner(pm, unit)
+	local players = pm:players()
+	if not players then
+		return nil
+	end
+	for _, p in pairs(players) do
+		local p_unit = p.player_unit
+		if p_unit and ALIVE[p_unit] then
+			local spawner_ext = ScriptUnit.has_extension(p_unit, "companion_spawner_system")
+			local spawned = spawner_ext and spawner_ext._spawned_units
+			if spawned then
+				for i = 1, #spawned do
+					if spawned[i] == unit then
+						return p
+					end
+				end
+			end
+		end
+	end
+	return nil
+end
+
+local function _apply_outline_color(unit, extension, owner)
+	local outlines = extension.outlines
+	local top_outline = outlines[1]
+	if not top_outline then
+		return
+	end
+
+	local color = get_color_for_account_id(pcall_safe(_get_player_account_id, owner), pcall_safe(_get_player_slot, owner))
+	if not color then
+		return
+	end
+
+	local r, g, b, count = color[2], color[3], color[4], #outlines
+	if extension._cs_top == top_outline and extension._cs_count == count and extension._cs_r == r and extension._cs_g == g and extension._cs_b == b then
+		return
+	end
+	extension._cs_top, extension._cs_count, extension._cs_r, extension._cs_g, extension._cs_b = top_outline, count, r, g, b
+	Unit.set_vector3_for_materials(unit, "outline_color", Vector3(r / 255, g / 255, b / 255), true)
+end
+
+local function _clear_outline_cache(extension)
+	extension._cs_top, extension._cs_count, extension._cs_r, extension._cs_g, extension._cs_b = nil, nil, nil, nil, nil
+	extension._cs_owner = nil
+end
+
 local function reset_character_outlines()
-    local extension_manager = Managers and Managers.state and Managers.state.extension
-    if not extension_manager then return end
+	local extension_manager = Managers and Managers.state and Managers.state.extension
+	if not extension_manager then return end
 
-    local outline_system = extension_manager:system("outline_system")
-    if not outline_system or not outline_system._unit_extension_data then return end
+	local outline_system = extension_manager:system("outline_system")
+	if not outline_system or not outline_system._unit_extension_data then return end
 
-    local default_outline_color = Vector3(163/255, 255/255, 185/255)
-    for unit, extension in pairs(outline_system._unit_extension_data) do
-        local pm = Managers.player
-        local is_player = pm and pm:player_by_unit(unit)
-        
-        local is_dog = false
-        if not is_player then
-            local ext = ScriptUnit.has_extension(unit, "unit_data_system")
-            local breed = ext and ext.breed and ext:breed()
-            if breed and breed.name and (string.find(breed.name, "dog", 1, true) or string.find(breed.name, "mastiff", 1, true)) then
-                is_dog = true
-            end
-        end
-
-        if is_player or is_dog then
-            pcall_safe(_set_vector3_for_materials, unit, "outline_color", default_outline_color, true)
-        end
-    end
+	local pm = Managers.player
+	local default_outline_color = Vector3(163/255, 255/255, 185/255)
+	for unit, extension in pairs(outline_system._unit_extension_data) do
+		_clear_outline_cache(extension)
+		local kind = extension._cs_kind
+		local is_player = kind ~= "other" and kind ~= "dog" and pm and pm:player_by_unit(unit)
+		if is_player or kind == "dog" or (not kind and _classify_non_player(unit, extension) == "dog") then
+			pcall_safe(_set_vector3_for_materials, unit, "outline_color", default_outline_color, true)
+		end
+	end
 end
 
 mod:hook_safe("OutlineSystem", "update", function(self)
 	if not mod:is_enabled() then return end
-	if not mod:get("color_outlines") and not mod:get("color_dog_outlines") then return end
+	local color_players, color_dogs = settings.color_outlines, settings.color_dog_outlines
+	if not color_players and not color_dogs then return end
 	if self._total_num_outlines == 0 then return end
 	if not self._visible then return end
 
@@ -1824,63 +1970,30 @@ mod:hook_safe("OutlineSystem", "update", function(self)
 	if not pm then return end
 
 	for unit, extension in pairs(self._unit_extension_data) do
-		local player = pm:player_by_unit(unit)
-
-		if player and mod:get("color_outlines") then
-			local top_outline = extension.outlines[1]
-
-			if top_outline then
-				local account_id = pcall_safe(_get_player_account_id, player)
-				local slot = pcall_safe(_get_player_slot, player)
-
-				local color = get_color_for_account_id(account_id, slot)
-
-				if color then
-					local color_vector = Vector3(color[2] / 255, color[3] / 255, color[4] / 255)
-					Unit.set_vector3_for_materials(unit, "outline_color", color_vector, true)
-				end
-			end
-		elseif not player and mod:get("color_dog_outlines") then
-			local is_dog = false
-			local ext = ScriptUnit.has_extension(unit, "unit_data_system")
-			local breed = ext and ext.breed and ext:breed()
-			if breed and breed.name and (string.find(breed.name, "dog", 1, true) or string.find(breed.name, "mastiff", 1, true)) then
-				is_dog = true
-			end
-
-			if is_dog then
-				local owner = nil
-				local players = pm:players()
-				if players then
-					for _, p in pairs(players) do
-						local p_unit = p.player_unit
-						if p_unit and ALIVE[p_unit] then
-							local spawner_ext = ScriptUnit.has_extension(p_unit, "companion_spawner_system")
-							if spawner_ext and spawner_ext._spawned_units then
-								for _, u in ipairs(spawner_ext._spawned_units) do
-									if u == unit then
-										owner = p
-										break
-									end
-								end
-							end
-						end
-						if owner then break end
+		local kind = extension._cs_kind
+		if kind ~= "other" and extension.outlines[1] then
+			if kind == "dog" then
+				if color_dogs then
+					local owner = extension._cs_owner
+					if not _is_player_valid(owner) then
+						owner = _find_dog_owner(pm, unit)
+						extension._cs_owner = owner
+					end
+					if owner then
+						_apply_outline_color(unit, extension, owner)
 					end
 				end
-
-				if owner then
-					local top_outline = extension.outlines[1]
-					if top_outline then
-						local account_id = pcall_safe(_get_player_account_id, owner)
-						local slot = pcall_safe(_get_player_slot, owner)
-
-						local color = get_color_for_account_id(account_id, slot)
-
-						if color then
-							local color_vector = Vector3(color[2] / 255, color[3] / 255, color[4] / 255)
-							Unit.set_vector3_for_materials(unit, "outline_color", color_vector, true)
-						end
+			else
+				local player = pm:player_by_unit(unit)
+				if player then
+					if color_players then
+						_apply_outline_color(unit, extension, player)
+					end
+				elseif _classify_non_player(unit, extension) == "dog" and color_dogs then
+					local owner = _find_dog_owner(pm, unit)
+					extension._cs_owner = owner
+					if owner then
+						_apply_outline_color(unit, extension, owner)
 					end
 				end
 			end
@@ -1888,11 +2001,11 @@ mod:hook_safe("OutlineSystem", "update", function(self)
 	end
 end)
 
--- in_gameplay_state declared at file top
 
 mod:hook_require("scripts/ui/view_elements/view_element_player_social_popup/view_element_player_social_popup_content_list", function(module)
 	if module.from_player_info then
-		local original_from_player_info = module.from_player_info
+		module.__cs_original_from_player_info = module.__cs_original_from_player_info or module.from_player_info
+		local original_from_player_info = module.__cs_original_from_player_info
 
 		module.from_player_info = function(parent, player_info)
 			local popup_menu_items, num_menu_items = original_from_player_info(parent, player_info)
@@ -2033,6 +2146,7 @@ mod.on_all_mods_loaded = function()
 end
 
 function mod.update(dt)
+	reset_frame_cache()
 	check_roster_changes()
 	if flush_pending_apply then
 		flush_pending_apply()
@@ -2064,7 +2178,7 @@ mod.on_enabled = function()
 end
 
 mod.on_disabled = function()
-	if previous_slot_colors and UISettings and UISettings.player_slot_colors then
+	if original_slot_colors then
 		restore_previous()
 
 		if in_gameplay_state then
@@ -2078,15 +2192,14 @@ mod.on_disabled = function()
 end
 
 mod.on_unload = function(exit_game)
-	if previous_slot_colors and UISettings and UISettings.player_slot_colors then
-		restore_previous()
-	end
+	restore_previous()
 	reset_team_panel_colors()
 	reset_nameplate_colors()
 	reset_character_outlines()
 end
 
 mod.on_setting_changed = function(setting_id)
+	refresh_settings()
 	local triggers_update = false
 
 	if setting_id == "saved_player_colors" then
@@ -2101,7 +2214,7 @@ mod.on_setting_changed = function(setting_id)
 			or setting_id == "color_names" or setting_id == "color_local_inside_mission" then
 		triggers_update = true
 	elseif setting_id == "force_local_slot_1" then
-		if mod:get("force_local_slot_1") == false then
+		if settings.force_local_slot_1 == false then
 			mod:set("color_local_outside_mission", false, true)
 		end
 		triggers_update = true
