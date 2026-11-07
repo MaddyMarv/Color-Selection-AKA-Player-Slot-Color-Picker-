@@ -585,15 +585,8 @@ local function apply_widget_color(panel)
 
 	if player then
 
-		local success, result = pcall(_get_player_slot, player)
-		if success and result then
-			slot = result
-		end
-
-		local id_success, id_result = pcall(_get_player_account_id, player)
-		if id_success and id_result then
-			account_id = id_result
-		end
+		slot = _get_player_slot(player)
+		account_id = _get_player_account_id(player)
 
 		if slot and not panel._player_slot then
 			panel._player_slot = slot
@@ -604,10 +597,7 @@ local function apply_widget_color(panel)
 		if slot then
 			player = get_player_by_slot(slot)
 			if player then
-				local success, result = pcall(_get_player_account_id, player)
-				if success then
-					account_id = result
-				end
+				account_id = _get_player_account_id(player)
 			end
 		end
 	end
@@ -707,18 +697,6 @@ mod:hook_safe("HudElementPersonalPlayerPanelHub", "update", function(self)
 end)
 
 mod:hook_safe("HudElementPersonalPlayerPanelHub", "_set_player_name", function(self)
-	if mod:is_enabled() then
-		apply_widget_color(self)
-	end
-end)
-
-mod:hook_safe("HudElementPersonalPlayerPanel", "update", function(self)
-	if mod:is_enabled() then
-		apply_widget_color(self)
-	end
-end)
-
-mod:hook_safe("HudElementTeamPlayerPanel", "update", function(self)
 	if mod:is_enabled() then
 		apply_widget_color(self)
 	end
@@ -1060,7 +1038,6 @@ local function apply_nameplate_color(marker)
     end
 end
 
-mod:hook_safe("HudElementTeamPanelHandler", "update", function(self) colourise_team_panels(self) end)
 
 local nameplate_template_path = "scripts/ui/hud/elements/world_markers/templates/world_marker_template_nameplate"
 mod:hook_require(nameplate_template_path, function(template)
