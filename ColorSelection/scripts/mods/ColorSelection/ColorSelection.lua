@@ -585,8 +585,15 @@ local function apply_widget_color(panel)
 
 	if player then
 
-		slot = _get_player_slot(player)
-		account_id = _get_player_account_id(player)
+		local success, result = pcall(_get_player_slot, player)
+		if success and result then
+			slot = result
+		end
+
+		local id_success, id_result = pcall(_get_player_account_id, player)
+		if id_success and id_result then
+			account_id = id_result
+		end
 
 		if slot and not panel._player_slot then
 			panel._player_slot = slot
@@ -597,7 +604,10 @@ local function apply_widget_color(panel)
 		if slot then
 			player = get_player_by_slot(slot)
 			if player then
-				account_id = _get_player_account_id(player)
+				local success, result = pcall(_get_player_account_id, player)
+				if success then
+					account_id = result
+				end
 			end
 		end
 	end
@@ -697,6 +707,18 @@ mod:hook_safe("HudElementPersonalPlayerPanelHub", "update", function(self)
 end)
 
 mod:hook_safe("HudElementPersonalPlayerPanelHub", "_set_player_name", function(self)
+	if mod:is_enabled() then
+		apply_widget_color(self)
+	end
+end)
+
+mod:hook_safe("HudElementPersonalPlayerPanel", "update", function(self)
+	if mod:is_enabled() then
+		apply_widget_color(self)
+	end
+end)
+
+mod:hook_safe("HudElementTeamPlayerPanel", "update", function(self)
 	if mod:is_enabled() then
 		apply_widget_color(self)
 	end
@@ -1038,6 +1060,7 @@ local function apply_nameplate_color(marker)
     end
 end
 
+mod:hook_safe("HudElementTeamPanelHandler", "update", function(self) colourise_team_panels(self) end)
 
 local nameplate_template_path = "scripts/ui/hud/elements/world_markers/templates/world_marker_template_nameplate"
 mod:hook_require(nameplate_template_path, function(template)
@@ -1934,16 +1957,15 @@ local function _apply_outline_color(unit, extension, owner)
 	end
 
 	local r, g, b, count = color[2], color[3], color[4], #outlines
-	local visible = extension.visible_material_layers
-	if extension._cs_top == top_outline and extension._cs_count == count and extension._cs_visible == visible and extension._cs_r == r and extension._cs_g == g and extension._cs_b == b then
+	if extension._cs_top == top_outline and extension._cs_count == count and extension._cs_r == r and extension._cs_g == g and extension._cs_b == b then
 		return
 	end
-	extension._cs_top, extension._cs_count, extension._cs_visible, extension._cs_r, extension._cs_g, extension._cs_b = top_outline, count, visible, r, g, b
+	extension._cs_top, extension._cs_count, extension._cs_r, extension._cs_g, extension._cs_b = top_outline, count, r, g, b
 	Unit.set_vector3_for_materials(unit, "outline_color", Vector3(r / 255, g / 255, b / 255), true)
 end
 
 local function _clear_outline_cache(extension)
-	extension._cs_top, extension._cs_count, extension._cs_visible, extension._cs_r, extension._cs_g, extension._cs_b = nil, nil, nil, nil, nil, nil
+	extension._cs_top, extension._cs_count, extension._cs_r, extension._cs_g, extension._cs_b = nil, nil, nil, nil, nil
 	extension._cs_owner = nil
 end
 
