@@ -1934,15 +1934,16 @@ local function _apply_outline_color(unit, extension, owner)
 	end
 
 	local r, g, b, count = color[2], color[3], color[4], #outlines
-	if extension._cs_top == top_outline and extension._cs_count == count and extension._cs_r == r and extension._cs_g == g and extension._cs_b == b then
+	local visible = extension.visible_material_layers
+	if extension._cs_top == top_outline and extension._cs_count == count and extension._cs_visible == visible and extension._cs_r == r and extension._cs_g == g and extension._cs_b == b then
 		return
 	end
-	extension._cs_top, extension._cs_count, extension._cs_r, extension._cs_g, extension._cs_b = top_outline, count, r, g, b
+	extension._cs_top, extension._cs_count, extension._cs_visible, extension._cs_r, extension._cs_g, extension._cs_b = top_outline, count, visible, r, g, b
 	Unit.set_vector3_for_materials(unit, "outline_color", Vector3(r / 255, g / 255, b / 255), true)
 end
 
 local function _clear_outline_cache(extension)
-	extension._cs_top, extension._cs_count, extension._cs_r, extension._cs_g, extension._cs_b = nil, nil, nil, nil, nil
+	extension._cs_top, extension._cs_count, extension._cs_visible, extension._cs_r, extension._cs_g, extension._cs_b = nil, nil, nil, nil, nil, nil
 	extension._cs_owner = nil
 end
 
